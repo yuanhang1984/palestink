@@ -1,0 +1,21 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<!DOCTYPE xml>
+<Config>
+        <!--
+                [DatabaseInformation]
+                driver: 数据库驱动.
+                url: 数据库库连接url.
+        -->
+        <DatabaseInformation driver = "com.mysql.jdbc.Driver" url = "jdbc:mysql://127.0.0.1:3306/lego?useUnicode=true&amp;characterEncoding=utf-8&amp;useSSL=true" />
+        <!--
+                [DatabaseSecurity]
+                name: 连接数据库的用户名.
+                password: 连接数据库的密码.
+        -->
+        <DatabaseSecurity name = "root" password = "5695234" />
+        <!--
+                [DatabasePool]
+                maxActiveConnection: 数据库连接池最大连接数.
+        -->
+        <DatabasePool maxActiveConnection = "80" />
+</Config>

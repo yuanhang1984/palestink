@@ -1,0 +1,31 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<!DOCTYPE xml>
+<Config>
+        <!--
+                [SourceCode]
+                rebuild: 0 不编译.
+                         1 编译.
+                command: 编译源码的命令.
+        -->
+        <SourceCode rebuild = "1" command = "javac -encoding utf-8 -cp ${WEB_APP}/WEB-INF/lib/palestinkSdk.jar -d ${WEB_APP}/WEB-INF/ext/log/bin ${WEB_APP}/WEB-INF/ext/log/src/necessary/LogListener.java" />
+        <!--
+                [logFile]
+                enable: true 启用日志文件.
+                        false 禁用日志文件.
+                logPath: 日志文件存放路径.
+                         ${WEB_APP} web应用的目录.
+                zipPath: 日志压缩文件存放路径.
+                         ${WEB_APP} web应用的目录.
+                size: 日志文件尺寸(MB), 超出后将打包成zip.
+                format: 日志消息格式.
+                        ${MODULE_NAME} 模块名.
+                        ${LEVEL} 级别(debug, info, warn, error, fatal).
+                        ${DATETIME} 时间(yyyy-MM-dd HH:mm:ss:SSS).
+                        ${CLASS_NAME} 类名.
+                        ${METHOD_NAME} 方法名.
+                        ${FILE_NAME} 文件名.
+                        ${LINE_NUMBER} 行号.
+                        ${MESSAGE} 消息内容.
+        -->
+        <LogFile enable = "true" logPath = "${WEB_APP}/WEB-INF/log" zipPath = "${WEB_APP}/WEB-INF/log/zip" size = "10" format = "[${MODULE_NAME}][${LEVEL}][${DATETIME}]${CLASS_NAME}.${METHOD_NAME}(${FILE_NAME}:${LINE_NUMBER}) -> ${MESSAGE}" />
+</Config>
