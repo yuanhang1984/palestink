@@ -11,13 +11,13 @@ public abstract class SqlModel {
 
         public abstract Connection getConnection();
 
-        public abstract int insert(Connection con, String sql, HashMap<String, Object> parameter);
+        public abstract int insert(Connection con, String sql);
 
-        public abstract int delete(Connection con, String sql, HashMap<String, Object> parameter);
+        public abstract int delete(Connection con, String sql);
 
-        public abstract int update(Connection con, String sql, HashMap<String, Object> parameter);
+        public abstract int update(Connection con, String sql);
 
-        public abstract ArrayList<HashMap<String, Object>> select(Connection con, String sql, HashMap<String, Object> parameter);
+        public abstract ArrayList<HashMap<String, Object>> select(Connection con, String sql);
 
         public abstract void release();
 }

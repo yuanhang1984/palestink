@@ -11,7 +11,6 @@ import org.apache.tomcat.jdbc.pool.PoolProperties;
 import framework.sdk.Log;
 import framework.sdk.SqlModel;
 import framework.sdk.Framework;
-import library.database.DatabaseKit;
 
 public class DbFactory extends SqlModel {
         private PoolProperties poolProperties;
@@ -53,14 +52,12 @@ public class DbFactory extends SqlModel {
         /**
          * idu执行（用于insert、delete、update三种操作）
          * @param sql sql语句
-         * @param parameter 参数
          * @return 执行sql影响的行数，发生异常返回-1。
          */
-        public int iduExecute(Connection con, String sql, HashMap<String, Object> parameter) {
-                String completeSql = DatabaseKit.generateSql(sql, parameter);
+        public int iduExecute(Connection con, String sql) {
                 PreparedStatement ps = null;
                 try {
-                        ps = con.prepareStatement(completeSql);
+                        ps = con.prepareStatement(sql);
                         return ps.executeUpdate();
                 } catch (Exception e) {
                         Framework.LOG.error(SqlModel.MODULE_NAME, e.toString());
@@ -78,29 +75,28 @@ public class DbFactory extends SqlModel {
         }
 
         @Override
-        public int insert(Connection con, String sql, HashMap<String, Object> parameter) {
-                return this.iduExecute(con, sql, parameter);
+        public int insert(Connection con, String sql) {
+                return this.iduExecute(con, sql);
         }
 
         @Override
-        public int delete(Connection con, String sql, HashMap<String, Object> parameter) {
-                return this.iduExecute(con, sql, parameter);
+        public int delete(Connection con, String sql) {
+                return this.iduExecute(con, sql);
         }
 
         @Override
-        public int update(Connection con, String sql, HashMap<String, Object> parameter) {
-                return this.iduExecute(con, sql, parameter);
+        public int update(Connection con, String sql) {
+                return this.iduExecute(con, sql);
         }
 
         @Override
-        public ArrayList<HashMap<String, Object>> select(Connection con, String sql, HashMap<String, Object> parameter) {
+        public ArrayList<HashMap<String, Object>> select(Connection con, String sql) {
                 ArrayList<HashMap<String, Object>> result = new ArrayList<HashMap<String, Object>>();
-                String completeSql = DatabaseKit.generateSql(sql, parameter);
                 PreparedStatement ps = null;
                 ResultSet rs = null;
                 ResultSetMetaData rsmd = null;
                 try {
-                        ps = con.prepareStatement(completeSql);
+                        ps = con.prepareStatement(sql);
                         rs = ps.executeQuery();
                         rsmd = rs.getMetaData();
                         int columnCount = rsmd.getColumnCount();

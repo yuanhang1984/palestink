@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ArrayList;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.dom4j.Element;
@@ -39,15 +38,22 @@ public class DatabaseKit {
                 Pattern pattern = Pattern.compile("\\#\\{(.+?)\\}");
                 Matcher matcher = pattern.matcher(text);
                 if (!matcher.find()) {
+                        // 如果没有找到需要替换的变量，直接返回sql语句的文本。
                         return text;
                 }
+                // 上面find了一次，这里需要重置一下。
                 matcher.reset();
+                // 循环遍历语句中的每个变量
                 while (matcher.find()) {
+                        // 如：#{name}获取name。
                         String name = matcher.group(1);
+                        // 从参数中获取name所指的参数值
                         Object value = parameter.get(name);
                         if (null == value) {
+                                // 如果没有找到参数值，说明未设置参数。
                                 continue;
                         }
+                        // sql中数字类型的可以直接加入sql语句，但是字符串等类型需要增加单引号。
                         String parameterStr = "";
                         if (-1 != value.getClass().getName().toLowerCase().indexOf("integer")) {
                                 parameterStr = String.valueOf(value);
@@ -58,8 +64,10 @@ public class DatabaseKit {
                         } else {
                                 parameterStr = "'" + String.valueOf(value) + "'";
                         }
+                        // 替换语句中的变量
                         text = text.replaceAll("\\#\\{" + name + "\\}", parameterStr);
                 }
+                // 返回sql语句
                 return text;
         }
 
@@ -67,45 +75,82 @@ public class DatabaseKit {
          * 组成Sql的choose标签（一个choose下面，只有一对if和else标签。相互之间不能嵌套。）
          * @param chooseElement choose标签
          * @param parameter 传入参数
-         * @return 符合if条件的sql语句
+         * @return 符合条件的sql语句
          */
         private static String composeSqlTagChoose(Element chooseElement, HashMap<String, Object> parameter) {
                 Element ifElement = chooseElement.element("if");
                 Element elseElement = chooseElement.element("else");
                 String parameterName = ifElement.attributeValue("parameterName");
                 String parameterValue = ifElement.attributeValue("parameterValue");
+                String operatorType = ifElement.attributeValue("operatorType");
                 Object obj = parameter.get(parameterName);
-                if (parameterValue.equalsIgnoreCase("#null")) {// 内置常量#null
-                        // 等于NULL
+                String text = "";
+                if ((parameterValue.equalsIgnoreCase("#null")) && (operatorType.equalsIgnoreCase("equal"))) {// 内置常量#null
                         if (null != obj) {
-                                // 不满足条件继续遍历
-                                return elseElement.getTextTrim();
+                                // 不满足if条件，赋予else内容。
+                                text = elseElement.getTextTrim();
+                        } else {
+                                text = ifElement.getTextTrim();
                         }
-                } else if (parameterValue.equalsIgnoreCase("#not_null")) {// 内置常量#not_null
-                        // 不等于NULL
+                } else if ((parameterValue.equalsIgnoreCase("#null")) && (operatorType.equalsIgnoreCase("unequal"))) {// 内置常量#null
                         if (null == obj) {
-                                // 不满足条件继续遍历
-                                return elseElement.getTextTrim();
+                                // 不满足if条件，赋予else内容。
+                                text = elseElement.getTextTrim();
+                        } else {
+                                text = ifElement.getTextTrim();
                         }
                 } else {// 其他固定常量
-                        if (!(obj.toString()).equalsIgnoreCase(parameterValue)) {
-                                // 不满足条件继续遍历
-                                return elseElement.getTextTrim();
+                        if (null == obj) {
+                                // 如果obj为空，说明传入的参数中没有这个值，那么自然失去了if的判断依据，所以应该等于else的内容。
+                                text = elseElement.getTextTrim();
+                        } else {
+                                int res = parameterValue.toLowerCase().compareTo(obj.toString().toLowerCase());
+                                if (operatorType.equalsIgnoreCase("equal")) {// 等于
+                                        if (0 == res) {
+                                                text = ifElement.getTextTrim();
+                                        } else {
+                                                text = elseElement.getTextTrim();
+                                        }
+                                } else if (operatorType.equalsIgnoreCase("unequal")) {// 不等于
+                                        if (0 != res) {
+                                                text = ifElement.getTextTrim();
+                                        } else {
+                                                text = elseElement.getTextTrim();
+                                        }
+                                } else if (operatorType.equalsIgnoreCase("greater")) {// 大于
+                                        if (0 > res) {
+                                                text = ifElement.getTextTrim();
+                                        } else {
+                                                text = elseElement.getTextTrim();
+                                        }
+                                } else if (operatorType.equalsIgnoreCase("less")) {// 小于
+                                        if (0 < res) {
+                                                text = ifElement.getTextTrim();
+                                        } else {
+                                                text = elseElement.getTextTrim();
+                                        }
+                                }
                         }
                 }
-                String ifText = ifElement.getTextTrim();
                 Pattern pattern = Pattern.compile("\\#\\{(.+?)\\}");
-                Matcher matcher = pattern.matcher(ifText);
+                Matcher matcher = pattern.matcher(text);
                 if (!matcher.find()) {
-                        return ifText;
+                        // 如果没有找到需要替换的变量，直接返回sql语句的文本。
+                        return text;
                 }
+                // 上面find了一次，这里需要重置一下。
                 matcher.reset();
+                // 循环遍历语句中的每个变量
                 while (matcher.find()) {
+                        // 如：#{name}获取name。
                         String name = matcher.group(1);
+                        // 从参数中获取name所指的参数值
                         Object value = parameter.get(name);
                         if (null == value) {
+                                // 如果没有找到参数值，说明未设置参数。
                                 continue;
                         }
+                        // sql中数字类型的可以直接加入sql语句，但是字符串等类型需要增加单引号。
                         String parameterStr = "";
                         if (-1 != value.getClass().getName().toLowerCase().indexOf("integer")) {
                                 parameterStr = String.valueOf(value);
@@ -116,9 +161,11 @@ public class DatabaseKit {
                         } else {
                                 parameterStr = "'" + String.valueOf(value) + "'";
                         }
-                        ifText = ifText.replaceAll("\\#\\{" + name + "\\}", parameterStr);
+                        // 替换语句中的变量
+                        text = text.replaceAll("\\#\\{" + name + "\\}", parameterStr);
                 }
-                return ifText;
+                // 返回sql语句
+                return text;
         }
 
         /**
@@ -130,44 +177,72 @@ public class DatabaseKit {
         private static String composeSqlTagIfBySelf(Element ifElement, HashMap<String, Object> parameter) {
                 String parameterName = ifElement.attributeValue("parameterName");
                 String parameterValue = ifElement.attributeValue("parameterValue");
+                String operatorType = ifElement.attributeValue("operatorType");
                 Object obj = parameter.get(parameterName);
-                if (parameterValue.equalsIgnoreCase("#null")) {// 内置常量#null
-                        // 等于NULL
+                String text = "";
+                if ((parameterValue.equalsIgnoreCase("#null")) && (operatorType.equalsIgnoreCase("equal"))) {// 内置常量#null
                         if (null != obj) {
-                                // 不满足条件
-                                return null;
+                                // 不满足if条件，返回空字符串。
+                                return "";
                         }
-                } else if (parameterValue.equalsIgnoreCase("#not_null")) {// 内置常量#not_null
-                        // 不等于NULL
+                        text = ifElement.getTextTrim();
+                } else if ((parameterValue.equalsIgnoreCase("#null")) && (operatorType.equalsIgnoreCase("unequal"))) {// 内置常量#null
                         if (null == obj) {
-                                // 不满足条件
-                                return null;
+                                // 不满足if条件，返回空字符串。
+                                return "";
                         }
+                        text = ifElement.getTextTrim();
                 } else {// 其他固定常量
                         if (null == obj) {
-                                // 不满足条件
-                                return null;
+                                // 如果obj为空，说明传入的参数中没有这个值，那么自然失去了if的判断依据，所以应该返回空字符串。
+                                return "";
                         }
-                        if (!(obj.toString()).equalsIgnoreCase(parameterValue)) {
-                                // 不满足条件
-                                return null;
+                        int res = parameterValue.toLowerCase().compareTo(obj.toString().toLowerCase());
+                        if (operatorType.equalsIgnoreCase("equal")) {// 等于
+                                if (0 == res) {
+                                        text = ifElement.getTextTrim();
+                                } else {
+                                        return "";
+                                }
+                        } else if (operatorType.equalsIgnoreCase("unequal")) {// 不等于
+                                if (0 != res) {
+                                        text = ifElement.getTextTrim();
+                                } else {
+                                        return "";
+                                }
+                        } else if (operatorType.equalsIgnoreCase("greater")) {// 大于
+                                if (0 > res) {
+                                        text = ifElement.getTextTrim();
+                                } else {
+                                        return "";
+                                }
+                        } else if (operatorType.equalsIgnoreCase("less")) {// 小于
+                                if (0 < res) {
+                                        text = ifElement.getTextTrim();
+                                } else {
+                                        return "";
+                                }
                         }
                 }
-                String ifText = ifElement.getTextTrim();
                 Pattern pattern = Pattern.compile("\\#\\{(.+?)\\}");
-                Matcher matcher = pattern.matcher(ifText);
+                Matcher matcher = pattern.matcher(text);
                 if (!matcher.find()) {
-                        // 说明传入参数中没有sql所需参数
-                        return ifText;
+                        // 如果没有找到需要替换的变量，直接返回sql语句的文本。
+                        return ifElement.getTextTrim();
                 }
+                // 上面find了一次，这里需要重置一下。
                 matcher.reset();
+                // 循环遍历语句中的每个变量
                 while (matcher.find()) {
+                        // 如：#{name}获取name。
                         String name = matcher.group(1);
+                        // 从参数中获取name所指的参数值
                         Object value = parameter.get(name);
                         if (null == value) {
-                                // 说明传入参数中没有sql所需参数
-                                return ifText;
+                                // 如果没有找到参数值，说明未设置参数。
+                                continue;
                         }
+                        // sql中数字类型的可以直接加入sql语句，但是字符串等类型需要增加单引号。
                         String parameterStr = "";
                         if (-1 != value.getClass().getName().toLowerCase().indexOf("integer")) {
                                 parameterStr = String.valueOf(value);
@@ -178,10 +253,11 @@ public class DatabaseKit {
                         } else {
                                 parameterStr = "'" + String.valueOf(value) + "'";
                         }
-                        ifText = ifText.replaceAll("\\#\\{" + name + "\\}", parameterStr);
-                        return ifText;
+                        // 替换语句中的变量
+                        text = text.replaceAll("\\#\\{" + name + "\\}", parameterStr);
                 }
-                return ifText;
+                // 返回sql语句
+                return text;
         }
 
         /**
@@ -197,45 +273,73 @@ public class DatabaseKit {
                         Element ifElement = (Element) ifIter.next();
                         String parameterName = ifElement.attributeValue("parameterName");
                         String parameterValue = ifElement.attributeValue("parameterValue");
+                        String operatorType = ifElement.attributeValue("operatorType");
                         Object obj = parameter.get(parameterName);
-                        if (parameterValue.equalsIgnoreCase("#null")) {// 内置常量#null
-                                // 等于NULL
+                        String text = "";
+                        if ((parameterValue.equalsIgnoreCase("#null")) && (operatorType.equalsIgnoreCase("equal"))) {// 内置常量#null
                                 if (null != obj) {
-                                        // 不满足条件继续遍历
+                                        // 不满足if条件，返回空字符串。
                                         continue;
                                 }
-                        } else if (parameterValue.equalsIgnoreCase("#not_null")) {// 内置常量#not_null
-                                // 不等于NULL
+                                text = ifElement.getTextTrim();
+                        } else if ((parameterValue.equalsIgnoreCase("#null")) & (operatorType.equalsIgnoreCase("unequal"))) {// 内置常量#null
                                 if (null == obj) {
-                                        // 不满足条件继续遍历
+                                        // 不满足if条件，返回空字符串。
                                         continue;
                                 }
+                                text = ifElement.getTextTrim();
                         } else {// 其他固定常量
                                 if (null == obj) {
-                                        // 不满足条件继续遍历
+                                        // 如果obj为空，说明传入的参数中没有这个值，那么自然失去了if的判断依据，所以应该继续遍历。
                                         continue;
                                 }
-                                if (!(obj.toString()).equalsIgnoreCase(parameterValue)) {
-                                        // 不满足条件继续遍历
-                                        continue;
+                                int res = parameterValue.toLowerCase().compareTo(obj.toString().toLowerCase());
+                                if (operatorType.equalsIgnoreCase("equal")) {// 等于
+                                        if (0 == res) {
+                                                text = ifElement.getTextTrim();
+                                        } else {
+                                                continue;
+                                        }
+                                } else if (operatorType.equalsIgnoreCase("unequal")) {// 不等于
+                                        if (0 != res) {
+                                                text = ifElement.getTextTrim();
+                                        } else {
+                                                continue;
+                                        }
+                                } else if (operatorType.equalsIgnoreCase("greater")) {// 大于
+                                        if (0 > res) {
+                                                text = ifElement.getTextTrim();
+                                        } else {
+                                                continue;
+                                        }
+                                } else if (operatorType.equalsIgnoreCase("less")) {// 小于
+                                        if (0 < res) {
+                                                text = ifElement.getTextTrim();
+                                        } else {
+                                                continue;
+                                        }
                                 }
                         }
-                        String ifText = ifElement.getTextTrim();
                         Pattern pattern = Pattern.compile("\\#\\{(.+?)\\}");
-                        Matcher matcher = pattern.matcher(ifText);
+                        Matcher matcher = pattern.matcher(text);
                         if (!matcher.find()) {
-                                // 说明传入参数中没有sql所需参数
-                                list.add(ifText);
+                                // 如果没有找到需要替换的变量，直接返回sql语句的文本。
+                                list.add(ifElement.getTextTrim());
+                                continue;
                         }
+                        // 上面find了一次，这里需要重置一下。
                         matcher.reset();
+                        // 循环遍历语句中的每个变量
                         while (matcher.find()) {
+                                // 如：#{name}获取name。
                                 String name = matcher.group(1);
+                                // 从参数中获取name所指的参数值
                                 Object value = parameter.get(name);
                                 if (null == value) {
-                                        // 说明传入参数中没有sql所需参数
-                                        list.add(ifText);
+                                        // 如果没有找到参数值，说明未设置参数。
                                         continue;
                                 }
+                                // sql中数字类型的可以直接加入sql语句，但是字符串等类型需要增加单引号。
                                 String parameterStr = "";
                                 if (-1 != value.getClass().getName().toLowerCase().indexOf("integer")) {
                                         parameterStr = String.valueOf(value);
@@ -246,15 +350,18 @@ public class DatabaseKit {
                                 } else {
                                         parameterStr = "'" + String.valueOf(value) + "'";
                                 }
-                                ifText = ifText.replaceAll("\\#\\{" + name + "\\}", parameterStr);
-                                list.add(ifText);
+                                // 替换语句中的变量
+                                text = text.replaceAll("\\#\\{" + name + "\\}", parameterStr);
+                                list.add(text);
                         }
                 }
+                // 返回sql语句集合
                 return list;
         }
 
         /**
          * 组合Sql
+         * @param sqlElement sql元素
          * @param element sql中的元素节点
          * @param parameter 参数列表
          * @return sql
@@ -263,6 +370,7 @@ public class DatabaseKit {
                 String s = "";
                 Iterator<?> sqlIter = sqlElement.elementIterator();
                 Element targetElement = null;
+                // 根据elementId遍历查询元素
                 while (sqlIter.hasNext()) {
                         Element e = (Element) sqlIter.next();
                         if (e.attributeValue("id").equalsIgnoreCase(elementId)) {
@@ -270,21 +378,23 @@ public class DatabaseKit {
                                 break;
                         }
                 }
+                // 如果没有找到元素，返回null。
                 if (null == targetElement) {
-                        return null;
+                        return "";
                 }
+                // 遍历elementId下所有的节点
                 List<?> list = targetElement.content();
                 Iterator<?> iter = list.iterator();
                 while (iter.hasNext()) {
                         Object obj = iter.next();
-                        if (-1 != obj.getClass().getName().toLowerCase().indexOf("defaulttext")) {
+                        if (-1 != obj.getClass().getName().toLowerCase().indexOf("defaulttext")) {// defaulttext与defaultcdata功能相同
                                 DefaultText dt = (DefaultText) obj;
                                 String text = dt.getText().trim();
                                 if (0 == text.length()) {
                                         continue;
                                 }
                                 s += (" " + DatabaseKit.composeSqlReplaceParameter(text, parameter));
-                        } else if (-1 != obj.getClass().getName().toLowerCase().indexOf("defaultcdata")) {
+                        } else if (-1 != obj.getClass().getName().toLowerCase().indexOf("defaultcdata")) {// defaulttext与defaultcdata功能相同
                                 DefaultCDATA dc = (DefaultCDATA) obj;
                                 String text = dc.getText().trim();
                                 if (0 == text.length()) {
@@ -305,18 +415,22 @@ public class DatabaseKit {
                                         if (str.toLowerCase().startsWith(prefix)) {
                                                 str = str.substring(prefix.length());
                                         }
-                                        s += (" where" + " " + str);
+                                        if (0 < str.trim().length()) {
+                                                s += (" where" + " " + str);
+                                        }
                                 } else if (name.equalsIgnoreCase("set")) {
                                         Iterator<String> i = DatabaseKit.composeSqlTagIfByParent(de, parameter).iterator();
                                         String str = "";
                                         while (i.hasNext()) {
                                                 str += (i.next() + " ");
                                         }
-                                        str = str.trim();
-                                        if ((str.lastIndexOf(",") + 1) == str.length()) {
-                                                str = str.substring(0, str.length() - 1);
+                                        if (0 < str.trim().length()) {
+                                                str = str.trim();
+                                                if ((str.lastIndexOf(",") + 1) == str.length()) {
+                                                        str = str.substring(0, str.length() - 1);
+                                                }
+                                                s += (" set" + " " + str);
                                         }
-                                        s += (" set" + " " + str);
                                 } else if (name.equalsIgnoreCase("choose")) {
                                         s += DatabaseKit.composeSqlTagChoose(de, parameter);
                                 } else if (name.equalsIgnoreCase("if")) {
@@ -326,27 +440,5 @@ public class DatabaseKit {
                         }
                 }
                 return s.trim();
-        }
-
-        /**
-        * 生成Sql
-        * @param sql sql语句（带参数标记）
-        * @param parameter （参数）
-        * @return sql
-        */
-        public static String generateSql(String sql, HashMap<String, Object> parameter) {
-                String s = sql;
-                Iterator<Entry<String, Object>> iter = parameter.entrySet().iterator();
-                while (iter.hasNext()) {
-                        Entry<String, Object> e = iter.next();
-                        String key = e.getKey();
-                        // 转义字符的正则替换
-                        key = key.replaceAll("\\#", "\\\\#");
-                        key = key.replaceAll("\\$", "\\\\$");
-                        key = key.replaceAll("\\{", "\\\\{");
-                        key = key.replaceAll("\\}", "\\\\}");
-                        s = s.replaceAll(key, (String) e.getValue());
-                }
-                return s;
         }
 }

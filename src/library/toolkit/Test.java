@@ -9,13 +9,25 @@ import library.database.DatabaseKit;
 public class Test {
         public Test() {
                 try {
+                        // String n1 = "A";
+                        // String n2 = "A";
+                        // int res = n1.compareTo(n2);
+                        // if (0 == res) {
+                        // System.out.println("相等");
+                        // } else if (0 < res) {
+                        // System.out.println("n1大于n2");
+                        // } else if (0 > res) {
+                        // System.out.println("n1小于n2");
+                        // }
+                        // System.exit(1);
                         HashMap<String, Object> hm = new HashMap<String, Object>();
-                        hm.put("uuid", "FFFFF00000");
-                        hm.put("vehicle_information_uuid", "hello");
-                        hm.put("offset", 0);
-                        hm.put("rows", 11);
-                        // hm.put("quantity", 3.1215926);
-                        // hm.put("cluster_list", "111;222;333;444;");
+                        // hm.put("uuid", "AAAAAAA00000");
+                        hm.put("vehicle_information_uuid", "ayuanhang");
+                        // hm.put("offset", 0);
+                        // hm.put("rows", 11);
+                        hm.put("quantity", "abc");
+                        // hm.put("cluster_list", "a;b;c;");
+                        // hm.put("sn_cluster_list", "set_null");
                         // hm.put("address", "qilishan");
                         // hm.put("a1", null);
                         // hm.put("b2", "This is b2");
