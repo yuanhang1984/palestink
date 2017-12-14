@@ -9,6 +9,6 @@ public abstract class CustomAction {
         public CustomAction(HttpServlet httpServlet, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, SqlHandle dbHandler, HashMap<String, Object> parameter) {
         }
 
-        public CustomAction(HttpServlet httpServlet, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, SqlModel sqlSession, HashMap<String, Object> parameter) {
+        public CustomAction(HttpServlet httpServlet, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, DbModel sqlSession, HashMap<String, Object> parameter) {
         }
 }

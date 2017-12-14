@@ -1,52 +1,39 @@
-package ext.db.necessary;
+package framework.db.sdbo;
 
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.sql.ResultSet;
 import java.sql.Connection;
-import java.sql.ResultSetMetaData;
 import java.sql.PreparedStatement;
-import org.apache.tomcat.jdbc.pool.DataSource;
-import org.apache.tomcat.jdbc.pool.PoolProperties;
-import framework.sdk.Log;
-import framework.sdk.SqlModel;
+import java.sql.ResultSetMetaData;
+import framework.sdk.DbModel;
 import framework.sdk.Framework;
+import ext.db.necessary.DbInstance;
 
-public class DbFactory extends SqlModel {
-        private PoolProperties poolProperties;
-        private DataSource dataSource;
+public class DbFactory {
+        private static final String MODULE_NAME = "DbFactory";
 
-        public DbFactory() {
-                this.poolProperties = new PoolProperties();
-                this.dataSource = new DataSource();
+        private DbFactory() {
         }
 
-        @Override
-        public boolean init(Log LOG, String driver, String url, String name, String password, int maxActiveConnection) {
-                try {
-                        // 设置连接池的基本属性（来自init参数）
-                        this.poolProperties.setDriverClassName(driver);
-                        this.poolProperties.setUrl(url);
-                        this.poolProperties.setUsername(name);
-                        this.poolProperties.setPassword(password);
-                        this.poolProperties.setMaxActive(maxActiveConnection);
-                        // 设置连接池属性至数据源
-                        this.dataSource.setPoolProperties(this.poolProperties);
-                } catch (Exception e) {
-                        Framework.LOG.error(SqlModel.MODULE_NAME, "Initialize DbFactory Error: " + e.toString());
-                        return false;
-                }
-                return true;
+        private static class InstanceMaker {
+                private static final DbModel INSTANCE = new DbInstance();
         }
 
-        @Override
-        public Connection getConnection() {
-                try {
-                        return this.dataSource.getConnection();
-                } catch (Exception e) {
-                        Framework.LOG.error(SqlModel.MODULE_NAME, e.toString());
-                        return null;
-                }
+        public static final DbModel getInstance() {
+                return InstanceMaker.INSTANCE;
+        }
+
+        public static boolean init(String driver, String url, String name, String password, int maxActiveConnection) {
+                return DbFactory.getInstance().init(driver, url, name, password, maxActiveConnection);
+        }
+
+        public static Connection getConnection() {
+                return DbFactory.getInstance().getConnection();
+        }
+
+        public static void release() {
+                DbFactory.getInstance().release();
         }
 
         /**
@@ -54,13 +41,13 @@ public class DbFactory extends SqlModel {
          * @param sql sql语句
          * @return 执行sql影响的行数，发生异常返回-1。
          */
-        public int iduExecute(Connection con, String sql) {
+        private static int iduExecute(Connection con, String sql) {
                 PreparedStatement ps = null;
                 try {
                         ps = con.prepareStatement(sql);
                         return ps.executeUpdate();
                 } catch (Exception e) {
-                        Framework.LOG.error(SqlModel.MODULE_NAME, e.toString());
+                        Framework.LOG.error(DbFactory.MODULE_NAME, e.toString());
                         return -1;
                 } finally {
                         try {
@@ -68,29 +55,25 @@ public class DbFactory extends SqlModel {
                                         ps.close();
                                 }
                         } catch (Exception e) {
-                                Framework.LOG.error(SqlModel.MODULE_NAME, e.toString());
+                                Framework.LOG.error(DbFactory.MODULE_NAME, e.toString());
                                 return -1;
                         }
                 }
         }
 
-        @Override
-        public int insert(Connection con, String sql) {
-                return this.iduExecute(con, sql);
+        public static int insert(Connection con, String sql) {
+                return DbFactory.iduExecute(con, sql);
         }
 
-        @Override
-        public int delete(Connection con, String sql) {
-                return this.iduExecute(con, sql);
+        public static int delete(Connection con, String sql) {
+                return DbFactory.iduExecute(con, sql);
         }
 
-        @Override
-        public int update(Connection con, String sql) {
-                return this.iduExecute(con, sql);
+        public static int update(Connection con, String sql) {
+                return DbFactory.iduExecute(con, sql);
         }
 
-        @Override
-        public ArrayList<HashMap<String, Object>> select(Connection con, String sql) {
+        public static ArrayList<HashMap<String, Object>> select(Connection con, String sql) {
                 ArrayList<HashMap<String, Object>> result = new ArrayList<HashMap<String, Object>>();
                 PreparedStatement ps = null;
                 ResultSet rs = null;
@@ -113,7 +96,7 @@ public class DbFactory extends SqlModel {
                         }
                         return result;
                 } catch (Exception e) {
-                        Framework.LOG.error(SqlModel.MODULE_NAME, e.toString());
+                        Framework.LOG.error(DbFactory.MODULE_NAME, e.toString());
                         return null;
                 } finally {
                         try {
@@ -124,14 +107,9 @@ public class DbFactory extends SqlModel {
                                         ps.close();
                                 }
                         } catch (Exception e) {
-                                Framework.LOG.error(SqlModel.MODULE_NAME, e.toString());
+                                Framework.LOG.error(DbFactory.MODULE_NAME, e.toString());
                                 return null;
                         }
                 }
-        }
-
-        @Override
-        public void release() {
-                this.dataSource.close();
         }
 }
