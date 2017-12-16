@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
-import framework.sdk.DbModel;
+import framework.sdk.DbInstanceModel;
 import framework.sdk.Framework;
 import ext.db.necessary.DbInstance;
 
@@ -17,10 +17,10 @@ public class DbFactory {
         }
 
         private static class InstanceMaker {
-                private static final DbModel INSTANCE = new DbInstance();
+                private static final DbInstanceModel INSTANCE = new DbInstance();
         }
 
-        public static final DbModel getInstance() {
+        public static final DbInstanceModel getInstance() {
                 return InstanceMaker.INSTANCE;
         }
 
@@ -41,7 +41,7 @@ public class DbFactory {
          * @param sql sql语句
          * @return 执行sql影响的行数，发生异常返回-1。
          */
-        private static int iduExecute(Connection con, String sql) {
+        public static int iduExecute(Connection con, String sql) {
                 PreparedStatement ps = null;
                 try {
                         ps = con.prepareStatement(sql);
@@ -59,18 +59,6 @@ public class DbFactory {
                                 return -1;
                         }
                 }
-        }
-
-        public static int insert(Connection con, String sql) {
-                return DbFactory.iduExecute(con, sql);
-        }
-
-        public static int delete(Connection con, String sql) {
-                return DbFactory.iduExecute(con, sql);
-        }
-
-        public static int update(Connection con, String sql) {
-                return DbFactory.iduExecute(con, sql);
         }
 
         public static ArrayList<HashMap<String, Object>> select(Connection con, String sql) {

@@ -1,12 +1,12 @@
 package ext.db.necessary;
 
 import java.sql.Connection;
-import framework.sdk.DbModel;
+import framework.sdk.DbInstanceModel;
 import framework.sdk.Framework;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 
-public class DbInstance extends DbModel {
+public class DbInstance extends DbInstanceModel {
         private PoolProperties poolProperties;
         private DataSource dataSource;
         private final String moduleName = "DbInstance";

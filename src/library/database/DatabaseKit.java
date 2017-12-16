@@ -361,19 +361,19 @@ public class DatabaseKit {
 
         /**
          * 组合Sql
-         * @param sqlElement sql元素
-         * @param element sql中的元素节点
+         * @param sqlRoot sql元素
+         * @param id sql中的元素节点
          * @param parameter 参数列表
          * @return sql
          */
-        public static String composeSql(Element sqlElement, String elementId, HashMap<String, Object> parameter) {
+        public static String composeSql(Element sqlRoot, String id, HashMap<String, Object> parameter) {
                 String s = "";
-                Iterator<?> sqlIter = sqlElement.elementIterator();
+                Iterator<?> sqlRootIter = sqlRoot.elementIterator();
                 Element targetElement = null;
                 // 根据elementId遍历查询元素
-                while (sqlIter.hasNext()) {
-                        Element e = (Element) sqlIter.next();
-                        if (e.attributeValue("id").equalsIgnoreCase(elementId)) {
+                while (sqlRootIter.hasNext()) {
+                        Element e = (Element) sqlRootIter.next();
+                        if (e.attributeValue("id").equalsIgnoreCase(id)) {
                                 targetElement = e;
                                 break;
                         }

@@ -1,16 +1,69 @@
 package framework.sdk;
 
+import java.util.HashMap;
+import java.util.ArrayList;
 import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 public class Message {
+        private RESULT result;
+        private Integer count;
+        private String detail;
+        private ArrayList<HashMap<String, Object>> dataList;// 用于存储所需的对象，比如select中返回的ArrayList。
+
+        public Message() {
+                this.result = null;
+                this.count = null;
+                this.detail = null;
+                this.dataList = null;
+        }
+
+        public Message(RESULT result, Integer count, String detail, ArrayList<HashMap<String, Object>> dataList) {
+                this.result = result;
+                this.count = count;
+                this.detail = detail;
+                this.dataList = dataList;
+        }
+
+        public RESULT getResult() {
+                return result;
+        }
+
+        public void setResult(RESULT result) {
+                this.result = result;
+        }
+
+        public Integer getCount() {
+                return count;
+        }
+
+        public void setCount(Integer count) {
+                this.count = count;
+        }
+
+        public String getDetail() {
+                return detail;
+        }
+
+        public void setDetail(String detail) {
+                this.detail = detail;
+        }
+
+        public ArrayList<HashMap<String, Object>> getDataList() {
+                return dataList;
+        }
+
+        public void setDataList(ArrayList<HashMap<String, Object>> dataList) {
+                this.dataList = dataList;
+        }
+
         /*
          * 状态枚举代码
          */
         public static enum RESULT {
-                SUCCESS/* 操作成功 */, ERROR/* 操作失败 */, EXCEPTION/* 操作异常 */, PARAM_INVALID/* 非法参数 */, PARAM_IS_NULL/* 参数为空 */, PARAM_FORMAT_ERROR/* 参数格式错误 */, PARAM_TRANSFORM_ERROR/* 参数转换错误 */, PARAM_HANDLE_EXCEPTION/* 参数处理异常 */, FILE_IS_NULL/* 文件为空 */, FILE_OVERSIZE/* 文件超出尺寸 */, FILE_SUFFIX_INVALID/* 非法文件后缀 */, FILE_UPLOAD_EXCEPTION/* 文件上传异常 */, MODULE_NO_PERMISSION/* 没有操作权限 */, MODULE_NO_DATA/* 没有数据 */, MODULE_DUPLICATE_DATA/* 重复数据 */, SDBO_TYPE_ERROR/* SDBO类型错误 */, COMPOSE_SQL_ERROR/* 组合SQL错误 */, UNKNOWN/* 未知错误 */
+                SUCCESS/* 操作成功 */, ERROR/* 操作失败 */, EXCEPTION/* 操作异常 */, PARAMETER_INVALID/* 非法参数 */, PARAMETER_IS_NULL/* 参数为空 */, PARAMETER_FORMAT_ERROR/* 参数格式错误 */, PARAMETER_TRANSFORM_ERROR/* 参数转换错误 */, PARAMETER_HANDLE_EXCEPTION/* 参数处理异常 */, FILE_IS_NULL/* 文件为空 */, FILE_OVERSIZE/* 文件超出尺寸 */, FILE_SUFFIX_INVALID/* 非法文件后缀 */, FILE_UPLOAD_EXCEPTION/* 文件上传异常 */, NO_PERMISSION/* 没有权限 */, NO_MODULE_SQL/* 没有模块的SQL */, ANALYSE_NAMESPACE_ERROR/* 解析namespace错误 */, DATABASE_CONNECTION_ERROR/* 数据库连接错误 */, IDU_NO_DATA/* IDU操作无数据 */, IDU_EXIST_DATA/* IDU操作有结果 */, QUERY_NO_DATA/* 查询无数据 */, DUPLICATE_DATA/* 重复数据 */, TRANSACTION_TYPE_ERROR/* Transaction类型错误 */, RESULT_ALIAS_ERROR/* 结果集别名错误 */, RESULT_NOT_EXIST/* 结果集不存在 */, RESULT_PARAMETER_ERROR/* 结果集参数错误 */, COMPOSE_SQL_ERROR/* 组合SQL错误 */, RECURSIVE_SELECT_ERROR/* 递归检索错误 */, CUSTOM_CLASS_FORMAT_ERROR/* 自定义class格式错误 */, UNKNOWN/* 未知错误 */
         }
 
         /**
@@ -31,19 +84,19 @@ public class Message {
                 case EXCEPTION:
                         return "Exception";
                 /* 非法参数 */
-                case PARAM_INVALID:
-                        return "Invalid Parameter";
+                case PARAMETER_INVALID:
+                        return "Parameter Invalid";
                 /* 参数为空 */
-                case PARAM_IS_NULL:
+                case PARAMETER_IS_NULL:
                         return "Parameter Is Null";
                 /* 参数格式错误 */
-                case PARAM_FORMAT_ERROR:
+                case PARAMETER_FORMAT_ERROR:
                         return "Parameter Format Error";
                 /* 参数转换错误 */
-                case PARAM_TRANSFORM_ERROR:
+                case PARAMETER_TRANSFORM_ERROR:
                         return "Parameter Transform Error";
                 /* 参数处理异常 */
-                case PARAM_HANDLE_EXCEPTION:
+                case PARAMETER_HANDLE_EXCEPTION:
                         return "Parameter Handle Exception";
                 /* 文件为空 */
                 case FILE_IS_NULL:
@@ -53,25 +106,55 @@ public class Message {
                         return "File Oversize";
                 /* 非法文件后缀 */
                 case FILE_SUFFIX_INVALID:
-                        return "Invalid File Suffix";
+                        return "File Suffix Invalid";
                 /* 文件上传异常 */
                 case FILE_UPLOAD_EXCEPTION:
                         return "File Upload Exception";
                 /* 没有操作权限 */
-                case MODULE_NO_PERMISSION:
+                case NO_PERMISSION:
                         return "No Permission";
-                /* 没有数据 */
-                case MODULE_NO_DATA:
-                        return "No Data";
+                /* 没有模块的SQL */
+                case NO_MODULE_SQL:
+                        return "No Module Sql";
+                /* 解析namespace错误 */
+                case ANALYSE_NAMESPACE_ERROR:
+                        return "Analyse Namespace Error";
+                /* 数据库连接错误 */
+                case DATABASE_CONNECTION_ERROR:
+                        return "Database Connection Error";
+                /* IDU无数据 */
+                case IDU_NO_DATA:
+                        return "IDU No Data";
+                /* IDU操作有结果 */
+                case IDU_EXIST_DATA:
+                        return "IDU Exist Data";
+                /* 查询无数据 */
+                case QUERY_NO_DATA:
+                        return "Query No Data";
                 /* 重复数据 */
-                case MODULE_DUPLICATE_DATA:
+                case DUPLICATE_DATA:
                         return "Duplicate Data";
-                /* SDBO类型错误 */
-                case SDBO_TYPE_ERROR:
-                        return "Sdbo Type Error";
+                /* Transaction类型错误 */
+                case TRANSACTION_TYPE_ERROR:
+                        return "Transaction Type Error";
+                /* 结果集参数错误 */
+                case RESULT_PARAMETER_ERROR:
+                        return "Result Parameter Error";
+                /* 结果集别名错误 */
+                case RESULT_ALIAS_ERROR:
+                        return "Result Alias Error";
+                /* 结果集不存在 */
+                case RESULT_NOT_EXIST:
+                        return "Result Not Exist";
                 /* 组合SQL错误 */
                 case COMPOSE_SQL_ERROR:
                         return "Compose Sql Error";
+                /* 递归检索错误 */
+                case RECURSIVE_SELECT_ERROR:
+                        return "Recursive Select Error";
+                /* 自定义class格式错误 */
+                case CUSTOM_CLASS_FORMAT_ERROR:
+                        return "Custom Class Format Error";
                 /* 未知错误 */
                 default:
                         return "Unknown Error";
