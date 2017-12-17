@@ -1,0 +1,91 @@
+﻿<?xml version = "1.0" encoding = "utf-8" ?>
+<!DOCTYPE xml>
+<Sql>
+        <!-- [示例_雇员信息][demo_employee-info] -->
+        <insert id = "insertEmployeeInfo" description = "添加雇员信息">
+                <![CDATA[insert into `demo_employee-info` (`id`, `uuid`, `name`, `password`, `age`, `sex`, `code`, `address`, `remark`, `create_datetime`) values (#{id}, #{uuid}, #{name}, #{password}, #{age}, #{sex}, #{code}, #{address}, #{remark}, now())]]>
+        </insert>
+        <delete id = "deleteEmployeeInfo" description = "删除雇员信息">
+                <![CDATA[delete from `demo_employee-info`]]>
+                <where>
+                        <!-- 删除的唯一标记用uuid -->
+                        <if parameterName = "uuid" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[and `uuid` = #{uuid}]]>
+                        </if>
+                        <!-- 这里增加一个sex参数，用来测试多记录删除的情况。 -->
+                        <if parameterName = "sex" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[and `sex` = #{sex}]]>
+                        </if>
+                </where>
+        </delete>
+        <update id = "updateEmployeeInfo" description = "修改雇员信息">
+                <![CDATA[update `demo_employee-info`]]>
+                <set>
+                        <if parameterName = "name" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[`name` = #{name},]]>
+                        </if>
+                        <if parameterName = "password" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[`password` = #{password},]]>
+                        </if>
+                        <if parameterName = "age" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[`age` = #{age},]]>
+                        </if>
+                        <if parameterName = "sex" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[`sex` = #{sex},]]>
+                        </if>
+                        <if parameterName = "code" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[`code` = #{code},]]>
+                        </if>
+                        <if parameterName = "address" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[`address` = #{address},]]>
+                        </if>
+                        <if parameterName = "remark" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[`remark` = #{remark},]]>
+                        </if>
+                </set>
+                <where>
+                        <if parameterName = "uuid" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[and `uuid` = #{uuid}]]>
+                        </if>
+                </where>
+        </update>
+        <select id = "selectEmployeeInfo" description = "查询雇员信息">
+                <![CDATA[select * from `demo_employee-info`]]>
+                <where>
+                        <if parameterName = "id" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[and `id` = #{id}]]>
+                        </if>
+                        <if parameterName = "uuid" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[and `uuid` = #{uuid}]]>
+                        </if>
+                        <if parameterName = "name" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[`name` = #{name},]]>
+                        </if>
+                        <if parameterName = "password" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[`password` = #{password},]]>
+                        </if>
+                        <if parameterName = "age" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[`age` = #{age},]]>
+                        </if>
+                        <if parameterName = "sex" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[`sex` = #{sex},]]>
+                        </if>
+                        <if parameterName = "code" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[`code` = #{code},]]>
+                        </if>
+                        <if parameterName = "address" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[`address` = #{address},]]>
+                        </if>
+                        <if parameterName = "remark" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[`remark` = #{remark},]]>
+                        </if>
+                </where>
+                <![CDATA[ order by `id` desc]]>
+                <if parameterName = "offset" parameterValue = "#null" operatorType = "unequal">
+                        <![CDATA[limit #{offset},]]>
+                </if>
+                <if parameterName = "rows" parameterValue = "#null" operatorType = "unequal">
+                        <![CDATA[#{rows}]]>
+                </if>
+        </select>
+</Sql>

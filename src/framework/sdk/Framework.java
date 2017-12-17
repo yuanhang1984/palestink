@@ -9,11 +9,6 @@ public class Framework {
         public static String PROJECT_REAL_PATH = "";
 
         /*
-         * 框架模块的名称（用于日志显示）
-         */
-        public static final String FRAMEWORK_MODULE_NAME = "Framework";
-
-        /*
          * 模块名称的列表
          */
         public static ArrayList<String> MODULE_NAME_LIST;

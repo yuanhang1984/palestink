@@ -1,5 +1,10 @@
 package library.toolkit;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import library.io.InputOutput;
+
 // import org.json.JSONObject;
 
 // import java.util.HashMap;
@@ -11,9 +16,13 @@ package library.toolkit;
 public class Test {
         public Test() {
                 try {
-                        String a = "javac -encoding utf-8 -cp D:/dev/local/palestink/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/palestink/WEB-INF/lib/palestinkSdk.jar;D:/dev/local/palestink/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/palestink/WEB-INF/classes -d D:/dev/local/palestink/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/palestink/WEB-INF/ext/db/bin D:/dev/local/palestink/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/palestink/WEB-INF/ext/db/src/necessary/DbInstance.java";
-                        a = a.replaceAll("-cp\\s+(.)\\s+", ";");
-                        System.out.println(a);
+                        String path = "D:\\dev\\github\\palestink\\WebContent\\WEB-INF";
+                        ArrayList<String> list = InputOutput.getCurrentDirectoryFolderName(InputOutput.regulatePath(path));
+                        Iterator<String> iter = list.iterator();
+                        while (iter.hasNext()) {
+                                String s = iter.next();
+                                System.out.println(s);
+                        }
                         // String type = "foreach-update>>userList:name,age->myAge,address";
                         // if (2 != type.split(">>").length) {
                         // System.out.println("11111111111111111111");

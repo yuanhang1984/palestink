@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 public class Message {
+        public static final String MODULE_NAME = "Message";
+
         private RESULT result;
         private Integer count;
         private String detail;
@@ -193,7 +195,7 @@ public class Message {
                                 Message.responseToClient(response, o.toString());
                         }
                 } catch (Exception e) {
-                        Framework.LOG.error(Framework.FRAMEWORK_MODULE_NAME, e.toString());
+                        Framework.LOG.error(Message.MODULE_NAME, e.toString());
                 }
         }
 

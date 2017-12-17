@@ -23,12 +23,12 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.FileUploadBase.FileSizeLimitExceededException;
-import framework.sdk.Message;
-import framework.sdk.Framework;
-import framework.dispatch.object.Parameter;
 import library.bool.Bool;
 import library.encrypt.Md5;
 import library.string.CharacterString;
+import framework.sdk.Message;
+import framework.sdk.Framework;
+import framework.dispatch.object.Parameter;
 
 @SuppressWarnings("serial")
 public class Dispatch extends HttpServlet {
@@ -78,10 +78,10 @@ public class Dispatch extends HttpServlet {
                         Iterator<?> servletIter = dispatch.elements("servlet").iterator();
                         while (servletIter.hasNext()) {
                                 Element servletElement = (Element) servletIter.next();
-                                String name = servletElement.elementText("name");
-                                String description = servletElement.elementText("description");
-                                String namespace = servletElement.elementText("namespace").replaceAll("\\s", "");
-                                String permission = servletElement.elementText("permission");
+                                String name = servletElement.elementTextTrim("name");
+                                String description = servletElement.elementTextTrim("description");
+                                String namespace = servletElement.elementTextTrim("namespace").replaceAll("\\s", "");
+                                String permission = servletElement.elementTextTrim("permission");
                                 Element parameters = servletElement.element("parameters");
                                 /*
                                  * 一个接口的“参数列表”可以为空，但需要设置其他“参数”。这里检查的是“是否存在<parameters>标签。
@@ -105,17 +105,17 @@ public class Dispatch extends HttpServlet {
                                 int i = 0;
                                 while (parameterIter.hasNext()) {
                                         Element e = (Element) parameterIter.next();
-                                        String paramName = e.elementText("name");
-                                        String paramDescription = e.elementText("description");
-                                        String type = e.elementText("type");
-                                        String format = e.elementText("format");
-                                        String transform = e.elementText("transform");
-                                        Object constant = e.elementText("constant");
-                                        boolean allowNull = Boolean.parseBoolean(e.elementText("allowNull"));
-                                        String fileType = e.elementText("fileType");
+                                        String paramName = e.elementTextTrim("name");
+                                        String paramDescription = e.elementTextTrim("description");
+                                        String type = e.elementTextTrim("type");
+                                        String format = e.elementTextTrim("format");
+                                        String transform = e.elementTextTrim("transform");
+                                        Object constant = e.elementTextTrim("constant");
+                                        boolean allowNull = Boolean.parseBoolean(e.elementTextTrim("allowNull"));
+                                        String fileType = e.elementTextTrim("fileType");
                                         long fileMaxSize = 0;
-                                        if (null != e.elementText("fileMaxSize")) {
-                                                fileMaxSize = Long.parseLong(e.elementText("fileMaxSize"));
+                                        if (null != e.elementTextTrim("fileMaxSize")) {
+                                                fileMaxSize = Long.parseLong(e.elementTextTrim("fileMaxSize"));
                                         }
                                         list[i] = new Parameter(paramName, paramDescription, type, format, transform, constant, allowNull, fileType, fileMaxSize);
                                         i++;
@@ -143,7 +143,7 @@ public class Dispatch extends HttpServlet {
                         if (null == roleStr) {
                                 return false;
                         }
-                        String permission_list = USER_ROLE_MAP.get(roleStr);
+                        String permission_list = Dispatch.USER_ROLE_MAP.get(roleStr);
                         if (null == permission_list) {
                                 return false;
                         }
