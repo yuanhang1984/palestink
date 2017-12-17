@@ -319,7 +319,7 @@ public class SimpleDBO extends SqlHandle {
          * @param list 最终返回的数据对象
          * @return 操作正确返回true，失败返回false。
          */
-        private boolean recursiveSelect(Connection c, String moduleName, String id, HashMap<String, Object> sqlParameter, String idColumnName, String pidColumnName, ArrayList<Object> list) {
+        private boolean recursiveSelect(Connection c, String moduleName, String id, HashMap<String, Object> sqlParameter, String idColumnName, String pidColumnName, ArrayList<HashMap<String, Object>> list) {
                 Message m = this.select(c, moduleName, id, sqlParameter);
                 if (m.getResult() != Message.RESULT.SUCCESS) {// Success标记执行是否成功
                         return false;
@@ -333,7 +333,7 @@ public class SimpleDBO extends SqlHandle {
                         if (!this.recursiveSelect(c, moduleName, id, p, idColumnName, pidColumnName, list)) {
                                 return false;
                         }
-                        list.add(idObj);
+                        list.add(hm);
                 }
                 return true;
         }
@@ -469,7 +469,8 @@ public class SimpleDBO extends SqlHandle {
                                         String aliasName = type.split(">>")[1].split(":")[0];
                                         String idColumnName = type.split(">>")[1].split(":")[1].split(",")[0];
                                         String pidColumnName = type.split(">>")[1].split(":")[1].split(",")[0];
-                                        ArrayList<Object> list = new ArrayList<Object>();
+                                        ArrayList<HashMap<String, Object>> list = new ArrayList<HashMap<String, Object>>();
+                                        // ArrayList<Object> list = new ArrayList<Object>();
                                         if (!this.recursiveSelect(c, moduleName, id, sqlParameter, idColumnName, pidColumnName, list)) {
                                                 c.rollback();
                                                 Message.send(request, response, Message.RESULT.RECURSIVE_SELECT_ERROR, null, "[" + type + "][" + id + "]");
@@ -752,9 +753,7 @@ public class SimpleDBO extends SqlHandle {
                         }
                         c.commit();
                         Message.send(request, response, Message.RESULT.SUCCESS, null, null);
-                } catch (
-
-                Exception e) {
+                } catch (Exception e) {
                         try {
                                 c.rollback();
                                 Framework.LOG.warn(SimpleDBO.MODULE_NAME, e.toString());

@@ -11,23 +11,26 @@ package library.toolkit;
 public class Test {
         public Test() {
                 try {
-                        String type = "foreach-update>>userList:name,age->myAge,address";
-                        if (2 != type.split(">>").length) {
-                                System.out.println("11111111111111111111");
-                                return;
-                        }
-                        if (2 != type.split(">>")[1].split(":").length) {
-                                System.out.println("22222222222222222222");
-                                return;
-                        }
-                        // 结果集别名
-                        String aliasName = type.split(">>")[1].split(":")[0];
-                        // 结果集引用数据的参数名
-                        String[] parameterList = type.split(">>")[1].split(":")[1].split(",");
-                        System.out.println("别名：" + aliasName);
-                        for (int i = 0; i < parameterList.length; i++) {
-                                System.out.println("参数：" + parameterList[i]);
-                        }
+                        String a = "javac -encoding utf-8 -cp D:/dev/local/palestink/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/palestink/WEB-INF/lib/palestinkSdk.jar;D:/dev/local/palestink/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/palestink/WEB-INF/classes -d D:/dev/local/palestink/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/palestink/WEB-INF/ext/db/bin D:/dev/local/palestink/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/palestink/WEB-INF/ext/db/src/necessary/DbInstance.java";
+                        a = a.replaceAll("-cp\\s+(.)\\s+", ";");
+                        System.out.println(a);
+                        // String type = "foreach-update>>userList:name,age->myAge,address";
+                        // if (2 != type.split(">>").length) {
+                        // System.out.println("11111111111111111111");
+                        // return;
+                        // }
+                        // if (2 != type.split(">>")[1].split(":").length) {
+                        // System.out.println("22222222222222222222");
+                        // return;
+                        // }
+                        // // 结果集别名
+                        // String aliasName = type.split(">>")[1].split(":")[0];
+                        // // 结果集引用数据的参数名
+                        // String[] parameterList = type.split(">>")[1].split(":")[1].split(",");
+                        // System.out.println("别名：" + aliasName);
+                        // for (int i = 0; i < parameterList.length; i++) {
+                        // System.out.println("参数：" + parameterList[i]);
+                        // }
                         // // 结果集存放的别名
                         // String aliasName = type.split("->")[1].split("\\|")[0];
                         // // 传入的参数名

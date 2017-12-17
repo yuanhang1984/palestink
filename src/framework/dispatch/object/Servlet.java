@@ -3,27 +3,26 @@ package framework.dispatch.object;
 import framework.dispatch.object.Parameter;
 
 public class Servlet {
-        private String servletName;
-        private String sdboType;
+        private String name;
+        private String description;
         private String namespace;
         private String permission;
         private Parameter parameterList[];
 
-        public Servlet(String servletName, String sdboType, String namespace, String permission, Parameter[] parameterList) {
-                super();
-                this.servletName = servletName;
-                this.sdboType = sdboType;
+        public Servlet(String name, String description, String namespace, String permission, Parameter[] parameterList) {
+                this.name = name;
+                this.description = description;
                 this.namespace = namespace;
                 this.permission = permission;
                 this.parameterList = parameterList;
         }
 
-        public String getServletName() {
-                return servletName;
+        public String getName() {
+                return name;
         }
 
-        public String getSdboType() {
-                return sdboType;
+        public String getDescription() {
+                return description;
         }
 
         public String getNamespace() {

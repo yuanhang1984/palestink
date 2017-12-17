@@ -30,6 +30,8 @@ public class Deploy {
                         this.deployPalestinkSdk();
                         // 发布Log源码
                         this.deployLogSource();
+                        // 发布Db源码
+                        this.deployDbSource();
                         // 清理临时目录
                         InputOutput.clearDir(tmpDir);
                 } catch (Exception e) {
@@ -61,6 +63,13 @@ public class Deploy {
          */
         private void deployLogSource() throws Exception {
                 InputOutput.copyDirectory(projectRootPath + "src/ext/log", projectRootPath + "WebContent/WEB-INF/ext/log/src");
+        }
+
+        /**
+         * 发布Db源码
+         */
+        private void deployDbSource() throws Exception {
+                InputOutput.copyDirectory(projectRootPath + "src/ext/db", projectRootPath + "WebContent/WEB-INF/ext/db/src");
         }
 
         public static void main(String[] args) {

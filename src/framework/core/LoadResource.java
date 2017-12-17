@@ -2,11 +2,15 @@ package framework.core;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import library.execute.Run;
 import library.io.InputOutput;
+import library.system.SystemKit;
 import framework.sdk.Framework;
+import framework.db.sdbo.DbFactory;
 import framework.log.LogFactory;
 import framework.sdk.DaemonAction;
 import org.dom4j.Element;
@@ -31,7 +35,7 @@ public class LoadResource implements ServletContextListener {
         }
 
         /**
-         * 加载log配置
+         * 加载Log配置
          * @param path log配置文件路径
          * @return 成功返回true;失败返回false.
          */
@@ -46,12 +50,51 @@ public class LoadResource implements ServletContextListener {
                         Element sourceCode = root.element("SourceCode");
                         Framework.LOG_SOURCE_CODE_REBUILD = Integer.parseInt(sourceCode.attributeValue("rebuild"));
                         Framework.LOG_SOURCE_CODE_COMMAND = sourceCode.attributeValue("command").replaceAll("\\$\\{WEB_APP\\}/", Framework.PROJECT_REAL_PATH);
+                        if (!SystemKit.isWindows()) {
+                                // windows系统下文件分隔用分号
+                                Framework.LOG_SOURCE_CODE_COMMAND = Framework.LOG_SOURCE_CODE_COMMAND.replaceAll(";", ":");
+                        }
                         Element logFile = root.element("LogFile");
                         Framework.LOG_FILE_ENABLE = Boolean.parseBoolean(logFile.attributeValue("enable"));
                         Framework.LOG_FILE_LOG_PATH = logFile.attributeValue("logPath").replaceAll("\\$\\{WEB_APP\\}/", Framework.PROJECT_REAL_PATH);
                         Framework.LOG_FILE_ZIP_PATH = logFile.attributeValue("zipPath").replaceAll("\\$\\{WEB_APP\\}/", Framework.PROJECT_REAL_PATH);
                         Framework.LOG_FILE_SIZE = Integer.parseInt(logFile.attributeValue("size"));
                         Framework.LOG_FILE_FORMAT = logFile.attributeValue("format");
+                } catch (Exception e) {
+                        System.err.println(e);
+                        return false;
+                }
+                return true;
+        }
+
+        /**
+         * 加载Db配置
+         * @param path db配置文件路径
+         * @return 成功返回true;失败返回false.
+         */
+        private boolean loadDbConfig(String path) {
+                try {
+                        File file = new File(path);
+                        if (!file.exists())
+                                return false;
+                        SAXReader reader = new SAXReader();
+                        Document doc = reader.read(file);
+                        Element root = doc.getRootElement();
+                        Element sourceCode = root.element("SourceCode");
+                        Framework.DB_SOURCE_CODE_REBUILD = Integer.parseInt(sourceCode.attributeValue("rebuild"));
+                        Framework.DB_SOURCE_CODE_COMMAND = sourceCode.attributeValue("command").replaceAll("\\$\\{WEB_APP\\}/", Framework.PROJECT_REAL_PATH);
+                        if (!SystemKit.isWindows()) {
+                                // windows系统下文件分隔用分号
+                                Framework.DB_SOURCE_CODE_COMMAND = Framework.DB_SOURCE_CODE_COMMAND.replaceAll(";", ":");
+                        }
+                        Element databaseInformation = root.element("DatabaseInformation");
+                        Framework.DB_INFO_DRIVER = databaseInformation.attributeValue("driver");
+                        Framework.DB_INFO_URL = databaseInformation.attributeValue("url");
+                        Element databaseSecurity = root.element("DatabaseSecurity");
+                        Framework.DB_SECURITY_NAME = databaseSecurity.attributeValue("name");
+                        Framework.DB_SECURITY_PASSWORD = databaseSecurity.attributeValue("password");
+                        Element databasePool = root.element("DatabasePool");
+                        Framework.DB_POOL_MAXACTIVECONNECTION = Integer.parseInt(databasePool.attributeValue("maxActiveConnection"));
                 } catch (Exception e) {
                         System.err.println(e);
                         return false;
@@ -299,6 +342,21 @@ public class LoadResource implements ServletContextListener {
                 Framework.PROJECT_REAL_PATH = InputOutput.regulatePath(sce.getServletContext().getRealPath("/"));
                 // 清空classes文件夹下所有文件
                 this.clearWICDir();
+                // 解压ext依赖jar至WEB-INF/classes目录
+                ArrayList<String> jarList = InputOutput.getCurrentDirectoryAllFilePath(Framework.PROJECT_REAL_PATH + "WEB-INF/ext/", ".jar");
+                Iterator<String> jarIter = jarList.iterator();
+                while (jarIter.hasNext()) {
+                        String p = jarIter.next();
+                        File f = new File(p);
+                        if (f.isFile()) {
+                                try {
+                                        InputOutput.decompressDirectoryToJarFile(f.getAbsolutePath(), Framework.PROJECT_REAL_PATH + "WEB-INF/classes/");
+                                } catch (Exception e) {
+                                        throw new RuntimeException("Decompress The Jar File Error: " + System.getProperty("line.separator") + e.toString());
+                                }
+                        }
+                }
+                // 初始化Log（因为很多地方需要用到Framework的日志打印，所以要提前初始化）
                 // 判断加载log配置是否成功
                 if (!this.loadLogConfig(Framework.PROJECT_REAL_PATH + "WEB-INF/ext/log/res/config.xml")) {
                         throw new RuntimeException("Load Log Config Error");
@@ -341,12 +399,39 @@ public class LoadResource implements ServletContextListener {
                 if (!Framework.LOG.init()) {
                         throw new RuntimeException("LogFactory Initialize Error");
                 }
-                Framework.LOG.debug(Framework.FRAMEWORK_MODULE_NAME, "Log Test debug");
-                Framework.LOG.info(Framework.FRAMEWORK_MODULE_NAME, "Log Test info");
-                Framework.LOG.warn(Framework.FRAMEWORK_MODULE_NAME, "Log Test warn");
-                Framework.LOG.error(Framework.FRAMEWORK_MODULE_NAME, "Log Test error");
-                Framework.LOG.fatal(Framework.FRAMEWORK_MODULE_NAME, "Log Test fatal");
-                // 初始化Framework（因为很多地方需要用到Framework的日志打印，所以要提前初始化）
+                Framework.LOG.info(Framework.FRAMEWORK_MODULE_NAME, "The [Log Module] Initialization Is Complete");
+                // 初始化Db
+                // 判断加载db配置是否成功
+                if (!this.loadDbConfig(Framework.PROJECT_REAL_PATH + "WEB-INF/ext/db/res/config.xml")) {
+                        throw new RuntimeException("Load Db Config Error");
+                }
+                // 判断是否编译Db源码
+                if (1 == Framework.DB_SOURCE_CODE_REBUILD) {
+                        // 编译Db源码
+                        StringBuilder stdout = new StringBuilder();
+                        StringBuilder stderr = new StringBuilder();
+                        try {
+                                Run.executeProgram(Framework.DB_SOURCE_CODE_COMMAND, stdout, stderr, true);
+                                if (stderr.length() > 1) {
+                                        throw new RuntimeException("Run Source Code Command Error: " + System.getProperty("line.separator") + stderr);
+                                } else {
+                                        System.out.println("Db Source Complie Complete.");
+                                }
+                        } catch (Exception e) {
+                                throw new RuntimeException("Run Source Code Command Error: " + System.getProperty("line.separator") + e.toString());
+                        }
+                }
+                try {
+                        // 将编译好的Log文件，复制到classes目录
+                        InputOutput.copyDirectory(InputOutput.regulatePath(Framework.PROJECT_REAL_PATH + "WEB-INF/ext/db/bin"), InputOutput.regulatePath(Framework.PROJECT_REAL_PATH + "WEB-INF/classes"));
+                } catch (Exception e) {
+                        throw new RuntimeException("Copy Log Class Error: " + System.getProperty("line.separator") + e.toString());
+                }
+                // 根据DbFactory初始化Framework的Db对象
+                if (!DbFactory.init(Framework.DB_INFO_DRIVER, Framework.DB_INFO_URL, Framework.DB_SECURITY_NAME, Framework.DB_SECURITY_PASSWORD, Framework.DB_POOL_MAXACTIVECONNECTION)) {
+                        throw new RuntimeException("DbFactory Initialize Error");
+                }
+                Framework.LOG.info(Framework.FRAMEWORK_MODULE_NAME, "The [Db Module] Initialization Is Complete");
                 //////////////////////////////////////////////////////
                 //////////////////////////////////////////////////////
                 //////////////////////////////////////////////////////
@@ -384,7 +469,7 @@ public class LoadResource implements ServletContextListener {
         @Override
         public void contextDestroyed(ServletContextEvent sce) {
                 DaemonAction.releaseDaemonThreadResource();
-                // DbFactory.releaseResource();
+                DbFactory.releaseResource();
                 Framework.LOG.releaseLogResource();
         }
 

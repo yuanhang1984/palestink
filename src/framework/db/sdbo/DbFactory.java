@@ -32,7 +32,7 @@ public class DbFactory {
                 return DbFactory.getInstance().getConnection();
         }
 
-        public static void release() {
+        public static void releaseResource() {
                 DbFactory.getInstance().release();
         }
 

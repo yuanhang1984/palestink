@@ -2,6 +2,13 @@
 <!DOCTYPE xml>
 <Config>
         <!--
+                [SourceCode]
+                rebuild: 0 不编译.
+                         1 编译.
+                command: 编译源码的命令.多个jar和java之间用";"分隔.
+        -->
+        <SourceCode rebuild = "1" command = "javac -encoding utf-8 -cp ${WEB_APP}/WEB-INF/lib/palestinkSdk.jar;${WEB_APP}/WEB-INF/classes -d ${WEB_APP}/WEB-INF/ext/db/bin ${WEB_APP}/WEB-INF/ext/db/src/necessary/DbInstance.java" />
+        <!--
                 [DatabaseInformation]
                 driver: 数据库驱动.
                 url: 数据库库连接url.

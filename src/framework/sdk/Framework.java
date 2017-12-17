@@ -68,7 +68,40 @@ public class Framework {
         public static int LOG_FILE_SIZE = 10;
 
         /*
+         * 数据库源码编译选项
+         * 0: 不编译.
+         * 1: 编译.
+         */
+        public static int DB_SOURCE_CODE_REBUILD = 0;
+
+        /*
+         * 编译源码的命令
+         */
+        public static String DB_SOURCE_CODE_COMMAND = "";
+
+        /*
          * 日志消息格式
          */
         public static String LOG_FILE_FORMAT = "";
+
+        /*
+         * 数据库用户名
+         */
+        public static String DB_SECURITY_NAME = "";
+        /*
+         * 数据库密码
+         */
+        public static String DB_SECURITY_PASSWORD = "";
+        /*
+         * 数据库驱动
+         */
+        public static String DB_INFO_DRIVER = "";
+        /*
+         * 数据库URL
+         */
+        public static String DB_INFO_URL = "";
+        /*
+         * 数据库连接池最大连接数
+         */
+        public static int DB_POOL_MAXACTIVECONNECTION = 0;
 }
