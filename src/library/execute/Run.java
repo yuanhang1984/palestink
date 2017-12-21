@@ -1,6 +1,8 @@
 package library.execute;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * 运行程序
@@ -8,6 +10,7 @@ import java.io.InputStream;
 public class Run {
         /**
          * 运行程序方法
+         * 注意，如果没有输出流，只有错误流。一定要将输出流置null，否则将会一直等待输出流的数据。相反同理。
          * 
          * @param cmd 运行程序的命令
          * @param stdout 标准输出流的返回对象
@@ -16,48 +19,60 @@ public class Run {
          */
         public static void executeProgram(String cmd, StringBuilder stdout, StringBuilder stderr, boolean isBlock) throws Exception {
                 Process p = Runtime.getRuntime().exec(cmd);
-                InputStream stdoutIs = p.getInputStream();
-                InputStream stderrIs = p.getErrorStream();
-                int res = -1;
-                byte[] b = new byte[512];
-                boolean isStdoutFinish = true;
-                boolean isStderrFinish = true;
+                InputStream stdoutIs = null;
+                InputStream stderrIs = null;
+                InputStreamReader stdoutIsr = null;
+                InputStreamReader stderrIsr = null;
+                BufferedReader stdoutBr = null;
+                BufferedReader stderrBr = null;
+                if (null != stdout) {
+                        stdoutIs = p.getInputStream();
+                }
+                if (null != stderr) {
+                        stderrIs = p.getErrorStream();
+                }
+                if (null != stdoutIs) {
+                        stdoutIsr = new InputStreamReader(stdoutIs);
+                }
+                if (null != stderrIs) {
+                        stderrIsr = new InputStreamReader(stderrIs);
+                }
+                if (null != stdoutIsr) {
+                        stdoutBr = new BufferedReader(stdoutIsr);
+                }
+                if (null != stderrIsr) {
+                        stderrBr = new BufferedReader(stderrIsr);
+                }
                 try {
-                        if ((null != stdoutIs) || (null != stderrIs)) {
-                                for (;;) {
-                                        if (null != stdoutIs) {
-                                                res = stdoutIs.read(b, 0, b.length);
-                                                if (-1 != res) {
-                                                        isStdoutFinish = false;
-                                                        stdout.append(new String(b, 0, res));
-                                                } else {
-                                                        isStdoutFinish = true;
-                                                }
-                                                if (res < b.length) {
-                                                        isStdoutFinish = true;
-                                                }
-                                        }
-                                        if (null != stderrIs) {
-                                                res = stderrIs.read(b, 0, b.length);
-                                                if (-1 != res) {
-                                                        isStderrFinish = false;
-                                                        stderr.append(new String(b, 0, res));
-                                                } else {
-                                                        isStderrFinish = true;
-                                                }
-                                                if (res < b.length) {
-                                                        isStderrFinish = true;
-                                                }
-                                        }
-                                        if (isStdoutFinish && isStderrFinish) {
-                                                break;
-                                        }
+                        String res = null;
+                        if (null != stdoutBr) {
+                                while (null != (res = stdoutBr.readLine())) {
+                                        stdout.append(res);
+                                        stdout.append(System.getProperty("line.separator"));
+                                }
+                        }
+                        if (null != stderrBr) {
+                                while (null != (res = stderrBr.readLine())) {
+                                        stderr.append(res);
+                                        stderr.append(System.getProperty("line.separator"));
                                 }
                         }
                         if (isBlock) {
                                 p.waitFor();
                         }
                 } finally {
+                        if (null != stdoutBr) {
+                                stdoutBr.close();
+                        }
+                        if (null != stderrBr) {
+                                stderrBr.close();
+                        }
+                        if (null != stdoutIsr) {
+                                stdoutIsr.close();
+                        }
+                        if (null != stderrIsr) {
+                                stderrIsr.close();
+                        }
                         if (null != stdoutIs) {
                                 stdoutIs.close();
                         }

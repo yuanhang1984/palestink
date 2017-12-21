@@ -2,7 +2,7 @@
     <wb-module deploy-name="palestink">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <property name="context-root" value="palestink"/>
         <property name="java-output-path" value="/palestink/build/classes"/>
+        <property name="context-root" value="palestink"/>
     </wb-module>
 </project-modules>

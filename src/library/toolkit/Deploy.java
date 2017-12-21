@@ -1,6 +1,8 @@
 package library.toolkit;
 
 import java.io.File;
+import java.util.Iterator;
+import java.util.ArrayList;
 import library.io.InputOutput;
 import library.string.CharacterString;
 
@@ -32,6 +34,8 @@ public class Deploy {
                         this.deployLogSource();
                         // 发布Db源码
                         this.deployDbSource();
+                        // 发布模块源码
+                        this.deployModuleSource();
                         // 清理临时目录
                         InputOutput.clearDir(tmpDir);
                 } catch (Exception e) {
@@ -53,9 +57,10 @@ public class Deploy {
          * 发布框架Sdk
          */
         private void deployPalestinkSdk() throws Exception {
-                InputOutput.copyDirectory(projectRootPath + "build/classes/framework/sdk", tmpDirPath + "palestinkSdk/framework/sdk");
-                InputOutput.compressDirectoryToJarFile(tmpDirPath + "palestinkSdk", tmpDirPath + "palestinkSdk/jar/palestinkSdk.jar");
-                InputOutput.copyFile(tmpDirPath + "palestinkSdk/jar/palestinkSdk.jar", projectRootPath + "WebContent/WEB-INF/lib/palestinkSdk.jar");
+                InputOutput.copyDirectory(projectRootPath + "build/classes/framework/sdk", tmpDirPath + "palestink_sdk/framework/sdk");
+                InputOutput.copyDirectory(projectRootPath + "build/classes/library", tmpDirPath + "palestink_sdk/library");
+                InputOutput.compressDirectoryToJarFile(tmpDirPath + "palestink_sdk", tmpDirPath + "palestink_sdk/jar/palestink_sdk.jar");
+                InputOutput.copyFile(tmpDirPath + "palestink_sdk/jar/palestink_sdk.jar", projectRootPath + "WebContent/WEB-INF/lib/palestink_sdk.jar");
         }
 
         /**
@@ -70,6 +75,21 @@ public class Deploy {
          */
         private void deployDbSource() throws Exception {
                 InputOutput.copyDirectory(projectRootPath + "src/ext/db", projectRootPath + "WebContent/WEB-INF/ext/db/src");
+        }
+
+        /**
+         * 发布模块源码（module目录下所有模块）
+         */
+        private void deployModuleSource() throws Exception {
+                ArrayList<String> moduleList = InputOutput.getCurrentDirectoryFolderName(projectRootPath + "src/module");
+                if (null != moduleList) {
+                        Iterator<String> moduleIter = moduleList.iterator();
+                        while (moduleIter.hasNext()) {
+                                String moduleName = moduleIter.next();
+                                InputOutput.clearDir(new File(projectRootPath + "WebContent/WEB-INF/module/" + moduleName + "/src"));
+                                InputOutput.copyDirectory(projectRootPath + "src/module/" + moduleName, projectRootPath + "WebContent/WEB-INF/module/" + moduleName + "/src/" + moduleName);
+                        }
+                }
         }
 
         public static void main(String[] args) {

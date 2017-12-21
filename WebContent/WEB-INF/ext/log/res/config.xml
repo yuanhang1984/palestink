@@ -7,7 +7,7 @@
                          1 编译.
                 command: 编译源码的命令.多个jar和java之间用";"分隔.
         -->
-        <SourceCode rebuild = "1" command = "javac -encoding utf-8 -cp ${WEB_APP}/WEB-INF/lib/palestinkSdk.jar -d ${WEB_APP}/WEB-INF/ext/log/bin ${WEB_APP}/WEB-INF/ext/log/src/necessary/LogListener.java" />
+        <SourceCode rebuild = "1" command = "javac -encoding utf-8 -cp ${WEB_APP}/WEB-INF/lib/* -d ${WEB_APP}/WEB-INF/ext/log/bin ${WEB_APP}/WEB-INF/ext/log/src/necessary/LogListener.java" />
         <!--
                 [logFile]
                 enable: true 启用日志文件.

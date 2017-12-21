@@ -11,7 +11,7 @@ public abstract class DaemonAction {
          * @param servletContext Servlet环境
          * @param dbHandler 数据库操作句柄
          */
-        public DaemonAction(ServletContext servletContext, SqlHandle dbHandler) {
+        public DaemonAction(ServletContext servletContext, SqlHandle sqlHandler) {
         }
 
         public static ArrayList<Thread> DAEMON_THREAD_LIST = new ArrayList<Thread>();

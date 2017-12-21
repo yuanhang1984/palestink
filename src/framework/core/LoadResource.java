@@ -104,38 +104,38 @@ public class LoadResource implements ServletContextListener {
                 return true;
         }
 
-        /**
-         * 加载模块配置
-         * @param path 模块配置文件路径
-         * @return 成功返回true;失败返回false.
-         */
-        private boolean loadModuleConfig(String path) {
-                try {
-                        File file = new File(path);
-                        if (!file.exists())
-                                return false;
-                        SAXReader reader = new SAXReader();
-                        Document doc = reader.read(file);
-                        Element root = doc.getRootElement();
-                        Element sourceCode = root.element("SourceCode");
-                        Framework.LOG_SOURCE_CODE_REBUILD = Integer.parseInt(sourceCode.attributeValue("rebuild"));
-                        Framework.LOG_SOURCE_CODE_COMMAND = sourceCode.attributeValue("command").replaceAll("\\$\\{WEB_APP\\}/", Framework.PROJECT_REAL_PATH);
-                        if (!SystemKit.isWindows()) {
-                                // windows系统下文件分隔用分号
-                                Framework.LOG_SOURCE_CODE_COMMAND = Framework.LOG_SOURCE_CODE_COMMAND.replaceAll(";", ":");
-                        }
-                        Element logFile = root.element("LogFile");
-                        Framework.LOG_FILE_ENABLE = Boolean.parseBoolean(logFile.attributeValue("enable"));
-                        Framework.LOG_FILE_LOG_PATH = logFile.attributeValue("logPath").replaceAll("\\$\\{WEB_APP\\}/", Framework.PROJECT_REAL_PATH);
-                        Framework.LOG_FILE_ZIP_PATH = logFile.attributeValue("zipPath").replaceAll("\\$\\{WEB_APP\\}/", Framework.PROJECT_REAL_PATH);
-                        Framework.LOG_FILE_SIZE = Integer.parseInt(logFile.attributeValue("size"));
-                        Framework.LOG_FILE_FORMAT = logFile.attributeValue("format");
-                } catch (Exception e) {
-                        System.err.println(e);
-                        return false;
-                }
-                return true;
-        }
+        // /**
+        // * 加载模块配置
+        // * @param path 模块配置文件路径
+        // * @return 成功返回true;失败返回false.
+        // */
+        // private boolean loadModuleConfig(String path) {
+        // try {
+        // File file = new File(path);
+        // if (!file.exists())
+        // return false;
+        // SAXReader reader = new SAXReader();
+        // Document doc = reader.read(file);
+        // Element root = doc.getRootElement();
+        // Element sourceCode = root.element("SourceCode");
+        // Framework.LOG_SOURCE_CODE_REBUILD = Integer.parseInt(sourceCode.attributeValue("rebuild"));
+        // Framework.LOG_SOURCE_CODE_COMMAND = sourceCode.attributeValue("command").replaceAll("\\$\\{WEB_APP\\}/", Framework.PROJECT_REAL_PATH);
+        // if (!SystemKit.isWindows()) {
+        // // windows系统下文件分隔用分号
+        // Framework.LOG_SOURCE_CODE_COMMAND = Framework.LOG_SOURCE_CODE_COMMAND.replaceAll(";", ":");
+        // }
+        // Element logFile = root.element("LogFile");
+        // Framework.LOG_FILE_ENABLE = Boolean.parseBoolean(logFile.attributeValue("enable"));
+        // Framework.LOG_FILE_LOG_PATH = logFile.attributeValue("logPath").replaceAll("\\$\\{WEB_APP\\}/", Framework.PROJECT_REAL_PATH);
+        // Framework.LOG_FILE_ZIP_PATH = logFile.attributeValue("zipPath").replaceAll("\\$\\{WEB_APP\\}/", Framework.PROJECT_REAL_PATH);
+        // Framework.LOG_FILE_SIZE = Integer.parseInt(logFile.attributeValue("size"));
+        // Framework.LOG_FILE_FORMAT = logFile.attributeValue("format");
+        // } catch (Exception e) {
+        // System.err.println(e);
+        // return false;
+        // }
+        // return true;
+        // }
 
         // /**
         // * 清空临时文件夹下所有数据
@@ -382,15 +382,17 @@ public class LoadResource implements ServletContextListener {
                 this.clearWICDir();
                 // 解压ext依赖jar至WEB-INF/classes目录
                 ArrayList<String> jarList = InputOutput.getCurrentDirectoryAllFilePath(Framework.PROJECT_REAL_PATH + "WEB-INF/ext/", ".jar");
-                Iterator<String> jarIter = jarList.iterator();
-                while (jarIter.hasNext()) {
-                        String p = jarIter.next();
-                        File f = new File(p);
-                        if (f.isFile()) {
-                                try {
-                                        InputOutput.decompressDirectoryToJarFile(f.getAbsolutePath(), Framework.PROJECT_REAL_PATH + "WEB-INF/classes/");
-                                } catch (Exception e) {
-                                        throw new RuntimeException("Decompress Ext Jar File Error: " + System.getProperty("line.separator") + e.toString());
+                if (null != jarList) {
+                        Iterator<String> jarIter = jarList.iterator();
+                        while (jarIter.hasNext()) {
+                                String p = jarIter.next();
+                                File f = new File(p);
+                                if (f.isFile()) {
+                                        try {
+                                                InputOutput.decompressDirectoryToJarFile(f.getAbsolutePath(), Framework.PROJECT_REAL_PATH + "WEB-INF/classes/");
+                                        } catch (Exception e) {
+                                                throw new RuntimeException("Decompress Ext Jar File Error: " + System.getProperty("line.separator") + e.toString());
+                                        }
                                 }
                         }
                 }
@@ -404,17 +406,16 @@ public class LoadResource implements ServletContextListener {
                 // 判断是否编译Log源码
                 if (1 == Framework.LOG_SOURCE_CODE_REBUILD) {
                         // 编译Log源码
-                        StringBuilder stdout = new StringBuilder();
                         StringBuilder stderr = new StringBuilder();
                         try {
-                                Run.executeProgram(Framework.LOG_SOURCE_CODE_COMMAND, stdout, stderr, true);
-                                if (stderr.length() > 1) {
-                                        throw new RuntimeException("Run Source Code Command Error: " + System.getProperty("line.separator") + stderr);
-                                } else {
-                                        System.out.println("Log Source Complie Complete.");
-                                }
+                                Run.executeProgram(Framework.LOG_SOURCE_CODE_COMMAND, null, stderr, true);
                         } catch (Exception e) {
-                                throw new RuntimeException("Run Source Code Command Error: " + System.getProperty("line.separator") + e.toString());
+                                throw new RuntimeException("Run Log Source Code Command Error: " + System.getProperty("line.separator") + e.toString());
+                        }
+                        if (stderr.length() > 1) {
+                                throw new RuntimeException("Complie Log Source Code Command Error: " + System.getProperty("line.separator") + stderr);
+                        } else {
+                                System.out.println("Log Source Complie Complete.");
                         }
                 }
                 try {
@@ -450,17 +451,16 @@ public class LoadResource implements ServletContextListener {
                 // 判断是否编译Db源码
                 if (1 == Framework.DB_SOURCE_CODE_REBUILD) {
                         // 编译Db源码
-                        StringBuilder stdout = new StringBuilder();
                         StringBuilder stderr = new StringBuilder();
                         try {
-                                Run.executeProgram(Framework.DB_SOURCE_CODE_COMMAND, stdout, stderr, true);
-                                if (stderr.length() > 1) {
-                                        throw new RuntimeException("Run Source Code Command Error: " + System.getProperty("line.separator") + stderr);
-                                } else {
-                                        System.out.println("Db Source Complie Complete.");
-                                }
+                                Run.executeProgram(Framework.DB_SOURCE_CODE_COMMAND, null, stderr, true);
                         } catch (Exception e) {
-                                throw new RuntimeException("Run Source Code Command Error: " + System.getProperty("line.separator") + e.toString());
+                                throw new RuntimeException("Run Db Source Code Command Error: " + System.getProperty("line.separator") + e.toString());
+                        }
+                        if (stderr.length() > 1) {
+                                throw new RuntimeException("Complie Db Source Code Command Error: " + System.getProperty("line.separator") + stderr);
+                        } else {
+                                System.out.println("Db Source Complie Complete.");
                         }
                 }
                 try {
@@ -479,47 +479,74 @@ public class LoadResource implements ServletContextListener {
                  ************************************************/
                 // 解压模块依赖jar至WEB-INF/classes目录
                 jarList = InputOutput.getCurrentDirectoryAllFilePath(Framework.PROJECT_REAL_PATH + "WEB-INF/module/", ".jar");
-                jarIter = jarList.iterator();
-                while (jarIter.hasNext()) {
-                        String p = jarIter.next();
-                        File f = new File(p);
-                        if (f.isFile()) {
-                                try {
-                                        InputOutput.decompressDirectoryToJarFile(f.getAbsolutePath(), Framework.PROJECT_REAL_PATH + "WEB-INF/classes/");
-                                } catch (Exception e) {
-                                        throw new RuntimeException("Decompress Module Jar File Error: " + System.getProperty("line.separator") + e.toString());
+                if (null != jarList) {
+                        Iterator<String> jarIter = jarList.iterator();
+                        while (jarIter.hasNext()) {
+                                String p = jarIter.next();
+                                File f = new File(p);
+                                if (f.isFile()) {
+                                        try {
+                                                InputOutput.decompressDirectoryToJarFile(f.getAbsolutePath(), Framework.PROJECT_REAL_PATH + "WEB-INF/classes/");
+                                        } catch (Exception e) {
+                                                throw new RuntimeException("Decompress Module Jar File Error: " + System.getProperty("line.separator") + e.toString());
+                                        }
                                 }
                         }
                 }
                 // 遍历所有模块，加载配置信息，编译模块，复制模块classes文件。
-                Iterator<String> moduleIter = InputOutput.getCurrentDirectoryFolderName(InputOutput.regulatePath(Framework.PROJECT_REAL_PATH + "WEB-INF/module/")).iterator();
-                while (moduleIter.hasNext()) {
-                        String moduleName = moduleIter.next();
-                        // 判断加载模块配置是否成功
-                        if (!this.loadLogConfig(Framework.PROJECT_REAL_PATH + "WEB-INF/ext/log/res/config.xml")) {
-                                throw new RuntimeException("Load Log Config Error");
-                        }
-                        // 判断是否编译Log源码
-                        if (1 == Framework.LOG_SOURCE_CODE_REBUILD) {
-                                // 编译Log源码
-                                StringBuilder stdout = new StringBuilder();
-                                StringBuilder stderr = new StringBuilder();
-                                try {
-                                        Run.executeProgram(Framework.LOG_SOURCE_CODE_COMMAND, stdout, stderr, true);
-                                        if (stderr.length() > 1) {
-                                                throw new RuntimeException("Run Source Code Command Error: " + System.getProperty("line.separator") + stderr);
-                                        } else {
-                                                System.out.println("Log Source Complie Complete.");
-                                        }
-                                } catch (Exception e) {
-                                        throw new RuntimeException("Run Source Code Command Error: " + System.getProperty("line.separator") + e.toString());
+                ArrayList<String> moduleList = InputOutput.getCurrentDirectoryFolderName(InputOutput.regulatePath(Framework.PROJECT_REAL_PATH + "WEB-INF/module/"));
+                if (null != moduleList) {
+                        Iterator<String> moduleIter = moduleList.iterator();
+                        while (moduleIter.hasNext()) {
+                                String moduleName = moduleIter.next();
+                                File configFile = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + moduleName + "/res/config.xml");
+                                if (!configFile.exists()) {
+                                        throw new RuntimeException("Module[" + moduleName + "] Config File Miss");
                                 }
-                        }
-                        try {
-                                // 将编译好的Log文件，复制到classes目录
-                                InputOutput.copyDirectory(InputOutput.regulatePath(Framework.PROJECT_REAL_PATH + "WEB-INF/ext/log/bin"), InputOutput.regulatePath(Framework.PROJECT_REAL_PATH + "WEB-INF/classes"));
-                        } catch (Exception e) {
-                                throw new RuntimeException("Copy Log Class Error: " + System.getProperty("line.separator") + e.toString());
+                                SAXReader reader = new SAXReader();
+                                Document doc = null;
+                                try {
+                                        doc = reader.read(configFile);
+                                } catch (Exception e) {
+                                        throw new RuntimeException("Read Module[" + moduleName + "] Config File Error: " + System.getProperty("line.separator") + e.toString());
+                                }
+                                Element root = doc.getRootElement();
+                                Element sourceCode = root.element("SourceCode");
+                                int rebuild = Integer.parseInt(sourceCode.attributeValue("rebuild"));
+                                String cmd = sourceCode.attributeValue("command").replaceAll("\\$\\{WEB_APP\\}/", Framework.PROJECT_REAL_PATH);
+                                if (!SystemKit.isWindows()) {
+                                        // windows系统下文件分隔用分号
+                                        cmd = cmd.replaceAll(";", ":");
+                                }
+                                // 判断是否编译模块源码
+                                if (1 == rebuild) {
+                                        // 编译模块源码
+                                        StringBuilder stderr = new StringBuilder();
+                                        try {
+                                                Run.executeProgram(cmd, null, stderr, true);
+                                        } catch (Exception e) {
+                                                throw new RuntimeException("Run Module[" + moduleName + "] Source Code Command Error: " + System.getProperty("line.separator") + e.toString());
+                                        }
+                                        if (stderr.length() > 1) {
+                                                throw new RuntimeException("Complie Module[" + moduleName + "] Source Code Command Error: " + System.getProperty("line.separator") + stderr);
+                                        } else {
+                                                Framework.LOG.info(LoadResource.MODULE_NAME, "Module[" + moduleName + "] Source Complie Complete");
+                                        }
+                                }
+                                try {
+                                        // 将编译好的模块文件，复制到classes目录
+                                        InputOutput.copyDirectory(InputOutput.regulatePath(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + moduleName + "/bin"), InputOutput.regulatePath(Framework.PROJECT_REAL_PATH + "WEB-INF/classes"));
+                                } catch (Exception e) {
+                                        throw new RuntimeException("Copy Module[" + moduleName + "] Class Error: " + System.getProperty("line.separator") + e.toString());
+                                }
+                                // 根据DbFactory初始化Framework的Db对象
+                                ////////////////////////
+                                ////////////////////////
+                                ////////////////////////
+                                // 这里应该开始动态加载模块了！！！！！！！！！！！！
+                                ////////////////////////
+                                ////////////////////////
+                                Framework.LOG.info(LoadResource.MODULE_NAME, "The Module[" + moduleName + "] Initialization Is Complete");
                         }
                 }
                 //////////////////////////////////////////////////////

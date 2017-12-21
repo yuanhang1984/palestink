@@ -1,26 +1,11 @@
-<?xml version = "1.0" encoding = "UTF-8"?>
-<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
-                      http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
-	version="3.1" metadata-complete="true">
-	<description>Based on palestink framework</description>
-	<display-name>palestink framework</display-name>
-	<!-- 设置转换编码 -->
-	<!-- <filter> <filter-name>transformFilter</filter-name> <filter-class>framework.filter.TransformFilter</filter-class> 
-		<init-param> <param-name>encoding</param-name> <param-value>utf-8</param-value> 
-		</init-param> </filter> <filter-mapping> <filter-name>transformFilter</filter-name> 
-		<url-pattern>/*</url-pattern> </filter-mapping> -->
-	<!-- 设置数据库配置信息 -->
-	<!--  <context-param>
-		<param-name>java_home</param-name>
-		<param-value>D:/dev/java/jdk180_121</param-value>
-	</context-param> -->
-	<!-- 设置Session有效期 -->
-	<session-config>
-		<session-timeout>60</session-timeout>
-	</session-config>
-	<!-- 设置加载资源的入口 -->
-	<listener>
-		<listener-class>framework.core.LoadResource</listener-class>
-	</listener>
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" metadata-complete="true" version="3.1">
+  <description>Based on palestink framework</description>
+  <display-name>palestink framework</display-name>
+  <session-config>
+    <session-timeout>60</session-timeout>
+  </session-config>
+  <listener>
+    <listener-class>framework.core.LoadResource</listener-class>
+  </listener>
 </web-app>
