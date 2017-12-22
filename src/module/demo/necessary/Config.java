@@ -6,14 +6,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import framework.sdk.Framework;
 import module.demo.optional.AuthorInfo;
-
 import org.dom4j.Element;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
 
 @SuppressWarnings("serial")
 public class Config extends HttpServlet {
-        public static final String MODULE_NAME = "Demo.Config";
+        public static final String MODULE_NAME = "demo.Config";
 
         public static AuthorInfo AUTHORINFO_OBJECT = new AuthorInfo();
 

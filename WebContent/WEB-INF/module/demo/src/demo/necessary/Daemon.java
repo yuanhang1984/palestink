@@ -39,7 +39,7 @@ class ExecuteThread extends Thread {
 }
 
 public class Daemon extends DaemonAction {
-        public static final String MODULE_NAME = "Demo.Daemon";
+        public static final String MODULE_NAME = "demo.Daemon";
         private SqlHandle sqlHandler;
 
         public Daemon(ServletContext servletContext, SqlHandle sqlHandler) {

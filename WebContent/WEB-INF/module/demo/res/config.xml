@@ -16,11 +16,11 @@
         -->
         <Module enable = "true" />
         <!--
-                [Api]
+                [Docs]
                 enable: true 启用Api.
                         false 禁用Api.
         -->
-        <Api enable = "true" />
+        <Docs enable = "true" />
         <!-- 其他业务所需 -->
         <!-- 作者信息 -->
         <AuthorInfo name = "Jack" birthday = "1984.10.19" />
