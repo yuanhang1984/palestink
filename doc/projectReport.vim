@@ -25,3 +25,6 @@
     1. 在服务器上下载并安装最新的JDK。
     2. 修改Tomcat的catalina.sh文件，在#!/bin/sh下增加一行，写入：
        JAVA_HOME=/home/jack/Program/jdk1.8.0_144
+
+[Q] 模块中的Daemon有时读取不到Config中的数据
+[A] Daemon是在Listener中启动的线程，加载顺序在Servlet（Config）之前，所以读取不到是正常的现象。应该避免Daemon依赖Config数据的操作。若要必须如此，可以增加延迟或者逻辑判断。

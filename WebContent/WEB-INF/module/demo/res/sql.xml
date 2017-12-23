@@ -3,7 +3,7 @@
 <Sql>
         <!-- [示例_雇员信息][demo_employee-info] -->
         <insert id = "insertEmployeeInfo" description = "添加雇员信息">
-                <![CDATA[insert into `demo_employee-info` (`id`, `uuid`, `name`, `password`, `age`, `sex`, `code`, `address`, `remark`, `create_datetime`) values (#{id}, #{uuid}, #{name}, #{password}, #{age}, #{sex}, #{code}, #{address}, #{remark}, now())]]>
+                <![CDATA[insert into `demo_employee-info` (`uuid`, `name`, `password`, `age`, `sex`, `code`, `address`, `remark`, `create_datetime`) values (#{uuid}, #{name}, #{password}, #{age}, #{sex}, #{code}, #{address}, #{remark}, now())]]>
         </insert>
         <delete id = "deleteEmployeeInfo" description = "删除雇员信息">
                 <![CDATA[delete from `demo_employee-info`]]>
@@ -59,25 +59,25 @@
                                 <![CDATA[and `uuid` = #{uuid}]]>
                         </if>
                         <if parameterName = "name" parameterValue = "#null" operatorType = "unequal">
-                                <![CDATA[`name` = #{name},]]>
+                                <![CDATA[`name` = #{name}]]>
                         </if>
                         <if parameterName = "password" parameterValue = "#null" operatorType = "unequal">
-                                <![CDATA[`password` = #{password},]]>
+                                <![CDATA[`password` = #{password}]]>
                         </if>
                         <if parameterName = "age" parameterValue = "#null" operatorType = "unequal">
-                                <![CDATA[`age` = #{age},]]>
+                                <![CDATA[`age` = #{age}]]>
                         </if>
                         <if parameterName = "sex" parameterValue = "#null" operatorType = "unequal">
-                                <![CDATA[`sex` = #{sex},]]>
+                                <![CDATA[`sex` = #{sex}]]>
                         </if>
                         <if parameterName = "code" parameterValue = "#null" operatorType = "unequal">
-                                <![CDATA[`code` = #{code},]]>
+                                <![CDATA[`code` = #{code}]]>
                         </if>
                         <if parameterName = "address" parameterValue = "#null" operatorType = "unequal">
-                                <![CDATA[`address` = #{address},]]>
+                                <![CDATA[`address` = #{address}]]>
                         </if>
                         <if parameterName = "remark" parameterValue = "#null" operatorType = "unequal">
-                                <![CDATA[`remark` = #{remark},]]>
+                                <![CDATA[`remark` = #{remark}]]>
                         </if>
                 </where>
                 <![CDATA[ order by `id` desc]]>

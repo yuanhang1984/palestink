@@ -24,5 +24,5 @@
                 [DatabasePool]
                 maxActiveConnection: 数据库连接池最大连接数.
         -->
-        <DatabasePool maxActiveConnection = "80" />
+        <DatabasePool maxActiveConnection = "200" />
 </Config>

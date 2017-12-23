@@ -16,6 +16,7 @@ import library.system.SystemKit;
 import framework.sdk.Framework;
 import framework.sdk.SqlHandle;
 import framework.log.LogFactory;
+import framework.sdbo.object.SqlRepository;
 import framework.sdk.DaemonAction;
 import framework.db.sdbo.DbFactory;
 import org.dom4j.Element;
@@ -231,20 +232,21 @@ public class LoadResource implements ServletContextListener {
                                 }
                         }
                 }
-                // 遍历所有模块，加载配置信息，编译模块，复制模块classes文件。
+                // 遍历所有模块，加载配置信息，加载sql信息，编译模块，复制模块classes文件。
                 ArrayList<String> moduleList = InputOutput.getCurrentDirectoryFolderName(InputOutput.regulatePath(Framework.PROJECT_REAL_PATH + "WEB-INF/module/"));
                 if (null != moduleList) {
                         Iterator<String> moduleIter = moduleList.iterator();
                         while (moduleIter.hasNext()) {
                                 String moduleName = moduleIter.next();
-                                File configFile = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + moduleName + "/res/config.xml");
-                                if (!configFile.exists()) {
+                                // 加载配置信息
+                                File file = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + moduleName + "/res/config.xml");
+                                if (!file.exists()) {
                                         throw new RuntimeException("Module[" + moduleName + "] Config File Miss");
                                 }
                                 SAXReader reader = new SAXReader();
                                 Document doc = null;
                                 try {
-                                        doc = reader.read(configFile);
+                                        doc = reader.read(file);
                                 } catch (Exception e) {
                                         throw new RuntimeException("Read Module[" + moduleName + "] Config File Error: " + System.getProperty("line.separator") + e.toString());
                                 }
@@ -283,6 +285,19 @@ public class LoadResource implements ServletContextListener {
                                 } catch (Exception e) {
                                         throw new RuntimeException("Copy Module[" + moduleName + "] Class Error: " + System.getProperty("line.separator") + e.toString());
                                 }
+                                // 加载sql信息
+                                file = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + moduleName + "/res/sql.xml");
+                                if (!file.exists()) {
+                                        throw new RuntimeException("Module[" + moduleName + "] Sql File Miss");
+                                }
+                                reader = new SAXReader();
+                                try {
+                                        doc = reader.read(file);
+                                } catch (Exception e) {
+                                        throw new RuntimeException("Read Module[" + moduleName + "] Config File Error: " + System.getProperty("line.separator") + e.toString());
+                                }
+                                root = doc.getRootElement();
+                                SqlRepository.put(moduleName, root);
                                 // 动态加载模块为Servlet
                                 Dynamic moduleConfig = sce.getServletContext().addServlet("InitModuleConfig_" + moduleName, "module." + moduleName + ".necessary.Config");
                                 moduleConfig.setInitParameter("path", Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + moduleName + "/res/config.xml");
@@ -306,7 +321,7 @@ public class LoadResource implements ServletContextListener {
                                 dispatchServlet.setInitParameter("path", Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + moduleName + "/res/dispatch.xml");
                                 dispatchServlet.setLoadOnStartup(3);
                                 // 添加模块的映射
-                                dispatchServlet.addMapping("/module/" + moduleName);
+                                dispatchServlet.addMapping("/module/" + moduleName + "/*");
                                 // 如果开启了api，那么添加api的servlet
                                 if (docs.attributeValue("enable").equalsIgnoreCase("true")) {
                                         String moduleDocs = "docs_" + moduleName;

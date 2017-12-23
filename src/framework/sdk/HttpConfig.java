@@ -6,7 +6,7 @@ public class HttpConfig {
          */
         public static String REQUEST_CHARACTER_ENCODING = "utf-8";
         public static String RESPONSE_CHARACTER_ENCODING = "utf-8";
-        public static String RESPONSE_CONTENT_TYPE_ENCODING = "utf-8";
+        public static String RESPONSE_CONTENT_TYPE_ENCODING = "application/json";
 
         /*
          * header数组

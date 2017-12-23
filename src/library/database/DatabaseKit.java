@@ -439,6 +439,8 @@ public class DatabaseKit {
                                 }
                         }
                 }
+                // 如果sql中依旧有“变量”，说明该变量至允许为空，这里置为null。
+                s = s.replaceAll("\\#\\{.+?\\}", "null");
                 return s.trim();
         }
 }

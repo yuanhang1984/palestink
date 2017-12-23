@@ -407,24 +407,31 @@ public class Dispatch extends HttpServlet {
                 /*
                  * 接收servletName参数
                  */
-                String servletName = request.getParameter("servletName");
-                if ((null == servletName) || (0 >= servletName.length())) {
-                        Message.send(request, response, Message.RESULT.PARAMETER_IS_NULL, null, "servletName");
+                String name = null;
+                String uri = request.getRequestURI();
+                Pattern pattern = Pattern.compile("(.+?)\\/");
+                Matcher matcher = pattern.matcher(uri);
+                // 循环遍历语句中的每个变量
+                while (matcher.find()) {
+                        name = matcher.group(1);
+                }
+                if ((null == name) || (0 >= name.length())) {
+                        Message.send(request, response, Message.RESULT.NO_SERVLET_NAME, null, null);
                         return;
                 }
                 /*
                  * 判断servletName参数的合法性
                  */
-                framework.dispatch.object.Servlet s = this.dispatchParameterMap.get(servletName);
+                framework.dispatch.object.Servlet s = this.dispatchParameterMap.get(name);
                 if (null == s) {
-                        Message.send(request, response, Message.RESULT.PARAMETER_INVALID, null, "servletName");
+                        Message.send(request, response, Message.RESULT.NO_SERVLET_NAME, null, name);
                         return;
                 }
                 /*
                  * 检查操作权限
                  */
                 if (false == this.checkServletPermission(request, response, s)) {
-                        Message.send(request, response, Message.RESULT.NO_PERMISSION, null, servletName);
+                        Message.send(request, response, Message.RESULT.NO_PERMISSION, null, name);
                         return;
                 }
                 /*

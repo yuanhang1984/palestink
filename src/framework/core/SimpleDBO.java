@@ -427,7 +427,7 @@ public class SimpleDBO extends SqlHandle {
                                         }
                                         if (0 < m.getCount()) {// 取反
                                                 c.rollback();
-                                                Message.send(request, response, Message.RESULT.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.RESULT.QUERY_EXIST_DATA, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                 } else if (type.toLowerCase().startsWith("select>>")) {

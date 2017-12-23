@@ -14,7 +14,7 @@
                 enable: true 启用模块.
                         false 禁用模块.
         -->
-        <Module enable = "true" />
+        <Module enable = "ture" />
         <!--
                 [Docs]
                 enable: true 启用Api.
@@ -25,10 +25,13 @@
         <!-- header数据 -->
         <!--
              [HttpHeader]
-             everyOrigin: true 动态添加所有数据来源.
-                          false 不添加.
+             everyOrigin: true 动态添加Access-Control-Allow-Origin为访问来源.
+                          false 不动态添加.
+             requestCharacterEncoding: Request的编码.
+             responseCharacterEncoding: Response的编码.
+             responseContentType: Response内容的类型.
         -->
-        <HttpHeader everyOrigin = "true">
+        <HttpHeader everyOrigin = "true" requestCharacterEncoding = "utf-8" responseCharacterEncoding = "utf-8" responseContentType = "application/json">
                 <!--
                      [Set]
                      key: header的name.

@@ -65,7 +65,7 @@ public class Message {
          * 状态枚举代码
          */
         public static enum RESULT {
-                SUCCESS/* 操作成功 */, ERROR/* 操作失败 */, EXCEPTION/* 操作异常 */, PARAMETER_INVALID/* 非法参数 */, PARAMETER_IS_NULL/* 参数为空 */, PARAMETER_FORMAT_ERROR/* 参数格式错误 */, PARAMETER_TRANSFORM_ERROR/* 参数转换错误 */, PARAMETER_HANDLE_EXCEPTION/* 参数处理异常 */, FILE_IS_NULL/* 文件为空 */, FILE_OVERSIZE/* 文件超出尺寸 */, FILE_SUFFIX_INVALID/* 非法文件后缀 */, FILE_UPLOAD_EXCEPTION/* 文件上传异常 */, NO_PERMISSION/* 没有权限 */, NO_MODULE_SQL/* 没有模块的SQL */, ANALYSE_NAMESPACE_ERROR/* 解析namespace错误 */, DATABASE_CONNECTION_ERROR/* 数据库连接错误 */, IDU_NO_DATA/* IDU操作无数据 */, IDU_EXIST_DATA/* IDU操作有结果 */, QUERY_NO_DATA/* 查询无数据 */, DUPLICATE_DATA/* 重复数据 */, TRANSACTION_TYPE_ERROR/* Transaction类型错误 */, RESULT_ALIAS_ERROR/* 结果集别名错误 */, RESULT_NOT_EXIST/* 结果集不存在 */, RESULT_PARAMETER_ERROR/* 结果集参数错误 */, COMPOSE_SQL_ERROR/* 组合SQL错误 */, RECURSIVE_SELECT_ERROR/* 递归检索错误 */, CUSTOM_CLASS_FORMAT_ERROR/* 自定义class格式错误 */, UNKNOWN/* 未知错误 */
+                SUCCESS/* 操作成功 */, ERROR/* 操作失败 */, EXCEPTION/* 操作异常 */, NO_SERVLET_NAME/* 没有Servlet的Name */, PARAMETER_INVALID/* 非法参数 */, PARAMETER_IS_NULL/* 参数为空 */, PARAMETER_FORMAT_ERROR/* 参数格式错误 */, PARAMETER_TRANSFORM_ERROR/* 参数转换错误 */, PARAMETER_HANDLE_EXCEPTION/* 参数处理异常 */, FILE_IS_NULL/* 文件为空 */, FILE_OVERSIZE/* 文件超出尺寸 */, FILE_SUFFIX_INVALID/* 非法文件后缀 */, FILE_UPLOAD_EXCEPTION/* 文件上传异常 */, NO_PERMISSION/* 没有权限 */, NO_MODULE_SQL/* 没有模块的SQL */, ANALYSE_NAMESPACE_ERROR/* 解析namespace错误 */, DATABASE_CONNECTION_ERROR/* 数据库连接错误 */, IDU_NO_DATA/* IDU操作无数据 */, IDU_EXIST_DATA/* IDU操作有结果 */, QUERY_NO_DATA/* 查询无数据 */, QUERY_EXIST_DATA/* 查询已有数据 */, TRANSACTION_TYPE_ERROR/* Transaction类型错误 */, RESULT_ALIAS_ERROR/* 结果集别名错误 */, RESULT_NOT_EXIST/* 结果集不存在 */, RESULT_PARAMETER_ERROR/* 结果集参数错误 */, COMPOSE_SQL_ERROR/* 组合SQL错误 */, RECURSIVE_SELECT_ERROR/* 递归检索错误 */, CUSTOM_CLASS_FORMAT_ERROR/* 自定义class格式错误 */, UNKNOWN/* 未知错误 */
         }
 
         /**
@@ -85,6 +85,9 @@ public class Message {
                 /* 操作异常 */
                 case EXCEPTION:
                         return "Exception";
+                /* 没有Servlet的Name */
+                case NO_SERVLET_NAME:
+                        return "No Servlet Name";
                 /* 非法参数 */
                 case PARAMETER_INVALID:
                         return "Parameter Invalid";
@@ -133,9 +136,9 @@ public class Message {
                 /* 查询无数据 */
                 case QUERY_NO_DATA:
                         return "Query No Data";
-                /* 重复数据 */
-                case DUPLICATE_DATA:
-                        return "Duplicate Data";
+                /* 查询已有数据 */
+                case QUERY_EXIST_DATA:
+                        return "Query Exist Data";
                 /* Transaction类型错误 */
                 case TRANSACTION_TYPE_ERROR:
                         return "Transaction Type Error";

@@ -16,6 +16,11 @@ class ExecuteThread extends Thread {
 
         @Override
         public void run() {
+                try {
+                        Thread.sleep(1000 * 10);
+                } catch (Exception e) {
+                        Framework.LOG.warn(Daemon.MODULE_NAME, e.toString());
+                }
                 for (;;) {
                         // 这里的数据库操作没有意义，只是说明如何使用数据库的操作。
                         DbInstanceModel dim = this.sqlHandler.getSqlModel(true);
