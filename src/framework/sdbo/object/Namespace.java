@@ -5,13 +5,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Namespace {
-        // /*
-        // * namespace类型
-        // */
-        // public static final String NAMESPACE_TYPE_INSERT = "insert";
-        // public static final String NAMESPACE_TYPE_DELETE = "delete";
-        // public static final String NAMESPACE_TYPE_UPDATE = "update";
-        // public static final String NAMESPACE_TYPE_SELECT = "select";
         public static final String NO_PARAMETER = "no_parameter";
 
         /*

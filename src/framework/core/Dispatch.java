@@ -26,8 +26,8 @@ import org.apache.commons.fileupload.FileUploadBase.FileSizeLimitExceededExcepti
 import library.bool.Bool;
 import library.encrypt.Md5;
 import library.string.CharacterString;
-import framework.sdk.Message;
 import framework.sdk.Framework;
+import framework.sdk.msg.Message;
 import framework.dispatch.object.Parameter;
 
 @SuppressWarnings("serial")
@@ -112,12 +112,11 @@ public class Dispatch extends HttpServlet {
                                         String transform = e.elementTextTrim("transform");
                                         Object constant = e.elementTextTrim("constant");
                                         boolean allowNull = Boolean.parseBoolean(e.elementTextTrim("allowNull"));
-                                        String fileType = e.elementTextTrim("fileType");
                                         long fileMaxSize = 0;
                                         if (null != e.elementTextTrim("fileMaxSize")) {
                                                 fileMaxSize = Long.parseLong(e.elementTextTrim("fileMaxSize"));
                                         }
-                                        list[i] = new Parameter(paramName, paramDescription, type, format, transform, constant, allowNull, fileType, fileMaxSize);
+                                        list[i] = new Parameter(paramName, paramDescription, type, format, transform, constant, allowNull, fileMaxSize);
                                         i++;
                                 }
                                 this.dispatchParameterMap.put(name, new framework.dispatch.object.Servlet(name, description, namespace, permission, list));
@@ -346,7 +345,7 @@ public class Dispatch extends HttpServlet {
                                         isBroken.setBool(true);
                                         return null;
                                 }
-                                if (false == CharacterString.regularExpressionCheck(parameter.getFileType(), fi.getName().toLowerCase())) {
+                                if (false == CharacterString.regularExpressionCheck(parameter.getFormat(), fi.getName().toLowerCase())) {
                                         Message.send(request, response, Message.RESULT.FILE_SUFFIX_INVALID, null, null);
                                         isBroken.setBool(true);
                                         return null;

@@ -1,0 +1,104 @@
+﻿<?xml version = "1.0" encoding = "utf-8" ?>
+<!DOCTYPE xml>
+<Sql>
+        <!-- [文件存储_文件][file-storage_file] -->
+        <insert id = "insertStorageFile" description = "添加文件">
+                <![CDATA[insert into `file-storage_file` (`uuid`, `name`, `suffix`, `create_datetime`, `expire_datetime`) values (#{uuid}, #{name}, #{suffix}, now(), #{expire_datetime})]]>
+        </insert>
+        <delete id = "deleteStorageFile" description = "删除文件">
+                <![CDATA[delete from `file-storage_file`]]>
+                <where>
+                        <!-- 删除的唯一标记用uuid -->
+                        <if parameterName = "uuid" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[and `uuid` = #{uuid}]]>
+                        </if>
+                </where>
+        </delete>
+        <update id = "updateStorageFile" description = "修改文件">
+                <![CDATA[update `file-storage_file`]]>
+                <set>
+                        <if parameterName = "name" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[`name` = #{name},]]>
+                        </if>
+                        <if parameterName = "suffix" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[`suffix` = #{suffix},]]>
+                        </if>
+                        <if parameterName = "create_datetime" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[`create_datetime` = #{create_datetime},]]>
+                        </if>
+                        <if parameterName = "expire_datetime" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[`expire_datetime` = #{expire_datetime},]]>
+                        </if>
+                </set>
+                <where>
+                        <if parameterName = "uuid" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[and `uuid` = #{uuid}]]>
+                        </if>
+                </where>
+        </update>
+        <select id = "selectStorageFile" description = "查询文件">
+                <![CDATA[select * from `file-storage_file`]]>
+                <where>
+                        <if parameterName = "uuid" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[and `uuid` = #{uuid}]]>
+                        </if>
+                        <if parameterName = "name" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[and `name` = #{name}]]>
+                        </if>
+                        <if parameterName = "suffix" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[and `suffix` = #{suffix}]]>
+                        </if>
+                        <if parameterName = "create_datetime" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[and `create_datetime` = #{create_datetime}]]>
+                        </if>
+                        <if parameterName = "expire_datetime" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[and `expire_datetime` = #{expire_datetime}]]>
+                        </if>
+                        <if parameterName = "under_expire_datetime" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[and `expire_datetime` <= #{under_expire_datetime}]]>
+                        </if>
+                </where>
+                <![CDATA[ order by `id` desc]]>
+                <if parameterName = "offset" parameterValue = "#null" operatorType = "unequal">
+                        <![CDATA[limit #{offset},]]>
+                </if>
+                <if parameterName = "rows" parameterValue = "#null" operatorType = "unequal">
+                        <![CDATA[#{rows}]]>
+                </if>
+        </select>
+        <!-- [文件存储_仓库][file-storage_repository] -->
+        <insert id = "insertStorageRepository" description = "添加仓库（data是二进制数据，所以不能通过SDBO的方法插入，但可以将Sql语句写在这里便于维护）">
+                <![CDATA[insert into `file-storage_repository` (`uuid`, `file_uuid`, `data`) values (?, ?, ?)]]>
+        </insert>
+        <delete id = "deleteStorageRepository" description = "删除仓库">
+                <![CDATA[delete from `file-storage_repository`]]>
+                <where>
+                        <if parameterName = "uuid" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[and `uuid` = #{uuid}]]>
+                        </if>
+                        <if parameterName = "file_uuid" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[and `file_uuid` = #{file_uuid}]]>
+                        </if>
+                </where>
+        </delete>
+        <select id = "selectStorageRepository" description = "查询仓库">
+                <![CDATA[select * from `file-storage_repository`]]>
+                <where>
+                        <if parameterName = "uuid" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[and `uuid` = #{uuid}]]>
+                        </if>
+                        <if parameterName = "file_uuid" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[and `file_uuid` = #{file_uuid}]]>
+                        </if>
+                </where>
+        </select>
+        <!-- [文件存储_联合查询][file-storage_file & file-storage_repository] -->
+        <select id = "selectStorageFileRepository" description = "文件仓库联合查询">
+                <![CDATA[select f.`id`, f.`uuid`, f.`name`, f.`suffix`, f.`create_datetime`, f.`expire_datetime`, r.`data` from `file-storage_file` f left join `file-storage_repository` r on f.`uuid` = r.`file_uuid`]]>
+                <where>
+                        <if parameterName = "uuid" parameterValue = "#null" operatorType = "unequal">
+                                <![CDATA[and f.`uuid` = #{uuid}]]>
+                        </if>
+                </where>
+        </select>
+</Sql>

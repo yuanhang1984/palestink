@@ -1,6 +1,6 @@
 package ext.log.necessary;
 
-import framework.sdk.LogMessage;
+import framework.sdk.log.LogMessage;
 
 public class LogListener extends LogMessage {
         /**

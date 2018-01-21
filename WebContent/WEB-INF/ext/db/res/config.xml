@@ -13,7 +13,7 @@
                 driver: 数据库驱动.
                 url: 数据库库连接url.
         -->
-        <DatabaseInformation driver = "com.mysql.jdbc.Driver" url = "jdbc:mysql://127.0.0.1:3306/lego?useUnicode=true&amp;characterEncoding=utf-8&amp;useSSL=true" />
+        <DatabaseInformation driver = "com.mysql.jdbc.Driver" url = "jdbc:mysql://127.0.0.1:3306/ink?useUnicode=true&amp;characterEncoding=utf-8&amp;useSSL=true" />
         <!--
                 [DatabaseSecurity]
                 name: 连接数据库的用户名.

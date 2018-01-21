@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+        <head>
+                <meta charset = "utf-8">
+                <title>Test</title>
+                <!-- 插件js区域 -->
+                <script src = "./jquery.min.js"></script>
+        </head>
+        <body>
+                <input type = "button" id = "loginBtn" value = "Login" />
+                <form id = "uploadForm" name = "uploadFormN" method="POST" enctype="multipart/form-data">
+                        <input type="file" name="attachment" id = "attachment" />  
+                </form>
+                <input type = "button" id = "uploadBtn" value = "UploadBtn" />
+                <!-- =============================================================== -->
+                <!-- 自定义js区域 -->
+                <script type = "text/javascript">
+                $(document).ready(function() {
+                        $("#loginBtn").click(function() {
+                                $.ajax({
+                                        type: "post",
+                                        url:"http://127.0.0.1:8080/lego/lego/lego_user?servletName=loginByName&name=admin&password=123",
+                                        dataType:"jsonp",
+                                        contentType: false,
+                                        processData: false,
+                                        success: function (data) { 
+                                                console.log(data);
+                                        }
+                                });
+                        });
+                        $("#uploadBtn").click(function() {
+                                var oData = new FormData(document.forms.namedItem("uploadFormN"));
+                                $.ajax({
+                                        url:"http://127.0.0.1:8080/lego/lego/lego_storage?servletName=uploadTempFile",
+                                        type: "POST",
+                                        crossDomain: true,
+                                        data: oData,
+                                        dataType:"json",
+                                        contentType: false,  
+                                        processData: false,
+                                        xhrFields: {
+                                                withCredentials: true
+                                        },
+                                        success: function (data) { 
+                                                console.log(data);
+                                        }
+                                });
+                        });
+                });
+                </script>
+        </body>
+</html>

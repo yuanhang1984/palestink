@@ -4,8 +4,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import framework.sdk.msg.Message;
 import library.io.InputOutput;
-import framework.sdk.Message;
 
 @SuppressWarnings("serial")
 public class ModuleDocs extends HttpServlet {

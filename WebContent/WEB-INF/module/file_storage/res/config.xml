@@ -1,0 +1,38 @@
+﻿<?xml version = "1.0" encoding = "utf-8"?>
+<!DOCTYPE xml>
+<Config>
+        <!-- 框架配置所需 -->
+        <!--
+                [SourceCode]
+                rebuild: 0 不编译.
+                         1 编译.
+                command: 编译源码的命令.多个jar和java之间用";"分隔.
+        -->
+        <SourceCode rebuild = "1" command = "javac -g -encoding utf-8 -cp ${WEB_APP}/WEB-INF/lib/*;${WEB_APP}/WEB-INF/classes -d ${WEB_APP}/WEB-INF/module/file_storage/bin ${WEB_APP}/WEB-INF/module/file_storage/src/file_storage/necessary/Config.java ${WEB_APP}/WEB-INF/module/file_storage/src/file_storage/necessary/Custom.java ${WEB_APP}/WEB-INF/module/file_storage/src/file_storage/necessary/Daemon.java" />
+        <!--
+                [Module]
+                enable: true 启用模块.
+                        false 禁用模块.
+        -->
+        <Module enable = "ture" />
+        <!--
+                [Docs]
+                enable: true 启用Api.
+                        false 禁用Api.
+        -->
+        <Docs enable = "true" />
+        <!-- 其他业务所需 -->
+        <!--
+             file_storage模块用于实现文件的存储功能.这里将上传的文件存储于数据库中,不建议存储在本地.原因有二:
+             1. 在文件数据不大时,不会产生因web集群造成的文件共享问题.
+             2. 在文件数据较大时,通常采用"对象存储"的中间件实现.若是发生迁移,这种存储于数据库的选择无疑是修改成本最低的方式.
+        -->
+        <!--
+             [FileStorage]
+             fileCheckCycle: 检查文件的时间周期(单位:分钟).
+             temporaryFileLifeCycle: 临时文件的生命周期(单位:分钟).
+             permanentFileLifeCycle: 永久文件的生命周期(单位:年).
+        -->
+        <FileStorage fileCheckTimeCycle = "10" temporaryFileLifeCycle = "60" permanentFileLifeCycle = "100"  />
+</Config>
+

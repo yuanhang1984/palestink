@@ -1,6 +1,7 @@
 package framework.sdk;
 
 import java.util.ArrayList;
+import framework.sdk.log.Log;
 
 public class Framework {
         /*

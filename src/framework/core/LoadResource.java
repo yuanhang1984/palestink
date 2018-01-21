@@ -14,11 +14,11 @@ import library.execute.Run;
 import library.io.InputOutput;
 import library.system.SystemKit;
 import framework.sdk.Framework;
-import framework.sdk.SqlHandle;
-import framework.log.LogFactory;
+import framework.sdk.spec.module.necessary.DaemonAction;
+import framework.ext.factory.DbFactory;
+import framework.ext.factory.LogFactory;
 import framework.sdbo.object.SqlRepository;
-import framework.sdk.DaemonAction;
-import framework.db.sdbo.DbFactory;
+
 import org.dom4j.Element;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
@@ -303,8 +303,8 @@ public class LoadResource implements ServletContextListener {
                                 moduleConfig.setInitParameter("path", Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + moduleName + "/res/config.xml");
                                 moduleConfig.setLoadOnStartup(1);
                                 // 初始化守护资源
-                                Object[] params = { sce.getServletContext(), new SimpleDBO() };
-                                Class<?>[] paramsType = { ServletContext.class, SqlHandle.class };
+                                Object[] params = { sce.getServletContext() };
+                                Class<?>[] paramsType = { ServletContext.class };
                                 try {
                                         Class<?> daemonClass = Class.forName("module." + moduleName + ".necessary.Daemon");
                                         Method daemonMethod = daemonClass.getMethod("run");

@@ -12,21 +12,21 @@ import org.dom4j.tree.DefaultCDATA;
 import org.dom4j.tree.DefaultElement;
 
 public class DatabaseKit {
-        /**
-         * 是否存在数据
-         * 
-         * @param list
-         * @return true:存有数据;false:没有数据。
-         */
-        public static boolean hasData(List<?> list) {
-                if (null == list) {
-                        return false;
-                }
-                if (0 >= list.size()) {
-                        return false;
-                }
-                return true;
-        }
+        // /**
+        //  * 是否存在数据
+        //  * 
+        //  * @param list
+        //  * @return true:存有数据;false:没有数据。
+        //  */
+        // public static boolean hasData(List<?> list) {
+        //         if (null == list) {
+        //                 return false;
+        //         }
+        //         if (0 >= list.size()) {
+        //                 return false;
+        //         }
+        //         return true;
+        // }
 
         /**
          * 组成Sql的直接替换变量
@@ -411,13 +411,36 @@ public class DatabaseKit {
                                                 str += (i.next() + " ");
                                         }
                                         str = str.trim();
-                                        String prefix = "and ";
-                                        if (str.toLowerCase().startsWith(prefix)) {
-                                                str = str.substring(prefix.length());
+                                        String prefix = "";
+                                        Pattern pattern = null;
+                                        Matcher matcher = null;
+                                        pattern = Pattern.compile("^and\\s+");
+                                        matcher = pattern.matcher(str);
+                                        if (matcher.find()) {
+                                                // and连接
+                                                prefix = "and ";
+                                                if (str.toLowerCase().startsWith(prefix)) {
+                                                        str = str.substring(prefix.length());
+                                                }
+                                                if (0 < str.trim().length()) {
+                                                        s += (" where" + " " + str);
+                                                }
+                                                continue;
                                         }
-                                        if (0 < str.trim().length()) {
-                                                s += (" where" + " " + str);
+                                        pattern = Pattern.compile("^or\\s+");
+                                        matcher = pattern.matcher(str);
+                                        if (matcher.find()) {
+                                                // and连接
+                                                prefix = "or ";
+                                                if (str.toLowerCase().startsWith(prefix)) {
+                                                        str = str.substring(prefix.length());
+                                                }
+                                                if (0 < str.trim().length()) {
+                                                        s += (" where" + " " + str);
+                                                }
+                                                continue;
                                         }
+
                                 } else if (name.equalsIgnoreCase("set")) {
                                         Iterator<String> i = DatabaseKit.composeSqlTagIfByParent(de, parameter).iterator();
                                         String str = "";

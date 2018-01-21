@@ -8,10 +8,9 @@ public class Parameter {
         private String transform;
         private Object constant;
         private boolean allowNull;
-        private String fileType;
         private long fileMaxSize;
 
-        public Parameter(String name, String description, String type, String format, String transform, Object constant, boolean allowNull, String fileType, long fileMaxSize) {
+        public Parameter(String name, String description, String type, String format, String transform, Object constant, boolean allowNull, long fileMaxSize) {
                 this.name = name;
                 this.description = description;
                 this.type = type;
@@ -19,7 +18,6 @@ public class Parameter {
                 this.transform = transform;
                 this.constant = constant;
                 this.allowNull = allowNull;
-                this.fileType = fileType;
                 this.fileMaxSize = fileMaxSize;
         }
 
@@ -49,10 +47,6 @@ public class Parameter {
 
         public boolean getAllowNull() {
                 return allowNull;
-        }
-
-        public String getFileType() {
-                return fileType;
         }
 
         public long getFileMaxSize() {

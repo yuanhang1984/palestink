@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Iterator;
 import javax.servlet.ServletContext;
 import framework.sdk.Framework;
-import framework.sdk.SqlHandle;
-import framework.sdk.HttpConfig;
-import framework.sdk.DaemonAction;
+import framework.sdk.config.HttpConfig;
+import framework.sdk.spec.module.necessary.DaemonAction;
+
 import org.dom4j.Element;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
@@ -49,8 +49,8 @@ class ExecuteThread extends Thread {
 public class Daemon extends DaemonAction {
         public static final String MODULE_NAME = "filter.Daemon";
 
-        public Daemon(ServletContext servletContext, SqlHandle sqlHandler) {
-                super(servletContext, sqlHandler);
+        public Daemon(ServletContext servletContext) {
+                super(servletContext);
         }
 
         @Override

@@ -11,18 +11,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import library.database.DatabaseKit;
-import framework.sdk.DbInstanceModel;
-import framework.sdk.Message;
+import framework.sdk.msg.Message;
 import framework.sdk.Framework;
-import framework.sdk.SqlHandle;
-import framework.db.sdbo.DbFactory;
+import framework.ext.factory.DbFactory;
 import framework.sdbo.object.Namespace;
 import framework.sdbo.object.SqlRepository;
 import org.dom4j.Element;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class SimpleDBO extends SqlHandle {
+public class SimpleDBO {
         private static final String MODULE_NAME = "SimpleDBO";
 
         /*
@@ -137,7 +135,7 @@ public class SimpleDBO extends SqlHandle {
                         }
                         msg.setResult(Message.RESULT.SUCCESS);
                         msg.setCount(a.length());
-                        msg.setDetail(a.toString());
+                        msg.setDetail(a);
                         return msg;
                 } catch (Exception e) {
                         Framework.LOG.warn(SimpleDBO.MODULE_NAME, e.toString());
@@ -348,6 +346,7 @@ public class SimpleDBO extends SqlHandle {
         public void transaction() {
                 Connection c = null;
                 try {
+                        boolean isAlreadyFeedbackToClient = false;
                         ArrayList<Namespace> namespaceList = Namespace.analyseNamespace(this.namespace);
                         if (0 >= namespaceList.size()) {
                                 Message.send(request, response, Message.RESULT.ANALYSE_NAMESPACE_ERROR, null, null);
@@ -657,20 +656,27 @@ public class SimpleDBO extends SqlHandle {
                                         try {
                                                 Class<?> businessClass = null;
                                                 Method classMethod = null;
-                                                if (3 != id.split("\\.").length) {
+                                                if (3 > id.split("\\.").length) {
                                                         c.rollback();
                                                         Message.send(request, response, Message.RESULT.CUSTOM_CLASS_FORMAT_ERROR, null, "[" + type + "][" + id + "]");
                                                         return;
                                                 }
-                                                String packageName = id.split("\\.")[0];
-                                                String className = id.split("\\.")[1];
-                                                String methodName = id.split("\\.")[2];
+                                                String tmpId = id;
+                                                int methodNameIndex = tmpId.lastIndexOf(".");
+                                                String methodName = tmpId.substring(methodNameIndex + 1);
+                                                tmpId = tmpId.substring(0, methodNameIndex);
+                                                int classNameIndex = tmpId.lastIndexOf(".");
+                                                String className = tmpId.substring(classNameIndex + 1);
+                                                tmpId = tmpId.substring(0, classNameIndex);
+                                                String packageName = tmpId;
                                                 businessClass = Class.forName(packageName + "." + className);
                                                 classMethod = businessClass.getMethod(methodName);
                                                 Constructor<?> constructor = businessClass.getConstructor(paramsType);
                                                 Object o = constructor.newInstance(params);
                                                 Message m = (Message) classMethod.invoke(o);
-                                                if (m.getResult() != Message.RESULT.SUCCESS) {// Success标记执行是否成功
+                                                if (Message.RESULT.ALREADY_FEEDBACK_TO_CLIENT == m.getResult()) {
+                                                        isAlreadyFeedbackToClient = true;
+                                                } else if (m.getResult() != Message.RESULT.SUCCESS) {// Success标记执行是否成功
                                                         c.rollback();
                                                         Message.send(request, response, m.getResult(), null, m.getDetail());
                                                         return;
@@ -719,20 +725,27 @@ public class SimpleDBO extends SqlHandle {
                                                 try {
                                                         Class<?> businessClass = null;
                                                         Method classMethod = null;
-                                                        if (3 != id.split("\\.").length) {
+                                                        if (3 > id.split("\\.").length) {
                                                                 c.rollback();
                                                                 Message.send(request, response, Message.RESULT.CUSTOM_CLASS_FORMAT_ERROR, null, "[" + type + "][" + id + "]");
                                                                 return;
                                                         }
-                                                        String packageName = id.split("\\.")[0];
-                                                        String className = id.split("\\.")[1];
-                                                        String methodName = id.split("\\.")[2];
+                                                        String tmpId = id;
+                                                        int methodNameIndex = tmpId.lastIndexOf(".");
+                                                        String methodName = tmpId.substring(methodNameIndex + 1);
+                                                        tmpId = tmpId.substring(0, methodNameIndex);
+                                                        int classNameIndex = tmpId.lastIndexOf(".");
+                                                        String className = tmpId.substring(classNameIndex + 1);
+                                                        tmpId = tmpId.substring(0, classNameIndex);
+                                                        String packageName = tmpId;
                                                         businessClass = Class.forName(packageName + "." + className);
                                                         classMethod = businessClass.getMethod(methodName);
                                                         Constructor<?> constructor = businessClass.getConstructor(paramsType);
                                                         Object o = constructor.newInstance(params);
                                                         Message m = (Message) classMethod.invoke(o);
-                                                        if (m.getResult() != Message.RESULT.SUCCESS) {// Success标记执行是否成功
+                                                        if (Message.RESULT.ALREADY_FEEDBACK_TO_CLIENT == m.getResult()) {
+                                                                isAlreadyFeedbackToClient = true;
+                                                        } else if (m.getResult() != Message.RESULT.SUCCESS) {// Success标记执行是否成功
                                                                 c.rollback();
                                                                 Message.send(request, response, m.getResult(), null, m.getDetail());
                                                                 return;
@@ -752,7 +765,10 @@ public class SimpleDBO extends SqlHandle {
                                 namespaceIndex++;
                         }
                         c.commit();
-                        Message.send(request, response, Message.RESULT.SUCCESS, null, null);
+                        // 如果已经向客户端反馈了结果，那么这里不用再次调用。比如用于文件下载的时候，已经通过Custom向客户端输出了数据。这里无需、也不能调用send方法。
+                        if (!isAlreadyFeedbackToClient) {
+                                Message.send(request, response, Message.RESULT.SUCCESS, null, null);
+                        }
                 } catch (Exception e) {
                         try {
                                 c.rollback();
@@ -768,10 +784,5 @@ public class SimpleDBO extends SqlHandle {
                                 Framework.LOG.warn(SimpleDBO.MODULE_NAME, e.toString());
                         }
                 }
-        }
-
-        @Override
-        public DbInstanceModel getSqlModel(boolean autoCommit) {
-                return DbFactory.getInstance();
         }
 }

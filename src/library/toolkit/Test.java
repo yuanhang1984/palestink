@@ -1,23 +1,38 @@
 package library.toolkit;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Test {
         public Test() {
-                String s = "http://127.0.0.1:8080/palestink/module/demo/selectEmployeeInfo&employee?Uuid=25b32cc252f14059a481d335b71bc8d0&offset=0&rows=10";
-                Pattern pattern = Pattern.compile("(.+?)\\/");
-                Matcher matcher = pattern.matcher(s);
-                if (!matcher.find()) {
-                        // 如果没有找到需要替换的变量，直接返回sql语句的文本。
-                        System.out.println("error");
+                String fileName = "1.bmp";
+                try {
+                        System.out.println(Files.probeContentType(Paths.get(fileName)));
+                } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
                 }
-                // 上面find了一次，这里需要重置一下。
-                matcher.reset();
-                // 循环遍历语句中的每个变量
-                while (matcher.find()) {
-                        System.out.println(matcher.group(1));
+                // 0123456789012345678901234567890123456789012345678
+                String id = "module.file_storage.necessary.Custom.downloadFile";
+                if (3 > id.split("\\.").length) {
+                        System.out.println("11111111111111");
+                        return;
                 }
+                String tmpId = id;
+                int methodNameIndex = tmpId.lastIndexOf(".");
+                String methodName = tmpId.substring(methodNameIndex + 1);
+                tmpId = tmpId.substring(0, methodNameIndex);
+                int classNameIndex = tmpId.lastIndexOf(".");
+                String className = tmpId.substring(classNameIndex + 1);
+                tmpId = tmpId.substring(0, classNameIndex);
+                String packageName = tmpId;
+                // int classNameIndex = id.lastIndexOf(".", methodNameIndex + 1);
+                // String className = id.substring(classNameIndex, methodNameIndex + 1);
+                // String packageName = id.substring(0, classNameIndex + 1);
+                System.out.println(packageName);
+                System.out.println(className);
+                System.out.println(methodName);
         }
 
         public static void main(String[] args) {
