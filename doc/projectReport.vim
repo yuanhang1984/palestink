@@ -28,3 +28,4 @@
 
 [Q] 模块中的Daemon有时读取不到Config中的数据
 [A] Daemon是在Listener中启动的线程，加载顺序在Servlet（Config）之前，所以读取不到是正常的现象。应该避免Daemon依赖Config数据的操作。若要必须如此，可以增加延迟或者逻辑判断。
+
