@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset = "utf-8" />
+<!-- *********************************************************************** -->
+<!-- plugin css -->
+<!-- *********************************************************************** -->
+<link rel = "stylesheet" href = "../../plugin/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel = "stylesheet" href = "../../plugin/font-awesome/3.2.1/css/font-awesome.min.css">
+<!-- *********************************************************************** -->
+<!-- custom css -->
+<!-- *********************************************************************** -->
+<link rel = "stylesheet" type = "text/css" href = "../../css/global.css"/>
+<link rel = "stylesheet" type = "text/css" href = "../../lib/css/default_theme/JSTable.css"/>
+<link rel = "stylesheet" type = "text/css" href = "../../lib/css/default_theme/JSButton.css"/>
+<link rel = "stylesheet" type = "text/css" href = "../../lib/css/default_theme/JSWindow.css"/>
+<link rel = "stylesheet" type = "text/css" href = "../../lib/css/default_theme/JSComboBox.css"/>
+<link rel = "stylesheet" type = "text/css" href = "../../lib/css/default_theme/JSTextArea.css"/>
+<link rel = "stylesheet" type = "text/css" href = "../../lib/css/default_theme/JSTextField.css"/>
+<link rel = "stylesheet" type = "text/css" href = "../../lib/css/default_theme/JSUploadList.css"/>
+<link rel = "stylesheet" type = "text/css" href = "./source_code.css"/>
+<!-- *********************************************************************** -->
+<!-- plugin js -->
+<!-- *********************************************************************** -->
+<script src = "../../plugin/jquery/1.12.4/jquery.min.js" type = "text/javascript" charset = "utf-8"></script>
+<script src = "../../plugin/bootstrap/3.3.7/js/bootstrap.min.js" type = "text/javascript" charset = "utf-8"></script>
+<script src = "../../plugin/jquery-nicescroll/3.7.6/jquery.nicescroll.min.js" type = "text/javascript" charset = "utf-8"></script>
+<!-- *********************************************************************** -->
+<!-- custom js -->
+<!-- *********************************************************************** -->
+<script src = "../../js/toolkit/JString.js" type = "text/javascript" charset = "utf-8"></script>
+<script src = "../../js/system/Configure.js" type = "text/javascript" charset = "utf-8"></script>
+<script src = "../../lib/js/JSTable.js" type = "text/javascript" charset = "utf-8"></script>
+<script src = "../../lib/js/JSButton.js" type = "text/javascript" charset = "utf-8"></script>
+<script src = "../../lib/js/JSWindow.js" type = "text/javascript" charset = "utf-8"></script>
+<script src = "../../lib/js/JSComboBox.js" type = "text/javascript" charset = "utf-8"></script>
+<script src = "../../lib/js/JSTextArea.js" type = "text/javascript" charset = "utf-8"></script>
+<script src = "../../lib/js/JSTextField.js" type = "text/javascript" charset = "utf-8"></script>
+<script src = "../../lib/js/JSUploadList.js" type = "text/javascript" charset = "utf-8"></script>
+<script>
+////////////////////////////////////////////////////////////////////////////////
+// ECMAScript规范
+////////////////////////////////////////////////////////////////////////////////
+"use strict";
+////////////////////////////////////////////////////////////////////////////////
+// SourceCodeWindow
+////////////////////////////////////////////////////////////////////////////////
+class SourceCodeWindow {
+  constructor() {
+    ////////////////////////////////////////////////////////////////////////////
+    // SelectModule下拉菜单
+    ////////////////////////////////////////////////////////////////////////////
+    this.modCB = new JSComboBox();
+    this.modCB.setType("dropdown");
+    this.modCB.addItem({
+      "type": "option",
+      "text": "Select Module",
+      "value": "Select Module",
+      "enable": false
+    });
+    this.modCB.addItem({
+      "type": "option",
+      "text": "file_storage",
+      "value": "file_storage",
+      "enable": true 
+    });
+    this.modCB.addItem({
+      "type": "option",
+      "text": "user_login",
+      "value": "user_login",
+      "enable": true
+    });
+    this.modCB.setSelectedIndex(0);
+    this.modCB.generateCode();
+    ////////////////////////////////////////////////////////////////////////////
+    // ChooseFile上传列表
+    ////////////////////////////////////////////////////////////////////////////
+    this.chooseFileUL = new JSUploadList();
+    this.chooseFileUL.addItem({
+      "key": "12123",
+      "name": "新建文本文件.txt",
+      "size": "(380K)"
+    });
+    this.chooseFileUL.addItem({
+      "key": "234345",
+      "name": "palestink_2.0.rp",
+      "size": "(1.23M)"
+    });
+    this.chooseFileUL.generateCode();
+    ////////////////////////////////////////////////////////////////////////////
+    // CompileCommand输入框
+    ////////////////////////////////////////////////////////////////////////////
+    this.ccTF = new JSTextField();
+    this.ccTF.setPlaceHolder("Compile Command");
+    this.ccTF.generateCode();
+    ////////////////////////////////////////////////////////////////////////////
+    // ComplieTest按钮
+    ////////////////////////////////////////////////////////////////////////////
+    this.ccTestBtn = new JSButton();
+    this.ccTestBtn.setText("Compile Test");
+    this.ccTestBtn.setClass("btn-primary");
+    this.ccTestBtn.generateCode();
+    ////////////////////////////////////////////////////////////////////////////
+    // Help按钮
+    ////////////////////////////////////////////////////////////////////////////
+    this.helpBtn = new JSButton();
+    this.helpBtn.setText("?");
+    this.helpBtn.setClass("btn-info");
+    this.helpBtn.generateCode();
+    ////////////////////////////////////////////////////////////////////////////
+    // TestResult显示框
+    ////////////////////////////////////////////////////////////////////////////
+    this.testResTA = new JSTextArea();
+    this.testResTA.setPlaceHolder("Test Result");
+    this.testResTA.setClass("form-control");
+    this.testResTA.generateCode();
+    ////////////////////////////////////////////////////////////////////////////
+    // RebuildSource下拉菜单
+    ////////////////////////////////////////////////////////////////////////////
+    this.rebuildSrcCB = new JSComboBox();
+    this.rebuildSrcCB.setType("dropdown");
+    this.rebuildSrcCB.addItem({
+      "type": "option",
+      "text": "Rebuild Source",
+      "value": 1,
+      "enable": false
+    });
+    this.rebuildSrcCB.addItem({
+      "type": "option",
+      "text": "True",
+      "value": 1,
+      "enable": true 
+    });
+    this.rebuildSrcCB.addItem({
+      "type": "option",
+      "text": "False",
+      "value": 0,
+      "enable": true
+    });
+    this.rebuildSrcCB.setSelectedIndex(0);
+    this.rebuildSrcCB.generateCode();
+    ////////////////////////////////////////////////////////////////////////////
+    // 创建模块列表
+    ////////////////////////////////////////////////////////////////////////////
+    this.constTable = new JSTable();
+    this.constTable.setClass("table-striped table-bordered");
+    this.constTable.setThead(
+      [
+        {
+          "text": "Constant Name",
+          "colspan": -1
+        },
+        {
+          "text": "Attribute Name",
+          "colspan": -1
+        },
+        {
+          "text": "Attribute Value",
+          "colspan": -1
+        },
+        {
+          "text": "Remove",
+          "colspan": 2
+        }
+      ]
+    );
+    this.constTable.addTbody(
+      [
+        {
+          "text": `<span>file_storage</span><i class = "icon-edit"></i>`,
+          "value": "",
+          "colspan": -1,
+          "rowspan": 3
+        },
+        {
+          "text": `<span>fileCheckTimeCycle</span><i class = "icon-edit"></i>`,
+          "value": "",
+          "colspan": -1,
+          "rowspan": -1
+        },
+        {
+          "text": 10,
+          "value": "",
+          "colspan": -1,
+          "rowspan": -1
+        },
+        {
+          "text": `<i class = "icon-remove"></i>`,
+          "value": "",
+          "colspan": -1,
+          "rowspan": -1
+        },
+        {
+          "text": `<i class = "icon-remove"></i>`,
+          "value": "",
+          "colspan": -1,
+          "rowspan": 3
+        }
+      ]
+    );
+    this.constTable.addTbody(
+      [
+        {
+          "text": `<span>temporaryFileLifeCycle</span><i class = "icon-edit"></i>`,
+          "value": "",
+          "colspan": -1,
+          "rowspan": -1
+        },
+        {
+          "text": 60,
+          "value": "",
+          "colspan": -1,
+          "rowspan": -1
+        },
+        {
+          "text": `<i class = "icon-remove"></i>`,
+          "value": "",
+          "colspan": -1,
+          "rowspan": -1
+        }
+      ]
+    );
+    this.constTable.addTbody(
+      [
+        {
+          "text": `<span>permanentFileLifeCycle</span><i class = "icon-edit"></i>`,
+          "value": "",
+          "colspan": -1,
+          "rowspan": -1
+        },
+        {
+          "text": 100,
+          "value": "",
+          "colspan": -1,
+          "rowspan": -1
+        },
+        {
+          "text": `<i class = "icon-remove"></i>`,
+          "value": "",
+          "colspan": -1,
+          "rowspan": -1
+        }
+      ]
+    );
+    this.constTable.addTbody(
+      [
+        {
+          "text": `<span>other</span><i class = "icon-edit"></i>`,
+          "value": "",
+          "colspan": -1,
+          "rowspan": -1
+        },
+        {
+          "text": `<span>Set Filter For Web Service</span><i class = "icon-edit"></i>`,
+          "value": "",
+          "colspan": -1,
+          "rowspan": -1
+        },
+        {
+          "text": "hello",
+          "value": "",
+          "colspan": -1,
+          "rowspan": -1
+        },
+        {
+          "text": `<i class = "icon-remove"></i>`,
+          "value": "",
+          "colspan": -1,
+          "rowspan": -1
+        },
+        {
+          "text": `<i class = "icon-remove"></i>`,
+          "value": "",
+          "colspan": -1,
+          "rowspan": -1
+        }
+      ]
+    );
+    this.constTable.generateCode();
+    ////////////////////////////////////////////////////////////////////////////
+    // AddConstant按钮
+    ////////////////////////////////////////////////////////////////////////////
+    this.addConstBtn = new JSButton();
+    this.addConstBtn.setText("Add Constant");
+    this.addConstBtn.setClass("btn-primary");
+    this.addConstBtn.generateCode();
+    ////////////////////////////////////////////////////////////////////////////
+    // AddAttribute按钮
+    ////////////////////////////////////////////////////////////////////////////
+    this.addAttrBtn = new JSButton();
+    this.addAttrBtn.setText("Add Attribute");
+    this.addAttrBtn.setClass("btn-primary");
+    this.addAttrBtn.generateCode();
+    ////////////////////////////////////////////////////////////////////////////
+    // 提交按钮
+    ////////////////////////////////////////////////////////////////////////////
+    this.submitBtn = new JSButton();
+    this.submitBtn.setText("Submit");
+    this.submitBtn.setClass("btn-primary");
+    this.submitBtn.generateCode();
+    ////////////////////////////////////////////////////////////////////////////
+    // 主窗体对象
+    ////////////////////////////////////////////////////////////////////////////
+    this.mainWindow = new JSWindow();
+    this.mainWindow.setWindowDecorationStyle("FRAME");
+    this.mainWindow.setTitle("Source Code");
+    this.mainWindow.setClass("SourceCodeWindow");
+    this.mainWindow.setContent(`
+      <div>${this.modCB.getCode()}</div>
+      <div>${this.chooseFileUL.getCode()}</div>
+      <div>${this.ccTF.getCode() + this.helpBtn.getCode() + this.ccTestBtn.getCode()}</div>
+      <div>${this.testResTA.getCode()}</div>
+      <div>${this.rebuildSrcCB.getCode()}</div>
+      <div>${this.constTable.getCode()}</div>
+      <div>${this.addConstBtn.getCode() + this.addAttrBtn.getCode() + this.submitBtn.getCode()}</div>
+    `);
+    this.mainWindow.generateCode();
+  }
+}
+////////////////////////////////////////////////////////////////////////////////
+// AddConstantWindow
+////////////////////////////////////////////////////////////////////////////////
+class AddConstantWindow {
+  constructor() {
+    ////////////////////////////////////////////////////////////////////////////
+    // name输入框
+    ////////////////////////////////////////////////////////////////////////////
+    this.nameTF = new JSTextField();
+    this.nameTF.setPlaceHolder("Name");
+    this.nameTF.generateCode();
+    ////////////////////////////////////////////////////////////////////////////
+    // Comment输入框
+    ////////////////////////////////////////////////////////////////////////////
+    this.commentTF = new JSTextField();
+    this.commentTF.setPlaceHolder("Comment");
+    this.commentTF.generateCode();
+    ////////////////////////////////////////////////////////////////////////////
+    // Create按钮
+    ////////////////////////////////////////////////////////////////////////////
+    this.createBtn = new JSButton();
+    this.createBtn.setText("Create");
+    this.createBtn.setClass("btn-primary");
+    this.createBtn.generateCode();
+    ////////////////////////////////////////////////////////////////////////////
+    // Cancel按钮
+    ////////////////////////////////////////////////////////////////////////////
+    this.cancelBtn = new JSButton();
+    this.cancelBtn.setText("Cancel");
+    this.cancelBtn.setClass("btn-default");
+    this.cancelBtn.generateCode();
+    ////////////////////////////////////////////////////////////////////////////
+    // 主窗体对象
+    ////////////////////////////////////////////////////////////////////////////
+    this.mainWindow = new JSWindow();
+    this.mainWindow.setWindowDecorationStyle("DIALOG");
+    this.mainWindow.setTitle("Add Constant");
+    this.mainWindow.setClass("AddConstantWindow");
+    this.mainWindow.setContent(`
+      <div>${this.nameTF.getCode()}</div>
+      <div>${this.commentTF.getCode()}</div>
+      <div>${this.createBtn.getCode() + this.cancelBtn.getCode()}</div>
+    `);
+    this.mainWindow.generateCode();
+  }
+}
+////////////////////////////////////////////////////////////////////////////////
+// AddAttributeWindow
+////////////////////////////////////////////////////////////////////////////////
+class AddAttributeWindow {
+  constructor() {
+    ////////////////////////////////////////////////////////////////////////////
+    // SelectModule下拉菜单
+    ////////////////////////////////////////////////////////////////////////////
+    this.modCB = new JSComboBox();
+    this.modCB.setType("dropdown");
+    this.modCB.addItem({
+      "type": "option",
+      "text": "Select Module",
+      "value": "Select Module",
+      "enable": false
+    });
+    this.modCB.addItem({
+      "type": "option",
+      "text": "file_storage",
+      "value": "file_storage",
+      "enable": true 
+    });
+    this.modCB.addItem({
+      "type": "option",
+      "text": "user_login",
+      "value": "user_login",
+      "enable": true
+    });
+    this.modCB.setSelectedIndex(0);
+    this.modCB.generateCode();
+    ////////////////////////////////////////////////////////////////////////////
+    // name输入框
+    ////////////////////////////////////////////////////////////////////////////
+    this.nameTF = new JSTextField();
+    this.nameTF.setPlaceHolder("Name");
+    this.nameTF.generateCode();
+    ////////////////////////////////////////////////////////////////////////////
+    // value输入框
+    ////////////////////////////////////////////////////////////////////////////
+    this.valueTF = new JSTextField();
+    this.valueTF.setPlaceHolder("Value");
+    this.valueTF.generateCode();
+    ////////////////////////////////////////////////////////////////////////////
+    // Create按钮
+    ////////////////////////////////////////////////////////////////////////////
+    this.createBtn = new JSButton();
+    this.createBtn.setText("Create");
+    this.createBtn.setClass("btn-primary");
+    this.createBtn.generateCode();
+    ////////////////////////////////////////////////////////////////////////////
+    // Cancel按钮
+    ////////////////////////////////////////////////////////////////////////////
+    this.cancelBtn = new JSButton();
+    this.cancelBtn.setText("Cancel");
+    this.cancelBtn.setClass("btn-default");
+    this.cancelBtn.generateCode();
+    ////////////////////////////////////////////////////////////////////////////
+    // 主窗体对象
+    ////////////////////////////////////////////////////////////////////////////
+    this.mainWindow = new JSWindow();
+    this.mainWindow.setWindowDecorationStyle("DIALOG");
+    this.mainWindow.setTitle("Add Attribute");
+    this.mainWindow.setClass("AddAttributeWindow");
+    this.mainWindow.setContent(`
+      <div>${this.modCB.getCode()}</div>
+      <div>${this.nameTF.getCode()}</div>
+      <div>${this.valueTF.getCode()}</div>
+      <div>${this.createBtn.getCode() + this.cancelBtn.getCode()}</div>
+    `);
+    this.mainWindow.generateCode();
+  }
+}
+</script>
+<script>
+//////////////////////////////////////////////////////////////////////////////
+// ECMAScript规范
+//////////////////////////////////////////////////////////////////////////////
+"use strict";
+//////////////////////////////////////////////////////////////////////////////
+// SourceCodeWindow对象
+//////////////////////////////////////////////////////////////////////////////
+let scw = new SourceCodeWindow();
+//////////////////////////////////////////////////////////////////////////////
+// AddConstantWindow对象
+//////////////////////////////////////////////////////////////////////////////
+let acw = new AddConstantWindow();
+//////////////////////////////////////////////////////////////////////////////
+// AddAttributeWindow对象
+//////////////////////////////////////////////////////////////////////////////
+let aaw = new AddAttributeWindow();
+////////////////////////////////////////////////////////////////////////////////
+// 输出代码
+////////////////////////////////////////////////////////////////////////////////
+$(document).ready(function() {
+  $("#sourceCodeWindowArea").html(scw.mainWindow.getCode());
+  $("#addConstantWindowArea").html(acw.mainWindow.getCode());
+  $("#addAttributeWindowArea").html(aaw.mainWindow.getCode());
+  // 设置滚动条属性
+  $("body").niceScroll({cursorcolor: "#65CEA7", cursorwidth: "2px", cursorborder: "0px", cursorborderradius: "2px"});
+  $("#" + scw.mainWindow.getId()).niceScroll({cursorcolor: "#65CEA7", cursorwidth: "2px", cursorborder: "0px", cursorborderradius: "2px"});
+  $("#" + acw.mainWindow.getId()).niceScroll({cursorcolor: "#65CEA7", cursorwidth: "2px", cursorborder: "0px", cursorborderradius: "2px"});
+  $("#" + aaw.mainWindow.getId()).niceScroll({cursorcolor: "#65CEA7", cursorwidth: "2px", cursorborder: "0px", cursorborderradius: "2px"});
+  // 事件绑定
+  scw.modCB.update();
+  scw.rebuildSrcCB.update();
+  scw.chooseFileUL.update();
+  aaw.modCB.update();
+  // 关联按钮打开模态窗口
+  $("#" + scw.addConstBtn.getId()).attr("data-toggle", "modal");
+  $("#" + scw.addConstBtn.getId()).attr("data-target", "#" + acw.mainWindow.getId());
+  $("#" + scw.addAttrBtn.getId()).attr("data-toggle", "modal");
+  $("#" + scw.addAttrBtn.getId()).attr("data-target", "#" + aaw.mainWindow.getId());
+  // 关联取消按钮关闭模态窗口
+  $("#" + acw.cancelBtn.getId()).attr("data-dismiss", "modal");
+  $("#" + aaw.cancelBtn.getId()).attr("data-dismiss", "modal");
+  // ccTF横铺显示
+  $("#" + scw.mainWindow.getId()).find(".panel-body").find("div:nth-child(3)").find("input").css("width",
+    parseInt($("#" + scw.mainWindow.getId()).find(".panel-body").find("div:nth-child(3)").find("input").css("width"))
+    - parseInt($("#" + scw.helpBtn.getId()).css("width"))
+    - parseInt($("#" + scw.helpBtn.getId()).css("margin-left"))
+    - parseInt($("#" + scw.helpBtn.getId()).css("margin-right"))
+    - parseInt($("#" + scw.ccTestBtn.getId()).css("width"))
+    + "px"
+  );
+});
+</script>
+<title>Module Source Code</title>
+</head>
+<body>
+  <div id = "sourceCodeWindowArea"></div>
+  <div id = "addConstantWindowArea"></div>
+  <div id = "addAttributeWindowArea"></div>
+</body>
+</html>

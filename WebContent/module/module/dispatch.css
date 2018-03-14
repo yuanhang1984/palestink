@@ -1,0 +1,120 @@
+.DispatchWindow {
+  margin-top: 20px;
+}
+
+.DispatchWindow i:hover {
+  color: #FF8556;
+  cursor: pointer;
+}
+
+/* 消除按钮的间距 */
+.DispatchWindow .panel-body div:last-child {
+  font-size: 0px;
+}
+
+/* 设置图标和图标的间距 */
+.DispatchWindow .panel-body div table tbody tr td:last-child i:first-child {
+  margin-right: 10px;
+}
+
+/* 设置文字和图标的间距 */
+.DispatchWindow div table tbody tr td span {
+  margin-right: 10px;
+}
+
+.CreateServletWindow {
+  margin-top: 20px;
+}
+
+.CreateServletWindow i:hover {
+  color: #FF8556;
+  cursor: pointer;
+}
+
+/* 消除按钮的间距 */
+.CreateServletWindow .panel-body div:last-child {
+  font-size: 0px;
+}
+
+/* 重置按钮的间距 */
+.CreateServletWindow .panel-body div:last-child button:first-child {
+  margin-right: 10px;
+}
+
+/* 设置文字和图标的间距 */
+.CreateServletWindow .panel-body div table thead tr th span {
+  margin-right: 10px;
+}
+
+/* 设置文字和图标的间距 */
+.CreateServletWindow .panel-body div table tbody tr td span {
+  margin-right: 10px;
+}
+
+.CreateServletWindow .panel-body div table caption {
+  padding-top: 0px;
+  text-align: right;
+  padding-bottom: 20px;
+}
+
+/* 设置图标和图标的间距 */
+.CreateServletWindow .panel-body div table tbody tr td:last-child i:first-child {
+  margin-right: 10px;
+}
+
+/* 设置文字和图标的间距 */
+.CreateServletWindow .panel-body div table tbody tr td ul {
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+}
+
+.AddParameterWindow {
+  width: 400px;
+  margin-top: 20px;
+}
+
+.AddParameterWindow i:hover {
+  color: #FF8556;
+  cursor: pointer;
+}
+
+/* 消除按钮的间距 */
+.AddParameterWindow .panel-body div:last-child {
+  font-size: 0px;
+}
+
+/* 重置按钮的间距 */
+.AddParameterWindow .panel-body div:last-child button:first-child {
+  margin-right: 10px;
+}
+
+/* 设置文字和图标的间距 */
+.AddParameterWindow div table tbody tr td span {
+  margin-right: 10px;
+}
+
+.AddNamespaceWindow {
+  width: 400px;
+  margin-top: 20px;
+}
+
+.AddNamespaceWindow i:hover {
+  color: #FF8556;
+  cursor: pointer;
+}
+
+/* 消除按钮的间距 */
+.AddNamespaceWindow .panel-body div:last-child {
+  font-size: 0px;
+}
+
+/* 重置按钮的间距 */
+.AddNamespaceWindow .panel-body div:last-child button:first-child {
+  margin-right: 10px;
+}
+
+/* 设置文字和图标的间距 */
+.AddNamespaceWindow div table tbody tr td span {
+  margin-right: 10px;
+}

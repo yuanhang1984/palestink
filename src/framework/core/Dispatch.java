@@ -210,11 +210,11 @@ public class Dispatch extends HttpServlet {
                         } else {
                                 try {
                                         if (parameter.getType().equalsIgnoreCase("integer")) {
-                                                return new Integer(constStr);
+                                                return Integer.getInteger(constStr);
                                         } else if (parameter.getType().equalsIgnoreCase("string")) {
                                                 return constStr;
                                         } else if (parameter.getType().equalsIgnoreCase("double")) {
-                                                return new Double(constStr);
+                                                return Double.valueOf(constStr);
                                         } else if (parameter.getType().equalsIgnoreCase("timestamp")) {
                                                 return java.sql.Timestamp.valueOf(constStr);
                                         } else if (parameter.getType().equalsIgnoreCase("jsonobject")) {
@@ -281,11 +281,11 @@ public class Dispatch extends HttpServlet {
                         }
                         try {
                                 if (parameter.getType().equalsIgnoreCase("integer")) {
-                                        return new Integer(paramValue);
+                                        return Integer.getInteger(paramValue);
                                 } else if (parameter.getType().equalsIgnoreCase("string")) {
                                         return paramValue;
                                 } else if (parameter.getType().equalsIgnoreCase("double")) {
-                                        return new Double(paramValue);
+                                        return Double.valueOf(paramValue);
                                 } else if (parameter.getType().equalsIgnoreCase("timestamp")) {
                                         return java.sql.Timestamp.valueOf(paramValue);
                                 } else if (parameter.getType().equalsIgnoreCase("jsonobject")) {

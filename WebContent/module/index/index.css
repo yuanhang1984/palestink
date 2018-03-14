@@ -1,0 +1,57 @@
+/******************************************************************************/
+/* body */
+/******************************************************************************/
+body {
+  margin: 0px;
+  padding: 0px;
+  overflow: hidden;
+}
+
+/******************************************************************************/
+/* menuTree */
+/******************************************************************************/
+.menuTree {
+  width: 240px;
+}
+
+.menuTree > li:first-child {
+  font-size: 20px;
+  text-align: center;
+  padding: 0px 0px 0px 0px;
+  background-color: #424F63;
+}
+
+.menuTree > li:first-child > span {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.menuTree > li:first-child > span > span {
+  font-weight: bold;
+  padding: 0px 0px 0px 0px;
+  display: inline!important;
+}
+
+.menuTree > li:first-child > span > span:nth-child(1) {
+  color: #FFFFFF;
+}
+
+.menuTree > li:last-child {
+  text-align: center;
+  background-color: #424F63;
+}
+
+.menuTree > li:last-child > span {
+  color: #AEAEAE;
+  font-size: 12px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+#menuTreeArea {
+  float: left;
+}
+
+#pageArea {
+  border-width: 0px;
+}

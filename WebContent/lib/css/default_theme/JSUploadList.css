@@ -1,0 +1,12 @@
+.JSUploadList a {
+  text-align: center;
+}
+
+.JSUploadList li {
+  text-align: right;
+}
+
+.JSUploadList li span {
+  float: left;
+  margin-right: 10px;
+}

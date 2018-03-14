@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset = "utf-8" />
+<!-- *********************************************************************** -->
+<!-- plugin css -->
+<!-- *********************************************************************** -->
+<link rel = "stylesheet" href = "../../plugin/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel = "stylesheet" href = "../../plugin/font-awesome/3.2.1/css/font-awesome.min.css">
+<!-- *********************************************************************** -->
+<!-- custom css -->
+<!-- *********************************************************************** -->
+<link rel = "stylesheet" type = "text/css" href = "../../css/global.css"/>
+<link rel = "stylesheet" type = "text/css" href = "../../lib/css/default_theme/JSButton.css"/>
+<link rel = "stylesheet" type = "text/css" href = "../../lib/css/default_theme/JSWindow.css"/>
+<link rel = "stylesheet" type = "text/css" href = "../../lib/css/default_theme/JSTextField.css"/>
+<link rel = "stylesheet" type = "text/css" href = "./login.css"/>
+<!-- *********************************************************************** -->
+<!-- plugin js -->
+<!-- *********************************************************************** -->
+<script src = "../../plugin/jquery/1.12.4/jquery.min.js" type = "text/javascript" charset = "utf-8"></script>
+<script src = "../../plugin/bootstrap/3.3.7/js/bootstrap.min.js" type = "text/javascript" charset = "utf-8"></script>
+<!-- *********************************************************************** -->
+<!-- custom js -->
+<!-- *********************************************************************** -->
+<script src = "../../js/toolkit/JString.js" type = "text/javascript" charset = "utf-8"></script>
+<script src = "../../js/system/Configure.js" type = "text/javascript" charset = "utf-8"></script>
+<script src = "../../lib/js/JSButton.js" type = "text/javascript" charset = "utf-8"></script>
+<script src = "../../lib/js/JSWindow.js" type = "text/javascript" charset = "utf-8"></script>
+<script src = "../../lib/js/JSTextField.js" type = "text/javascript" charset = "utf-8"></script>
+<script>
+////////////////////////////////////////////////////////////////////////////////
+// ECMAScript规范
+////////////////////////////////////////////////////////////////////////////////
+"use strict";
+////////////////////////////////////////////////////////////////////////////////
+// LoginWindow
+////////////////////////////////////////////////////////////////////////////////
+class LoginWindow {
+  constructor() {
+    ////////////////////////////////////////////////////////////////////////////
+    // Name输入框
+    ////////////////////////////////////////////////////////////////////////////
+    this.nameTF = new JSTextField();
+    this.nameTF.setPlaceHolder("Name");
+    this.nameTF.generateCode();
+    ////////////////////////////////////////////////////////////////////////////
+    // Password输入框
+    ////////////////////////////////////////////////////////////////////////////
+    this.pwdTF = new JSTextField();
+    this.pwdTF.setPlaceHolder("Password");
+    this.pwdTF.setType("password");
+    this.pwdTF.generateCode();
+    ////////////////////////////////////////////////////////////////////////////
+    // Login按钮
+    ////////////////////////////////////////////////////////////////////////////
+    this.loginBtn = new JSButton();
+    this.loginBtn.setText("Login");
+    this.loginBtn.setClass("btn-primary");
+    this.loginBtn.generateCode();
+    ////////////////////////////////////////////////////////////////////////////
+    // 主窗体对象
+    ////////////////////////////////////////////////////////////////////////////
+    this.mainWindow = new JSWindow();
+    this.mainWindow.setWindowDecorationStyle("FRAME");
+    this.mainWindow.setTitle("Login");
+    this.mainWindow.setClass("LoginWindow");
+    this.mainWindow.setContent(`
+      <div>${this.nameTF.getCode()}</div>
+      <div>${this.pwdTF.getCode()}</div>
+      <div>${this.loginBtn.getCode()}</div>       
+    `);
+    this.mainWindow.generateCode();
+  }
+}
+</script>
+<script>
+//////////////////////////////////////////////////////////////////////////////
+// ECMAScript规范
+//////////////////////////////////////////////////////////////////////////////
+"use strict";
+//////////////////////////////////////////////////////////////////////////////
+// LoginWindow对象
+//////////////////////////////////////////////////////////////////////////////
+let lw = new LoginWindow();
+////////////////////////////////////////////////////////////////////////////////
+// 输出代码
+////////////////////////////////////////////////////////////////////////////////
+$(document).ready(function() {
+  $("#loginWindowArea").html(lw.mainWindow.getCode());
+  // 调整窗口位置页面居中
+  $(".LoginWindow").css("margin-top", (($(document).height() - $(`#${lw.mainWindow.getId()}`).height()) / 2) + "px");
+});
+</script>
+<title>Login</title>
+</head>
+<body>
+  <div id = "loginWindowArea"></div>
+</body>
+</html>

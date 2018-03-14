@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset = "utf-8" />
+<!-- *********************************************************************** -->
+<!-- plugin css -->
+<!-- *********************************************************************** -->
+<link rel = "stylesheet" href = "../../plugin/bootstrap/3.3.7/css/bootstrap.min.css">
+<!-- *********************************************************************** -->
+<!-- custom css -->
+<!-- *********************************************************************** -->
+<link rel = "stylesheet" type = "text/css" href = "../css/default_theme/JSWindow.css"/>
+<!-- *********************************************************************** -->
+<!-- plugin js -->
+<!-- *********************************************************************** -->
+<script src = "../../plugin/jquery/1.12.4/jquery.min.js" type = "text/javascript" charset = "utf-8"></script>
+<script src = "../../plugin/bootstrap/3.3.7/js/bootstrap.min.js" type = "text/javascript" charset = "utf-8"></script>
+<!-- *********************************************************************** -->
+<!-- custom js -->
+<!-- *********************************************************************** -->
+<script src = "../../js/toolkit/JString.js" type = "text/javascript" charset = "utf-8"></script>
+<script src = "../js/JSWindow.js" type = "text/javascript" charset = "utf-8"></script>
+<script>
+  //////////////////////////////////////////////////////////////////////////////
+  // ECMAScript规范
+  //////////////////////////////////////////////////////////////////////////////
+  "use strict";
+  //////////////////////////////////////////////////////////////////////////////
+  // 创建对象
+  //////////////////////////////////////////////////////////////////////////////
+  let jsWindow = new JSWindow();
+  //////////////////////////////////////////////////////////////////////////////
+  // 设置属性
+  //////////////////////////////////////////////////////////////////////////////
+  jsWindow.setTitle("显示详情");
+  jsWindow.setContent("<p>Hello World</p>");
+  // jsWindow.setWindowDecorationStyle("NONE");
+  // jsWindow.setWindowDecorationStyle("FRAME");
+  jsWindow.setWindowDecorationStyle("DIALOG");
+  // jsWindow.setClass("JSOptionPane_Primary");
+  //////////////////////////////////////////////////////////////////////////////
+  // 生成代码
+  //////////////////////////////////////////////////////////////////////////////
+  jsWindow.generateCode();
+  //////////////////////////////////////////////////////////////////////////////
+  // Start
+  //////////////////////////////////////////////////////////////////////////////
+  $(document).ready(function() {
+    // 输出代码
+    $("#outputArea").html(jsWindow.getCode());
+    // 用于DIALOG的测试
+    $("#showDlgBtn").attr("data-target", "#" + jsWindow.getId());
+  });
+</script>
+<title>Demo</title>
+</head>
+<body>
+  <!-- 用于DIALOG的测试 -->
+  <button type = "button" class = "btn btn-primary" id = "showDlgBtn" data-toggle = "modal">Show</button>
+  <div id = "outputArea"></div>
+</body>
+</html>

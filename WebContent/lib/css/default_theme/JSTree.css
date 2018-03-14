@@ -1,0 +1,56 @@
+.JSTree {
+  color: #FFFFFF;
+  cursor: default;
+  font-size: 14px;
+  text-align: left;
+  list-style: none;
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
+  background-color: #353F4F;
+}
+
+/* 清除ul默认样式 */
+.JSTree ul {
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
+  list-style: none;
+}
+
+/* 清除li默认样式 */
+.JSTree li {
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
+}
+
+/* 鼠标停放时的样式 */
+.JSTree li:hover {
+  color: #FF8556;
+  background-color: #2A323F;
+}
+
+/* 设置子菜单的间距 */
+.JSTree a {
+  color: #FFFFFF;
+  display: block;
+  text-decoration: none;
+  margin: 0px 0px 0px 0px;
+  padding: 10px 10px 10px 40px;
+}
+
+/* 如果带有<i>的图标，图标右侧留有10px的空间 */
+.JSTree i {
+  margin: 0px 10px 0px 0px;
+}
+
+/* 设置父菜单的间距 */
+.JSTree span {
+  color: #FF8556;
+  display: block;
+  margin: 0px 0px 0px 0px;
+  padding: 10px 10px 10px 20px;
+}
+
+/* 活动链接的样式 */
+.JSTree .active {
+  background-color: #2A323F;
+}

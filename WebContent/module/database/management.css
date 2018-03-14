@@ -1,0 +1,43 @@
+/******************************************************************************/
+/* ConnectionListWindow */
+/******************************************************************************/
+.ConnectionListWindow i {
+  margin-left: 10px;
+}
+
+.ConnectionListWindow i:hover {
+  color: #FF8556;
+  cursor: pointer;
+}
+
+.ConnectionListWindow i:last-child {
+  margin-right: 10px;
+}
+
+/* 消除按钮的间距 */
+.ConnectionListWindow .panel-body div:last-child {
+  font-size: 0px;
+}
+
+/* 重置按钮的间距 */
+.ConnectionListWindow .panel-body div:last-child button:first-child {
+  margin-right: 10px;
+}
+/******************************************************************************/
+/* ConnectionCreateWindow */
+/******************************************************************************/
+.ConnectionCreateWindow {
+  width: 400px;
+  margin-top: 20px;
+}
+
+/* 消除按钮的间距 */
+.ConnectionCreateWindow .panel-body div:last-child {
+  font-size: 0px;
+}
+
+/* 重置按钮的间距 */
+.ConnectionCreateWindow .panel-body div:last-child button:nth-child(2) {
+  margin-left: 10px;
+  margin-right: 10px;
+}

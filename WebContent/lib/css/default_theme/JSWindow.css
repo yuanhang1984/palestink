@@ -1,0 +1,37 @@
+.JSWindow {
+  width: 100%;
+  margin: auto auto auto auto;
+}
+
+/* 标题栏文字靠左 */
+.JSWindow .panel-heading {
+  text-align: left;
+}
+
+/* 内容区域靠左 */
+.JSWindow .panel-body div {
+  text-align: left;
+}
+
+/* 内容区域padding */
+.JSWindow .panel-body {
+  padding: 20px;
+}
+
+/* 内容区域每个div对下有20px的间距 */
+.JSWindow .panel-body div {
+  margin-bottom: 20px;
+}
+
+/* 因为底部有padding-bottom所以出去最后一个div的间距 */
+.JSWindow .panel-body div:last-child {
+  text-align: center;
+  margin-bottom: 0px;
+}
+
+/* 若窗口类型为DIALOG，设置关闭叉号为白色 */
+.JSWindow .panel .panel-heading button {
+  opacity: 1;
+  color: #FFFFFF;
+  text-shadow: none;
+}

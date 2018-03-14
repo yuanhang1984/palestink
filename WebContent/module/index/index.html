@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset = "utf-8" />
+<!-- *********************************************************************** -->
+<!-- plugin css -->
+<!-- *********************************************************************** -->
+<link rel = "stylesheet" href = "../../plugin/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel = "stylesheet" href = "../../plugin/font-awesome/3.2.1/css/font-awesome.min.css">
+<!-- *********************************************************************** -->
+<!-- custom css -->
+<!-- *********************************************************************** -->
+<link rel = "stylesheet" type = "text/css" href = "../../css/global.css"/>
+<link rel = "stylesheet" type = "text/css" href = "../../lib/css/default_theme/JSTree.css"/>
+<link rel = "stylesheet" type = "text/css" href = "./index.css"/>
+<!-- *********************************************************************** -->
+<!-- plugin js -->
+<!-- *********************************************************************** -->
+<script src = "../../plugin/jquery/1.12.4/jquery.min.js" type = "text/javascript" charset = "utf-8"></script>
+<script src = "../../plugin/bootstrap/3.3.7/js/bootstrap.min.js" type = "text/javascript" charset = "utf-8"></script>
+<script src = "../../plugin/jquery-nicescroll/3.7.6/jquery.nicescroll.min.js" type = "text/javascript" charset = "utf-8"></script>
+<!-- *********************************************************************** -->
+<!-- custom js -->
+<!-- *********************************************************************** -->
+<script src = "../../js/toolkit/JString.js" type = "text/javascript" charset = "utf-8"></script>
+<script src = "../../js/system/Configure.js" type = "text/javascript" charset = "utf-8"></script>
+<script src = "../../lib/js/JSTree.js" type = "text/javascript" charset = "utf-8"></script>
+<script>
+////////////////////////////////////////////////////////////////////////////////
+// ECMAScript规范
+////////////////////////////////////////////////////////////////////////////////
+"use strict";
+//////////////////////////////////////////////////////////////////////////////
+// JSTree对象
+//////////////////////////////////////////////////////////////////////////////
+let menuTree = new JSTree();
+menuTree.setNode(
+  [
+    {
+      "text": "<span>Palest</span><span>Ink</span>"
+    },
+    {
+      "text": "Database",
+      "list": [
+        {
+          "text": "Management",
+          "link": "../database/management.html"
+        },
+        {
+          "text": "SQL",
+          "link": "../database/sql.html"
+        }
+      ]
+    },
+    {
+      "text": "Module",
+      "list": [
+        {
+          "text": "Management",
+          "link": "../module/management.html"
+        },
+        {
+          "text": "Source Code",
+          "link": "../module/source_code.html"
+        },
+        {
+          "text": "Dispatch",
+          "link": "../module/dispatch.html"
+        }
+      ]
+    },
+    {
+      "text": "Copyright 2018 Palestink.com"
+    }
+  ]
+);
+menuTree.setLinkTarget("pageArea");
+menuTree.setClass("menuTree");
+menuTree.generateCode();
+////////////////////////////////////////////////////////////////////////////////
+// 输出代码
+////////////////////////////////////////////////////////////////////////////////
+$(document).ready(function() {
+  $("#menuTreeArea").html(menuTree.getCode());
+  menuTree.update();
+  // 调整菜单显示的高度
+  $("#menuTreeArea").css("height", $(window).height() + "px");
+  // 调整菜单最后一栏置底
+  if ($(window).height() > $(`#${menuTree.getId()}`).height()) {
+    $(".menuTree").find("li:last-child").find("span").css("margin-top", $(window).height() - $(`#${menuTree.getId()}`).height() + "px");
+  }
+  // 设置菜单滚动条属性
+  $("#menuTreeArea").niceScroll({
+    cursorcolor: "#65CEA7", //滚动条颜色
+    cursorwidth: "2px", //滚动条宽度
+    cursorborder: "0px", // 滚动条边框
+    cursorborderradius: "2px" //滚动条圆角
+  });
+  // 调整pageArea宽度
+  $("#pageArea").css("width", ($(window).width() - $(`#${menuTree.getId()}`).width()) + "px");
+  $("#pageArea").css("height", $(window).height() + "px");
+});
+</script>
+<title>Ant Colony</title>
+</head>
+<body>
+  <div>
+    <div id = "menuTreeArea"></div>
+    <iframe id = "pageArea" src = "../dashboard/dashboard.html" name = "pageArea"></iframe>
+  </div>
+</body>
+</html>

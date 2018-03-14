@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset = "utf-8" />
+<!-- *********************************************************************** -->
+<!-- plugin css -->
+<!-- *********************************************************************** -->
+<link rel = "stylesheet" href = "../../plugin/bootstrap/3.3.7/css/bootstrap.min.css">
+<!-- *********************************************************************** -->
+<!-- custom css -->
+<!-- *********************************************************************** -->
+<link rel = "stylesheet" type = "text/css" href = "../css/default_theme/JSCheckBox.css"/>
+<!-- *********************************************************************** -->
+<!-- plugin js -->
+<!-- *********************************************************************** -->
+<script src = "../../plugin/jquery/1.12.4/jquery.min.js" type = "text/javascript" charset = "utf-8"></script>
+<script src = "../../plugin/bootstrap/3.3.7/js/bootstrap.min.js" type = "text/javascript" charset = "utf-8"></script>
+<!-- *********************************************************************** -->
+<!-- custom js -->
+<!-- *********************************************************************** -->
+<script src = "../../js/toolkit/JString.js" type = "text/javascript" charset = "utf-8"></script>
+<script src = "../js/JSCheckBox.js" type = "text/javascript" charset = "utf-8"></script>
+<script>
+  //////////////////////////////////////////////////////////////////////////////
+  // ECMAScript规范
+  //////////////////////////////////////////////////////////////////////////////
+  "use strict";
+  //////////////////////////////////////////////////////////////////////////////
+  // 创建对象
+  //////////////////////////////////////////////////////////////////////////////
+  let jsCheckBox_1 = new JSCheckBox();
+  let jsCheckBox_2 = new JSCheckBox();
+  //////////////////////////////////////////////////////////////////////////////
+  // 设置属性
+  //////////////////////////////////////////////////////////////////////////////
+  jsCheckBox_1.setName("food");
+  jsCheckBox_1.setLabel("米饭");
+  jsCheckBox_1.setValue("rice");
+  jsCheckBox_2.setName("food");
+  jsCheckBox_2.setLabel("面条");
+  jsCheckBox_2.setValue("noodle");
+  //////////////////////////////////////////////////////////////////////////////
+  // 生成代码
+  //////////////////////////////////////////////////////////////////////////////
+  jsCheckBox_1.generateCode();
+  jsCheckBox_2.generateCode();
+  //////////////////////////////////////////////////////////////////////////////
+  // Start
+  //////////////////////////////////////////////////////////////////////////////
+  $(document).ready(function() {
+    // 输出代码
+    $("#outputArea").html(jsCheckBox_1.getCode() + jsCheckBox_2.getCode());
+  });
+</script>
+<title>Demo</title>
+</head>
+<body>
+  <div id = "outputArea"></div>
+</body>
+</html>

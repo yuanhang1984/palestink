@@ -1,8 +1,5 @@
 package library.encrypt;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
-
 /**
  * base64加密和解密
  */
@@ -14,7 +11,8 @@ public class Base64 {
          * @return 密文字符串
          */
         public static String encode(byte[] b) {
-                return (new BASE64Encoder().encode(b));
+                return (java.util.Base64.getEncoder().encodeToString(b));
+                // return (new BASE64Encoder().encode(b));
         }
 
         /**
@@ -24,6 +22,7 @@ public class Base64 {
          * @return 明文byte[]
          */
         public static byte[] decode(String s) throws Exception {
-                return new BASE64Decoder().decodeBuffer(s);
+                return (java.util.Base64.getDecoder().decode(s));
+                // return new BASE64Decoder().decodeBuffer(s);
         }
 }
