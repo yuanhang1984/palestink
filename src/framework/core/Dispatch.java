@@ -16,8 +16,6 @@ import org.json.JSONObject;
 import org.dom4j.Element;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
-//commons-fileupload-1.3.2.jar
-//commons-io-2.5.jar
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -36,7 +34,7 @@ public class Dispatch extends HttpServlet {
         /*
          * 模块的名称
          */
-        // private String moduleName;
+        private String moduleName;
 
         /*
          * 配置文件路径
@@ -52,11 +50,6 @@ public class Dispatch extends HttpServlet {
          * 全局dispatch配置MAP
          */
         // public static HashMap<String, framework.dispatch.object.Servlet> DISPATCH_PARAMETER_MAP = new HashMap<String, framework.dispatch.object.Servlet>();
-
-        /*
-         * 全局角色
-         */
-        private static HashMap<String, String> USER_ROLE_MAP = new HashMap<String, String>();
 
         /**
          * 构造函数
@@ -81,13 +74,12 @@ public class Dispatch extends HttpServlet {
                                 String name = servletElement.elementTextTrim("name");
                                 String description = servletElement.elementTextTrim("description");
                                 String namespace = servletElement.elementTextTrim("namespace").replaceAll("\\s", "");
-                                String permission = servletElement.elementTextTrim("permission");
                                 Element parameters = servletElement.element("parameters");
                                 /*
                                  * 一个接口的“参数列表”可以为空，但需要设置其他“参数”。这里检查的是“是否存在<parameters>标签。
                                  */
                                 if (null == parameters) {
-                                        this.dispatchParameterMap.put(name, new framework.dispatch.object.Servlet(name, description, namespace, permission, null));
+                                        this.dispatchParameterMap.put(name, new framework.dispatch.object.Servlet(this.moduleName, name, description, namespace, null));
                                         // Dispatch.DISPATCH_PARAMETER_MAP.put(this.moduleName + "." + servletName, new framework.dispatch.object.Servlet(servletName, sdboType, namespace, permission, null));
                                         continue;
                                 }
@@ -96,7 +88,7 @@ public class Dispatch extends HttpServlet {
                                  * 一个接口“参数列表”可以为空，但需要设置其他“参数”。这里检查的是“是否存在<parameter>标签（与上面不同）。
                                  */
                                 if ((null == parameterList) || (0 >= parameterList.size())) {
-                                        this.dispatchParameterMap.put(name, new framework.dispatch.object.Servlet(name, description, namespace, permission, null));
+                                        this.dispatchParameterMap.put(name, new framework.dispatch.object.Servlet(this.moduleName, name, description, namespace, null));
                                         // Dispatch.DISPATCH_PARAMETER_MAP.put(this.moduleName + "." + servletName, new framework.dispatch.object.Servlet(servletName, sdboType, namespace, permission, null));
                                         continue;
                                 }
@@ -119,7 +111,7 @@ public class Dispatch extends HttpServlet {
                                         list[i] = new Parameter(paramName, paramDescription, type, format, transform, constant, allowNull, fileMaxSize);
                                         i++;
                                 }
-                                this.dispatchParameterMap.put(name, new framework.dispatch.object.Servlet(name, description, namespace, permission, list));
+                                this.dispatchParameterMap.put(name, new framework.dispatch.object.Servlet(this.moduleName, name, description, namespace, list));
                                 // Dispatch.DISPATCH_PARAMETER_MAP.put(this.moduleName + "." + servletName, new framework.dispatch.object.Servlet(servletName, sdboType, namespace, permission, list));
                         }
                 } catch (Exception e) {
@@ -137,27 +129,25 @@ public class Dispatch extends HttpServlet {
          */
         private boolean checkServletPermission(HttpServletRequest request, HttpServletResponse response, framework.dispatch.object.Servlet servlet) {
                 HttpSession hs = request.getSession();
-                if (!servlet.getPermission().equalsIgnoreCase("none")) {
-                        String roleStr = (String) hs.getAttribute(Framework.USER_ROLE);
-                        if (null == roleStr) {
-                                return false;
-                        }
-                        String permission_list = Dispatch.USER_ROLE_MAP.get(roleStr);
-                        if (null == permission_list) {
-                                return false;
-                        }
-                        if (permission_list.equalsIgnoreCase("*")) {
-                                return true;
-                        }
-                        String[] arr = permission_list.split(";");
-                        for (int i = 0; i < arr.length; i++) {
-                                if (arr[i].equalsIgnoreCase(servlet.getPermission())) {
-                                        return true;
-                                }
-                        }
+                String roleStr = (String) hs.getAttribute(Framework.USER_ROLE);
+                if (null == roleStr) {
                         return false;
                 }
-                return true;
+                String permission_list = Framework.USER_ROLE_MAP.get(roleStr);
+                if (null == permission_list) {
+                        return false;
+                }
+                if (permission_list.equalsIgnoreCase("*")) {
+                        return true;
+                }
+                String[] arr = permission_list.split(";");
+                for (int i = 0; i < arr.length; i++) {
+                        // 权限比较字符串：模块名称.Servlet名称
+                        if (arr[i].equalsIgnoreCase(servlet.getModuleName() + "." + servlet.getName())) {
+                                return true;
+                        }
+                }
+                return false;
         }
 
         /**
@@ -185,7 +175,7 @@ public class Dispatch extends HttpServlet {
                         } else if (constStr.equalsIgnoreCase("#session_user_uuid")) {
                                 Object obj = request.getSession().getAttribute(Framework.USER_UUID);
                                 if (null == obj) {
-                                        Message.send(request, response, Message.RESULT.PARAMETER_IS_NULL, null, parameter.getName());
+                                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.PARAMETER_IS_NULL, null, parameter.getName());
                                         isBroken.setBool(true);
                                         return null;
                                 }
@@ -193,7 +183,7 @@ public class Dispatch extends HttpServlet {
                         } else if (constStr.equalsIgnoreCase("#session_user_role")) {
                                 Object obj = request.getSession().getAttribute(Framework.USER_ROLE);
                                 if (null == obj) {
-                                        Message.send(request, response, Message.RESULT.PARAMETER_IS_NULL, null, parameter.getName());
+                                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.PARAMETER_IS_NULL, null, parameter.getName());
                                         isBroken.setBool(true);
                                         return null;
                                 }
@@ -210,7 +200,7 @@ public class Dispatch extends HttpServlet {
                         } else {
                                 try {
                                         if (parameter.getType().equalsIgnoreCase("integer")) {
-                                                return Integer.getInteger(constStr);
+                                                return Integer.valueOf(constStr);
                                         } else if (parameter.getType().equalsIgnoreCase("string")) {
                                                 return constStr;
                                         } else if (parameter.getType().equalsIgnoreCase("double")) {
@@ -222,7 +212,7 @@ public class Dispatch extends HttpServlet {
                                         } else if (parameter.getType().equalsIgnoreCase("jsonarray")) {
                                                 return new JSONArray(constStr).toString();
                                         } else {
-                                                Message.send(request, response, Message.RESULT.PARAMETER_TRANSFORM_ERROR, null, parameter.getName());
+                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.PARAMETER_TRANSFORM_ERROR, null, parameter.getName());
                                                 isBroken.setBool(true);
                                                 return null;
                                         }
@@ -230,7 +220,7 @@ public class Dispatch extends HttpServlet {
                                         /*
                                          * 通过异常判断参数类型转换是否成功
                                          */
-                                        Message.send(request, response, Message.RESULT.PARAMETER_HANDLE_EXCEPTION, null, e.toString());
+                                        Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.PARAMETER_HANDLE_EXCEPTION, null, e.toString());
                                         isBroken.setBool(true);
                                         return null;
                                 }
@@ -248,7 +238,7 @@ public class Dispatch extends HttpServlet {
                          * 如果不允许为空，但却是空。那么给出错误信息。
                          */
                         if (null == paramValue) {
-                                Message.send(request, response, Message.RESULT.PARAMETER_IS_NULL, null, parameter.getName());
+                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.PARAMETER_IS_NULL, null, parameter.getName());
                                 isBroken.setBool(true);
                                 return null;
                         }
@@ -261,7 +251,7 @@ public class Dispatch extends HttpServlet {
                          * 在不为空的状况下，用正则表达式检查参数合法性
                          */
                         if (false == CharacterString.regularExpressionCheck(parameter.getFormat(), paramValue)) {
-                                Message.send(request, response, Message.RESULT.PARAMETER_FORMAT_ERROR, null, parameter.getName());
+                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.PARAMETER_FORMAT_ERROR, null, parameter.getName());
                                 isBroken.setBool(true);
                                 return null;
                         }
@@ -273,7 +263,7 @@ public class Dispatch extends HttpServlet {
                                         try {
                                                 paramValue = Md5.encode(paramValue.getBytes("utf-8"));
                                         } catch (Exception e) {
-                                                Message.send(request, response, Message.RESULT.PARAMETER_TRANSFORM_ERROR, null, e.toString());
+                                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.PARAMETER_TRANSFORM_ERROR, null, e.toString());
                                                 isBroken.setBool(true);
                                                 return null;
                                         }
@@ -281,7 +271,7 @@ public class Dispatch extends HttpServlet {
                         }
                         try {
                                 if (parameter.getType().equalsIgnoreCase("integer")) {
-                                        return Integer.getInteger(paramValue);
+                                        return Integer.valueOf(paramValue);
                                 } else if (parameter.getType().equalsIgnoreCase("string")) {
                                         return paramValue;
                                 } else if (parameter.getType().equalsIgnoreCase("double")) {
@@ -293,7 +283,7 @@ public class Dispatch extends HttpServlet {
                                 } else if (parameter.getType().equalsIgnoreCase("jsonarray")) {
                                         return new JSONArray(paramValue).toString();
                                 } else {
-                                        Message.send(request, response, Message.RESULT.PARAMETER_TRANSFORM_ERROR, null, parameter.getName());
+                                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.PARAMETER_TRANSFORM_ERROR, null, parameter.getName());
                                         isBroken.setBool(true);
                                         return null;
                                 }
@@ -301,7 +291,7 @@ public class Dispatch extends HttpServlet {
                                 /*
                                  * 通过异常判断参数类型转换是否成功
                                  */
-                                Message.send(request, response, Message.RESULT.PARAMETER_HANDLE_EXCEPTION, null, e.toString());
+                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.PARAMETER_HANDLE_EXCEPTION, null, e.toString());
                                 isBroken.setBool(true);
                                 return null;
                         }
@@ -341,19 +331,19 @@ public class Dispatch extends HttpServlet {
                                  * 这里对文件尺寸的大小判断，基于文件全部上传后才行。
                                  */
                                 if (fi.getSize() >= parameter.getFileMaxSize()) {
-                                        Message.send(request, response, Message.RESULT.FILE_OVERSIZE, null, null);
+                                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.FILE_OVERSIZE, null, null);
                                         isBroken.setBool(true);
                                         return null;
                                 }
                                 if (false == CharacterString.regularExpressionCheck(parameter.getFormat(), fi.getName().toLowerCase())) {
-                                        Message.send(request, response, Message.RESULT.FILE_SUFFIX_INVALID, null, null);
+                                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.FILE_SUFFIX_INVALID, null, null);
                                         isBroken.setBool(true);
                                         return null;
                                 }
                         }
                         if (true == noFile) {
                                 if (false == parameter.getAllowNull()) {
-                                        Message.send(request, response, Message.RESULT.FILE_IS_NULL, null, null);
+                                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.FILE_IS_NULL, null, null);
                                         isBroken.setBool(true);
                                         return null;
                                 }
@@ -363,17 +353,30 @@ public class Dispatch extends HttpServlet {
                         /*
                          * 利用FileSizeLimitExceededException异常限制文件上传的大小
                          */
-                        Message.send(request, response, Message.RESULT.FILE_OVERSIZE, null, null);
+                        Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.FILE_OVERSIZE, null, null);
                         isBroken.setBool(true);
                         return null;
                 } catch (FileUploadException e) {
-                        Message.send(request, response, Message.RESULT.FILE_UPLOAD_EXCEPTION, null, e.toString());
+                        Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.FILE_UPLOAD_EXCEPTION, null, e.toString());
                         isBroken.setBool(true);
                         return null;
                 } catch (Exception e) {
-                        Message.send(request, response, Message.RESULT.EXCEPTION, null, e.toString());
+                        Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, e.toString());
                         isBroken.setBool(true);
                         return null;
+                }
+        }
+
+        /**
+         * 给未登录的用户分配“访客”角色
+         * 
+         * @param request 当前连接下的request
+         */
+        private void allocateRole(HttpServletRequest request) {
+                HttpSession hs = request.getSession();
+                String roleStr = (String) hs.getAttribute(Framework.USER_ROLE);
+                if (null == roleStr) {
+                        hs.setAttribute(Framework.USER_ROLE, Framework.ROLE_VISITOR);
                 }
         }
 
@@ -384,7 +387,7 @@ public class Dispatch extends HttpServlet {
         @Override
         public void init() throws ServletException {
                 super.init();
-                // this.moduleName = this.getInitParameter("moduleName");
+                this.moduleName = this.getInitParameter("moduleName");
                 this.configFilePath = this.getInitParameter("path");
                 this.initDispatchParameterMap();
                 // Framework.LOG.info(Dispatch.MODULE_NAME, "[" + this.moduleName + "] Load Complete");
@@ -404,6 +407,10 @@ public class Dispatch extends HttpServlet {
         @Override
         public void doPost(HttpServletRequest request, HttpServletResponse response) {
                 /*
+                 * 给未登录的用户分配“访客”角色
+                 */
+                this.allocateRole(request);
+                /*
                  * 接收servletName参数
                  */
                 String name = null;
@@ -415,7 +422,7 @@ public class Dispatch extends HttpServlet {
                         name = matcher.group(1);
                 }
                 if ((null == name) || (0 >= name.length())) {
-                        Message.send(request, response, Message.RESULT.NO_SERVLET_NAME, null, null);
+                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.NO_SERVLET_NAME, null, null);
                         return;
                 }
                 /*
@@ -423,14 +430,14 @@ public class Dispatch extends HttpServlet {
                  */
                 framework.dispatch.object.Servlet s = this.dispatchParameterMap.get(name);
                 if (null == s) {
-                        Message.send(request, response, Message.RESULT.NO_SERVLET_NAME, null, name);
+                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.NO_SERVLET_NAME, null, name);
                         return;
                 }
                 /*
                  * 检查操作权限
                  */
                 if (false == this.checkServletPermission(request, response, s)) {
-                        Message.send(request, response, Message.RESULT.NO_PERMISSION, null, name);
+                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.NO_PERMISSION, null, name);
                         return;
                 }
                 /*

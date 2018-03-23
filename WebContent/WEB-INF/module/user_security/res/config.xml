@@ -1,0 +1,37 @@
+﻿<?xml version = "1.0" encoding = "utf-8"?>
+<!DOCTYPE xml>
+<Config>
+    <!-- 框架配置所需 -->
+    <!--
+        [SourceCode]
+            rebuild
+                0 不编译.
+                1 编译.
+            command: 编译源码的命令.多个jar和java之间用";"分隔.
+    -->
+    <SourceCode rebuild = "1" command = "javac -g -encoding utf-8 -cp ${WEB_APP}/WEB-INF/lib/*;${WEB_APP}/WEB-INF/classes -d ${WEB_APP}/WEB-INF/module/user_security/bin ${WEB_APP}/WEB-INF/module/user_security/src/user_security/necessary/Config.java ${WEB_APP}/WEB-INF/module/user_security/src/user_security/necessary/Custom.java ${WEB_APP}/WEB-INF/module/user_security/src/user_security/necessary/Daemon.java ${WEB_APP}/WEB-INF/module/user_security/src/user_security/optional/LogIOn.java ${WEB_APP}/WEB-INF/module/user_security/src/user_security/optional/RolePermission.java" />
+    <!--
+        [Module]
+            enable
+                true 启用模块.
+                false 禁用模块.
+    -->
+    <Module enable = "ture" />
+    <!--
+        [Docs]
+            enable
+                true 启用Api.
+                false 禁用Api.
+    -->
+    <Docs enable = "true" />
+    <!-- 其他业务所需 -->
+    <!--
+         user_security模块用于用户安全的相关操作.
+    -->
+    <!--
+         [LogIOn]
+         loginFailedRetryCount: 登录失败重试计数(单位:次).
+         accountFrozenTime: 账户冻结时间(单位:分钟).
+    -->
+    <LogIOn loginFailedRetryCount = "5" accountFrozenTime = "10" />
+</Config>

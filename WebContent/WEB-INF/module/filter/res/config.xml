@@ -1,44 +1,47 @@
 ﻿<?xml version = "1.0" encoding = "utf-8"?>
 <!DOCTYPE xml>
 <Config>
-        <!-- 框架配置所需 -->
-        <!--
-                [SourceCode]
-                rebuild: 0 不编译.
-                         1 编译.
-                command: 编译源码的命令.多个jar和java之间用";"分隔.
-        -->
-        <SourceCode rebuild = "1" command = "javac -g -encoding utf-8 -cp ${WEB_APP}/WEB-INF/lib/*;${WEB_APP}/WEB-INF/classes -d ${WEB_APP}/WEB-INF/module/filter/bin ${WEB_APP}/WEB-INF/module/filter/src/filter/necessary/Config.java ${WEB_APP}/WEB-INF/module/filter/src/filter/necessary/Custom.java ${WEB_APP}/WEB-INF/module/filter/src/filter/necessary/Daemon.java" />
-        <!--
-                [Module]
-                enable: true 启用模块.
-                        false 禁用模块.
-        -->
-        <Module enable = "ture" />
-        <!--
-                [Docs]
-                enable: true 启用Api.
-                        false 禁用Api.
-        -->
-        <Docs enable = "true" />
-        <!-- 其他业务所需 -->
-        <!-- header数据 -->
-        <!--
-             [HttpHeader]
-             everyOrigin: true 动态添加Access-Control-Allow-Origin为访问来源.
-                          false 不动态添加.
-             requestCharacterEncoding: Request的编码.
-             responseCharacterEncoding: Response的编码.
-             responseContentType: Response内容的类型.
-        -->
-        <HttpHeader everyOrigin = "true" requestCharacterEncoding = "utf-8" responseCharacterEncoding = "utf-8" responseContentType = "application/json">
-                <!--
-                     [Set]
-                     key: header的name.
-                     value: header的value.
-                -->
-                <Set key = "Access-Control-Allow-Credentials" value = "true" />
-                <Set key = "Access-Control-Allow-Methods" value = "POST, GET, DELETE, PUT, OPTIONS" />
-        </HttpHeader>
+    <!-- 框架配置所需 -->
+    <!--
+        [SourceCode]
+            rebuild
+                0 不编译.
+                1 编译.
+            command: 编译源码的命令.多个jar和java之间用";"分隔.
+    -->
+    <SourceCode rebuild = "1" command = "javac -g -encoding utf-8 -cp ${WEB_APP}/WEB-INF/lib/*;${WEB_APP}/WEB-INF/classes -d ${WEB_APP}/WEB-INF/module/filter/bin ${WEB_APP}/WEB-INF/module/filter/src/filter/necessary/Config.java ${WEB_APP}/WEB-INF/module/filter/src/filter/necessary/Custom.java ${WEB_APP}/WEB-INF/module/filter/src/filter/necessary/Daemon.java" />
+    <!--
+        [Module]
+            enable
+                true 启用模块.
+                false 禁用模块.
+    -->
+    <Module enable = "ture" />
+    <!--
+        [Docs]
+            enable
+                true 启用Api.
+                false 禁用Api.
+    -->
+    <Docs enable = "true" />
+    <!-- 其他业务所需 -->
+    <!-- header数据 -->
+    <!--
+        [HttpHeader]
+            everyOrigin
+                true 动态添加Access-Control-Allow-Origin为访问来源.
+                false 不动态添加.
+            requestCharacterEncoding: Request的编码.
+            responseCharacterEncoding: Response的编码.
+            responseContentType: Response内容的类型.
+    -->
+    <HttpHeader everyOrigin = "true" requestCharacterEncoding = "utf-8" responseCharacterEncoding = "utf-8" responseContentType = "application/json">
+    <!--
+        [Set]
+            key: header的name.
+            value: header的value.
+    -->
+    <Set key = "Access-Control-Allow-Credentials" value = "true" />
+    <Set key = "Access-Control-Allow-Methods" value = "POST, GET, DELETE, PUT, OPTIONS" />
+    </HttpHeader>
 </Config>
-

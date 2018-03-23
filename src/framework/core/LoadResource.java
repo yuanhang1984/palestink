@@ -1,6 +1,7 @@
 package framework.core;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.lang.reflect.Method;
@@ -18,7 +19,6 @@ import framework.sdk.spec.module.necessary.DaemonAction;
 import framework.ext.factory.DbFactory;
 import framework.ext.factory.LogFactory;
 import framework.sdbo.object.SqlRepository;
-
 import org.dom4j.Element;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
@@ -28,6 +28,8 @@ public class LoadResource implements ServletContextListener {
 
         public LoadResource() {
                 Framework.MODULE_NAME_LIST = new ArrayList<String>();
+                Framework.MODULE_SERVLET_MAP = new HashMap<String, ArrayList<String>>();
+                Framework.USER_ROLE_MAP = new HashMap<String, String>();
         }
 
         /**
@@ -108,6 +110,31 @@ public class LoadResource implements ServletContextListener {
                         return false;
                 }
                 return true;
+        }
+
+        /**
+         * 获取指定dispatch.xml模块的Servlet集合
+         * @param path 文件的路径
+         * @return 返回该文件下的Servlet集合
+         */
+        private ArrayList<String> getModuleServlet(String path) {
+                ArrayList<String> list = new ArrayList<String>();
+                try {
+                        File file = new File(path);
+                        SAXReader reader = new SAXReader();
+                        Document doc = reader.read(file);
+                        Element root = doc.getRootElement();
+                        Element dispatch = root.element("dispatch");
+                        Iterator<?> servletIter = dispatch.elements("servlet").iterator();
+                        while (servletIter.hasNext()) {
+                                Element servletElement = (Element) servletIter.next();
+                                String name = servletElement.elementTextTrim("name");
+                                list.add(name);
+                        }
+                } catch (Exception e) {
+                        throw new RuntimeException("Load Module Servlet Error: " + System.getProperty("line.separator") + e.toString());
+                }
+                return list;
         }
 
         @Override
@@ -332,8 +359,10 @@ public class LoadResource implements ServletContextListener {
                                         // 添加模块的映射
                                         srDocs.addMapping("/module/docs/" + moduleName);
                                 }
-                                // 最后保存模块名称
+                                // 保存模块名称
                                 Framework.MODULE_NAME_LIST.add(moduleName);
+                                // 保存模块以及Servlet的数据
+                                Framework.MODULE_SERVLET_MAP.put(moduleName, this.getModuleServlet(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + moduleName + "/res/dispatch.xml"));
                         }
                 }
                 Framework.LOG.info(LoadResource.MODULE_NAME, "Resource Load Complete!");

@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import library.database.DatabaseKit;
-import framework.sdk.msg.Message;
 import framework.sdk.Framework;
+import framework.sdk.msg.Message;
 import framework.ext.factory.DbFactory;
 import framework.sdbo.object.Namespace;
 import framework.sdbo.object.SqlRepository;
@@ -76,21 +76,25 @@ public class SimpleDBO {
                 try {
                         Element sqlRoot = SqlRepository.get(moduleName);
                         if (null == sqlRoot) {
-                                msg.setResult(Message.RESULT.NO_MODULE_SQL);
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.NO_MODULE_SQL);
                                 return msg;
                         }
                         String sql = DatabaseKit.composeSql(sqlRoot, id, parameter);
                         if (0 >= sql.trim().length()) {
-                                msg.setResult(Message.RESULT.COMPOSE_SQL_ERROR);
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.COMPOSE_SQL_ERROR);
                                 return msg;
                         }
                         int res = DbFactory.iduExecute(c, sql);
+                        msg.setStatus(Message.STATUS.SUCCESS);
+                        msg.setError(Message.ERROR.NONE);
                         msg.setCount(res);
-                        msg.setResult(Message.RESULT.SUCCESS);
                         return msg;
                 } catch (Exception e) {
                         Framework.LOG.warn(SimpleDBO.MODULE_NAME, e.toString());
-                        msg.setResult(Message.RESULT.EXCEPTION);
+                        msg.setStatus(Message.STATUS.EXCEPTION);
+                        msg.setError(Message.ERROR.OTHER);
                         msg.setDetail(e.toString());
                         return msg;
                 }
@@ -106,12 +110,14 @@ public class SimpleDBO {
                 try {
                         Element sqlRoot = SqlRepository.get(moduleName);
                         if (null == sqlRoot) {
-                                msg.setResult(Message.RESULT.NO_MODULE_SQL);
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.NO_MODULE_SQL);
                                 return msg;
                         }
                         String sql = DatabaseKit.composeSql(sqlRoot, id, parameter);
                         if (0 >= sql.trim().length()) {
-                                msg.setResult(Message.RESULT.COMPOSE_SQL_ERROR);
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.COMPOSE_SQL_ERROR);
                                 return msg;
                         }
                         JSONArray a = new JSONArray();
@@ -133,13 +139,15 @@ public class SimpleDBO {
                                 }
                                 a.put(row);
                         }
-                        msg.setResult(Message.RESULT.SUCCESS);
+                        msg.setStatus(Message.STATUS.SUCCESS);
+                        msg.setError(Message.ERROR.NONE);
                         msg.setCount(a.length());
                         msg.setDetail(a);
                         return msg;
                 } catch (Exception e) {
                         Framework.LOG.warn(SimpleDBO.MODULE_NAME, e.toString());
-                        msg.setResult(Message.RESULT.EXCEPTION);
+                        msg.setStatus(Message.STATUS.EXCEPTION);
+                        msg.setError(Message.ERROR.OTHER);
                         msg.setDetail(e.toString());
                         return msg;
                 }
@@ -191,9 +199,9 @@ public class SimpleDBO {
         private boolean transactionIdu(Connection c, String type, String moduleName, String id, HashMap<String, Object> sqlParameter, boolean flip, boolean insist) {
                 try {
                         Message m = this.iduExecute(c, moduleName, id, sqlParameter);
-                        if (m.getResult() != Message.RESULT.SUCCESS) {// Success标记执行是否成功
+                        if (m.getStatus() != Message.STATUS.SUCCESS) {// Success标记执行是否成功
                                 c.rollback();
-                                Message.send(request, response, m.getResult(), null, "[" + type + "][" + id + "]");
+                                Message.send(request, response, m.getStatus(), m.getError(), null, "[" + type + "][" + id + "]");
                                 return false;
                         }
                         if (insist) {
@@ -203,13 +211,13 @@ public class SimpleDBO {
                         if (!flip) {
                                 if (0 >= m.getCount()) {// idu的执行结果未必大于0才是正确，但这里是以事务的方式来处理，所以要以是否大于0作为判断依据。
                                         c.rollback();
-                                        Message.send(request, response, Message.RESULT.IDU_NO_DATA, null, "[" + type + "][" + id + "]");
+                                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.IDU_NO_DATA, null, "[" + type + "][" + id + "]");
                                         return false;
                                 }
                         } else {
                                 if (0 < m.getCount()) {// 取反
                                         c.rollback();
-                                        Message.send(request, response, Message.RESULT.IDU_NO_DATA, null, "[" + type + "][" + id + "]");
+                                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.IDU_NO_DATA, null, "[" + type + "][" + id + "]");
                                         return false;
                                 }
                         }
@@ -218,11 +226,11 @@ public class SimpleDBO {
                         try {
                                 c.rollback();
                                 Framework.LOG.warn(SimpleDBO.MODULE_NAME, e.toString());
-                                Message.send(request, response, Message.RESULT.EXCEPTION, null, e.toString());
+                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, e.toString());
                                 return false;
                         } catch (Exception e2) {
                                 Framework.LOG.warn(SimpleDBO.MODULE_NAME, e2.toString());
-                                Message.send(request, response, Message.RESULT.EXCEPTION, null, e2.toString());
+                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, e2.toString());
                                 return false;
                         }
                 }
@@ -244,12 +252,12 @@ public class SimpleDBO {
                 try {
                         if (2 != type.split("<<").length) {
                                 c.rollback();
-                                Message.send(request, response, Message.RESULT.RESULT_ALIAS_ERROR, null, "[" + type + "][" + id + "]");
+                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.RESULT_ALIAS_ERROR, null, "[" + type + "][" + id + "]");
                                 return false;
                         }
                         if (2 != type.split("<<")[1].split(":").length) {
                                 c.rollback();
-                                Message.send(request, response, Message.RESULT.RESULT_PARAMETER_ERROR, null, "[" + type + "][" + id + "]");
+                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.RESULT_PARAMETER_ERROR, null, "[" + type + "][" + id + "]");
                                 return false;
                         }
                         // 结果集别名
@@ -257,7 +265,7 @@ public class SimpleDBO {
                         ArrayList<HashMap<String, Object>> list = aliasNameMap.get(aliasName);
                         if (null == list) {
                                 c.rollback();
-                                Message.send(request, response, Message.RESULT.RESULT_NOT_EXIST, null, "[" + type + "][" + id + "]");
+                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.RESULT_NOT_EXIST, null, "[" + type + "][" + id + "]");
                                 return false;
                         }
                         Iterator<HashMap<String, Object>> iter = list.iterator();
@@ -279,13 +287,13 @@ public class SimpleDBO {
                                         if (!flip) {
                                                 if (0 >= m.getCount()) {// idu的执行结果未必大于0才是正确，但这里是以事务的方式来处理，所以要以是否大于0作为判断依据。
                                                         c.rollback();
-                                                        Message.send(request, response, Message.RESULT.IDU_NO_DATA, null, "[" + type + "][" + id + "]");
+                                                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.IDU_NO_DATA, null, "[" + type + "][" + id + "]");
                                                         return false;
                                                 }
                                         } else {
                                                 if (0 < m.getCount()) {// 取反
                                                         c.rollback();
-                                                        Message.send(request, response, Message.RESULT.IDU_NO_DATA, null, "[" + type + "][" + id + "]");
+                                                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.IDU_NO_DATA, null, "[" + type + "][" + id + "]");
                                                         return false;
                                                 }
                                         }
@@ -296,11 +304,11 @@ public class SimpleDBO {
                         try {
                                 c.rollback();
                                 Framework.LOG.warn(SimpleDBO.MODULE_NAME, e.toString());
-                                Message.send(request, response, Message.RESULT.EXCEPTION, null, e.toString());
+                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, e.toString());
                                 return false;
                         } catch (Exception e2) {
                                 Framework.LOG.warn(SimpleDBO.MODULE_NAME, e2.toString());
-                                Message.send(request, response, Message.RESULT.EXCEPTION, null, e2.toString());
+                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, e2.toString());
                                 return false;
                         }
                 }
@@ -319,7 +327,7 @@ public class SimpleDBO {
          */
         private boolean recursiveSelect(Connection c, String moduleName, String id, HashMap<String, Object> sqlParameter, String idColumnName, String pidColumnName, ArrayList<HashMap<String, Object>> list) {
                 Message m = this.select(c, moduleName, id, sqlParameter);
-                if (m.getResult() != Message.RESULT.SUCCESS) {// Success标记执行是否成功
+                if (m.getStatus() != Message.STATUS.SUCCESS) {// Success标记执行是否成功
                         return false;
                 }
                 Iterator<HashMap<String, Object>> iter = m.getDataList().iterator();
@@ -349,12 +357,12 @@ public class SimpleDBO {
                         boolean isAlreadyFeedbackToClient = false;
                         ArrayList<Namespace> namespaceList = Namespace.analyseNamespace(this.namespace);
                         if (0 >= namespaceList.size()) {
-                                Message.send(request, response, Message.RESULT.ANALYSE_NAMESPACE_ERROR, null, null);
+                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.ANALYSE_NAMESPACE_ERROR, null, null);
                                 return;
                         }
                         c = DbFactory.getConnection();
                         if (null == c) {
-                                Message.send(request, response, Message.RESULT.DATABASE_CONNECTION_ERROR, null, null);
+                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.DATABASE_CONNECTION_ERROR, null, null);
                                 return;
                         }
                         c.setAutoCommit(false);
@@ -401,50 +409,50 @@ public class SimpleDBO {
                                         }
                                 } else if (type.equalsIgnoreCase("select")) {// select操作
                                         Message m = this.select(c, moduleName, id, sqlParameter);
-                                        if (m.getResult() != Message.RESULT.SUCCESS) {// Success标记执行是否成功
+                                        if (m.getStatus() != Message.STATUS.SUCCESS) {// Success标记执行是否成功
                                                 c.rollback();
-                                                Message.send(request, response, m.getResult(), null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, m.getStatus(), m.getError(), null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         if (0 >= m.getCount()) {// select的执行结果未必大于0才是正确，但这里是以事务的方式来处理，所以要以是否大于0作为判断依据。
                                                 c.rollback();
-                                                Message.send(request, response, Message.RESULT.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         if ((namespaceIndex + 1) >= namespaceList.size()) {
                                                 // 最后一个namespace，可以直接返回select的结果集。
                                                 c.commit();
-                                                Message.send(request, response, Message.RESULT.SUCCESS, m.getCount(), m.getDetail());
+                                                Message.send(request, response, Message.STATUS.SUCCESS, Message.ERROR.NONE, m.getCount(), m.getDetail());
                                                 return;
                                         }
                                 } else if (type.equalsIgnoreCase("!select")) {// !select操作
                                         Message m = this.select(c, moduleName, id, sqlParameter);
-                                        if (m.getResult() != Message.RESULT.SUCCESS) {// Success标记执行是否成功
+                                        if (m.getStatus() != Message.STATUS.SUCCESS) {// Success标记执行是否成功
                                                 c.rollback();
-                                                Message.send(request, response, m.getResult(), null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, m.getStatus(), m.getError(), null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         if (0 < m.getCount()) {// 取反
                                                 c.rollback();
-                                                Message.send(request, response, Message.RESULT.QUERY_EXIST_DATA, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.QUERY_EXIST_DATA, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                 } else if (type.toLowerCase().startsWith("select>>")) {
                                         if (2 != type.split(">>").length) {
                                                 c.rollback();
-                                                Message.send(request, response, Message.RESULT.RESULT_ALIAS_ERROR, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.RESULT_ALIAS_ERROR, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         String aliasName = type.split(">>")[1];
                                         Message m = this.select(c, moduleName, id, sqlParameter);
-                                        if (m.getResult() != Message.RESULT.SUCCESS) {// Success标记执行是否成功
+                                        if (m.getStatus() != Message.STATUS.SUCCESS) {// Success标记执行是否成功
                                                 c.rollback();
-                                                Message.send(request, response, m.getResult(), null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, m.getStatus(), m.getError(), null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         if (0 >= m.getCount()) {// select的执行结果未必大于0才是正确，但这里是以事务的方式来处理，所以要以是否大于0作为判断依据。
                                                 c.rollback();
-                                                Message.send(request, response, Message.RESULT.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         ArrayList<HashMap<String, Object>> list = m.getDataList();
@@ -452,17 +460,17 @@ public class SimpleDBO {
                                 } else if (type.toLowerCase().startsWith("recursive-select>>")) {
                                         if (2 != type.split(">>").length) {
                                                 c.rollback();
-                                                Message.send(request, response, Message.RESULT.RESULT_ALIAS_ERROR, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.RESULT_ALIAS_ERROR, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         if (2 != type.split(">>")[1].split(":").length) {
                                                 c.rollback();
-                                                Message.send(request, response, Message.RESULT.RESULT_PARAMETER_ERROR, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.RESULT_PARAMETER_ERROR, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         if (2 != type.split(">>")[1].split(":")[1].split(",").length) {
                                                 c.rollback();
-                                                Message.send(request, response, Message.RESULT.RESULT_PARAMETER_ERROR, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.RESULT_PARAMETER_ERROR, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         String aliasName = type.split(">>")[1].split(":")[0];
@@ -472,24 +480,24 @@ public class SimpleDBO {
                                         // ArrayList<Object> list = new ArrayList<Object>();
                                         if (!this.recursiveSelect(c, moduleName, id, sqlParameter, idColumnName, pidColumnName, list)) {
                                                 c.rollback();
-                                                Message.send(request, response, Message.RESULT.RECURSIVE_SELECT_ERROR, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.RECURSIVE_SELECT_ERROR, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         if (0 >= list.size()) {
                                                 c.rollback();
-                                                Message.send(request, response, Message.RESULT.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         aliasNameMap.put(aliasName, list);
                                 } else if (type.toLowerCase().startsWith("foreach-select<<")) {// 读取结果集后执行select操作
                                         if (2 != type.split("<<").length) {
                                                 c.rollback();
-                                                Message.send(request, response, Message.RESULT.RESULT_ALIAS_ERROR, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.RESULT_ALIAS_ERROR, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         if (2 != type.split("<<")[1].split(":").length) {
                                                 c.rollback();
-                                                Message.send(request, response, Message.RESULT.RESULT_PARAMETER_ERROR, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.RESULT_PARAMETER_ERROR, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         // 结果集别名
@@ -497,7 +505,7 @@ public class SimpleDBO {
                                         ArrayList<HashMap<String, Object>> list = aliasNameMap.get(aliasName);
                                         if (null == list) {
                                                 c.rollback();
-                                                Message.send(request, response, Message.RESULT.RESULT_NOT_EXIST, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.RESULT_NOT_EXIST, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         Iterator<HashMap<String, Object>> iter = list.iterator();
@@ -516,14 +524,14 @@ public class SimpleDBO {
                                                         }
                                                 }
                                                 Message m = this.select(c, moduleName, id, sqlParameter);
-                                                if (m.getResult() != Message.RESULT.SUCCESS) {// Success标记执行是否成功
+                                                if (m.getStatus() != Message.STATUS.SUCCESS) {// Success标记执行是否成功
                                                         c.rollback();
-                                                        Message.send(request, response, m.getResult(), null, "[" + type + "][" + id + "]");
+                                                        Message.send(request, response, m.getStatus(), m.getError(), null, "[" + type + "][" + id + "]");
                                                         return;
                                                 }
                                                 if (0 >= m.getCount()) {// select的执行结果未必大于0才是正确，但这里是以事务的方式来处理，所以要以是否大于0作为判断依据。
                                                         c.rollback();
-                                                        Message.send(request, response, Message.RESULT.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
+                                                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
                                                         return;
                                                 }
                                                 // 如果是最后一个namespace，那么就添加这个数据。
@@ -556,18 +564,18 @@ public class SimpleDBO {
                                                                 a.put(row);
                                                         }
                                                 }
-                                                Message.send(request, response, Message.RESULT.SUCCESS, a.length(), a.toString());
+                                                Message.send(request, response, Message.STATUS.SUCCESS, Message.ERROR.NONE, a.length(), a.toString());
                                                 return;
                                         }
                                 } else if (type.toLowerCase().startsWith("foreach-!select<<")) {// 读取结果集后执行!select操作
                                         if (2 != type.split("<<").length) {
                                                 c.rollback();
-                                                Message.send(request, response, Message.RESULT.RESULT_ALIAS_ERROR, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.RESULT_ALIAS_ERROR, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         if (2 != type.split("<<")[1].split(":").length) {
                                                 c.rollback();
-                                                Message.send(request, response, Message.RESULT.RESULT_PARAMETER_ERROR, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.RESULT_PARAMETER_ERROR, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         // 结果集别名
@@ -575,7 +583,7 @@ public class SimpleDBO {
                                         ArrayList<HashMap<String, Object>> list = aliasNameMap.get(aliasName);
                                         if (null == list) {
                                                 c.rollback();
-                                                Message.send(request, response, Message.RESULT.RESULT_NOT_EXIST, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.RESULT_NOT_EXIST, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         Iterator<HashMap<String, Object>> iter = list.iterator();
@@ -593,26 +601,26 @@ public class SimpleDBO {
                                                         }
                                                 }
                                                 Message m = this.select(c, moduleName, id, sqlParameter);
-                                                if (m.getResult() != Message.RESULT.SUCCESS) {// Success标记执行是否成功
+                                                if (m.getStatus() != Message.STATUS.SUCCESS) {// Success标记执行是否成功
                                                         c.rollback();
-                                                        Message.send(request, response, m.getResult(), null, "[" + type + "][" + id + "]");
+                                                        Message.send(request, response, m.getStatus(), m.getError(), null, "[" + type + "][" + id + "]");
                                                         return;
                                                 }
                                                 if (0 < m.getCount()) {// 取反
                                                         c.rollback();
-                                                        Message.send(request, response, Message.RESULT.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
+                                                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
                                                         return;
                                                 }
                                         }
                                 } else if (type.toLowerCase().startsWith("foreach-select>>")) {
                                         if (2 != type.split(">>").length) {
                                                 c.rollback();
-                                                Message.send(request, response, Message.RESULT.RESULT_ALIAS_ERROR, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.RESULT_ALIAS_ERROR, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         if (2 != type.split(">>")[1].split(":").length) {
                                                 c.rollback();
-                                                Message.send(request, response, Message.RESULT.RESULT_PARAMETER_ERROR, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.RESULT_PARAMETER_ERROR, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         // 结果集别名
@@ -620,7 +628,7 @@ public class SimpleDBO {
                                         ArrayList<HashMap<String, Object>> list = aliasNameMap.get(aliasName);
                                         if (null == list) {
                                                 c.rollback();
-                                                Message.send(request, response, Message.RESULT.RESULT_NOT_EXIST, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.RESULT_NOT_EXIST, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         Iterator<HashMap<String, Object>> iter = list.iterator();
@@ -638,14 +646,14 @@ public class SimpleDBO {
                                                         }
                                                 }
                                                 Message m = this.select(c, moduleName, id, sqlParameter);
-                                                if (m.getResult() != Message.RESULT.SUCCESS) {// Success标记执行是否成功
+                                                if (m.getStatus() != Message.STATUS.SUCCESS) {// Success标记执行是否成功
                                                         c.rollback();
-                                                        Message.send(request, response, m.getResult(), null, "[" + type + "][" + id + "]");
+                                                        Message.send(request, response, m.getStatus(), m.getError(), null, "[" + type + "][" + id + "]");
                                                         return;
                                                 }
                                                 if (0 >= m.getCount()) {// select的执行结果未必大于0才是正确，但这里是以事务的方式来处理，所以要以是否大于0作为判断依据。
                                                         c.rollback();
-                                                        Message.send(request, response, Message.RESULT.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
+                                                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
                                                         return;
                                                 }
                                                 aliasNameMap.put(aliasName, m.getDataList());
@@ -658,7 +666,7 @@ public class SimpleDBO {
                                                 Method classMethod = null;
                                                 if (3 > id.split("\\.").length) {
                                                         c.rollback();
-                                                        Message.send(request, response, Message.RESULT.CUSTOM_CLASS_FORMAT_ERROR, null, "[" + type + "][" + id + "]");
+                                                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.CUSTOM_CLASS_FORMAT_ERROR, null, "[" + type + "][" + id + "]");
                                                         return;
                                                 }
                                                 String tmpId = id;
@@ -674,28 +682,39 @@ public class SimpleDBO {
                                                 Constructor<?> constructor = businessClass.getConstructor(paramsType);
                                                 Object o = constructor.newInstance(params);
                                                 Message m = (Message) classMethod.invoke(o);
-                                                if (Message.RESULT.ALREADY_FEEDBACK_TO_CLIENT == m.getResult()) {
+                                                // 首先判断是否为ALREADY_FEEDBACK_TO_CLIENT
+                                                if (m.getSign() == Message.SIGN.ALREADY_FEEDBACK_TO_CLIENT) {
+                                                        // 已通过custom向客户端返回数据
                                                         isAlreadyFeedbackToClient = true;
-                                                } else if (m.getResult() != Message.RESULT.SUCCESS) {// Success标记执行是否成功
-                                                        c.rollback();
-                                                        Message.send(request, response, m.getResult(), null, m.getDetail());
-                                                        return;
+                                                } else {
+                                                        // 如果是最后一个namespace，可以直接返回custom执行的结果。
+                                                        if ((namespaceIndex + 1) >= namespaceList.size()) {
+                                                                Message.send(request, response, m.getStatus(), m.getError(), m.getCount(), m.getDetail());
+                                                                c.commit();
+                                                                return;
+                                                        }
+                                                        // 如果执行失败，回滚操作返回结果
+                                                        if (m.getStatus() != Message.STATUS.SUCCESS) {
+                                                                c.rollback();
+                                                                Message.send(request, response, m.getStatus(), m.getError(), m.getCount(), m.getDetail());
+                                                                return;
+                                                        }
                                                 }
                                         } catch (Exception e) {
                                                 c.rollback();
                                                 Framework.LOG.warn(SimpleDBO.MODULE_NAME, e.toString());
-                                                Message.send(request, response, Message.RESULT.EXCEPTION, null, e.toString());
+                                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, e.toString());
                                                 return;
                                         }
                                 } else if (type.toLowerCase().startsWith("foreach-custom<<")) {
                                         if (2 != type.split("<<").length) {
                                                 c.rollback();
-                                                Message.send(request, response, Message.RESULT.RESULT_ALIAS_ERROR, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.RESULT_ALIAS_ERROR, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         if (2 != type.split("<<")[1].split(":").length) {
                                                 c.rollback();
-                                                Message.send(request, response, Message.RESULT.RESULT_PARAMETER_ERROR, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.RESULT_PARAMETER_ERROR, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         // 结果集别名
@@ -703,7 +722,7 @@ public class SimpleDBO {
                                         ArrayList<HashMap<String, Object>> list = aliasNameMap.get(aliasName);
                                         if (null == list) {
                                                 c.rollback();
-                                                Message.send(request, response, Message.RESULT.RESULT_NOT_EXIST, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.RESULT_NOT_EXIST, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         Iterator<HashMap<String, Object>> iter = list.iterator();
@@ -727,7 +746,7 @@ public class SimpleDBO {
                                                         Method classMethod = null;
                                                         if (3 > id.split("\\.").length) {
                                                                 c.rollback();
-                                                                Message.send(request, response, Message.RESULT.CUSTOM_CLASS_FORMAT_ERROR, null, "[" + type + "][" + id + "]");
+                                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.CUSTOM_CLASS_FORMAT_ERROR, null, "[" + type + "][" + id + "]");
                                                                 return;
                                                         }
                                                         String tmpId = id;
@@ -743,23 +762,34 @@ public class SimpleDBO {
                                                         Constructor<?> constructor = businessClass.getConstructor(paramsType);
                                                         Object o = constructor.newInstance(params);
                                                         Message m = (Message) classMethod.invoke(o);
-                                                        if (Message.RESULT.ALREADY_FEEDBACK_TO_CLIENT == m.getResult()) {
+                                                        // 首先判断是否为ALREADY_FEEDBACK_TO_CLIENT
+                                                        if (m.getSign() == Message.SIGN.ALREADY_FEEDBACK_TO_CLIENT) {
+                                                                // 已通过custom向客户端返回数据
                                                                 isAlreadyFeedbackToClient = true;
-                                                        } else if (m.getResult() != Message.RESULT.SUCCESS) {// Success标记执行是否成功
-                                                                c.rollback();
-                                                                Message.send(request, response, m.getResult(), null, m.getDetail());
-                                                                return;
+                                                        } else {
+                                                                // 如果是最后一个namespace，可以直接返回custom执行的结果。
+                                                                if ((namespaceIndex + 1) >= namespaceList.size()) {
+                                                                        Message.send(request, response, m.getStatus(), m.getError(), m.getCount(), m.getDetail());
+                                                                        c.commit();
+                                                                        return;
+                                                                }
+                                                                // 如果执行失败，回滚操作返回结果
+                                                                if (m.getStatus() != Message.STATUS.SUCCESS) {
+                                                                        c.rollback();
+                                                                        Message.send(request, response, m.getStatus(), m.getError(), m.getCount(), m.getDetail());
+                                                                        return;
+                                                                }
                                                         }
                                                 } catch (Exception e) {
                                                         c.rollback();
                                                         Framework.LOG.warn(SimpleDBO.MODULE_NAME, e.toString());
-                                                        Message.send(request, response, Message.RESULT.EXCEPTION, null, e.toString());
+                                                        Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, e.toString());
                                                         return;
                                                 }
                                         }
                                 } else {
                                         c.rollback();
-                                        Message.send(request, response, Message.RESULT.TRANSACTION_TYPE_ERROR, null, "[" + type + "][" + id + "]");
+                                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.TRANSACTION_TYPE_ERROR, null, "[" + type + "][" + id + "]");
                                         return;
                                 }
                                 namespaceIndex++;
@@ -767,15 +797,16 @@ public class SimpleDBO {
                         c.commit();
                         // 如果已经向客户端反馈了结果，那么这里不用再次调用。比如用于文件下载的时候，已经通过Custom向客户端输出了数据。这里无需、也不能调用send方法。
                         if (!isAlreadyFeedbackToClient) {
-                                Message.send(request, response, Message.RESULT.SUCCESS, null, null);
+                                Message.send(request, response, Message.STATUS.SUCCESS, Message.ERROR.NONE, null, null);
                         }
                 } catch (Exception e) {
                         try {
                                 c.rollback();
                                 Framework.LOG.warn(SimpleDBO.MODULE_NAME, e.toString());
-                                Message.send(request, response, Message.RESULT.EXCEPTION, null, e.toString());
+                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, e.toString());
                         } catch (Exception e2) {
                                 Framework.LOG.warn(SimpleDBO.MODULE_NAME, e2.toString());
+                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, e2.toString());
                         }
                 } finally {
                         try {

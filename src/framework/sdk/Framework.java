@@ -1,5 +1,6 @@
 package framework.sdk;
 
+import java.util.HashMap;
 import java.util.ArrayList;
 import framework.sdk.log.Log;
 
@@ -15,6 +16,16 @@ public class Framework {
         public static ArrayList<String> MODULE_NAME_LIST;
 
         /*
+         * 模块名称以及Servlet
+         */
+        public static HashMap<String, ArrayList<String>> MODULE_SERVLET_MAP;
+
+        /*
+         * 用户角色对应Map
+         */
+        public static HashMap<String, String> USER_ROLE_MAP;
+
+        /*
          * 声明全局日志对象
          */
         public static Log LOG = null;
@@ -28,6 +39,12 @@ public class Framework {
          * 账号角色的session名称
          */
         public static final String USER_ROLE = "user_role";
+
+        /*
+         * “访客”角色
+         * 给未登录用户分配的角色
+         */
+        public static final String ROLE_VISITOR = "role_visitor";
 
         /*
          * 日志源码编译选项

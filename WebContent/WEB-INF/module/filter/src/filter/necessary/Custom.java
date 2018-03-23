@@ -8,8 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 import framework.sdk.spec.module.necessary.CustomAction;
 
 public class Custom extends CustomAction {
-        public static final String MODULE_NAME = "filter.Custom";
-
         public Custom(HttpServlet httpServlet, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Connection connection, HashMap<String, Object> parameter) {
                 super(httpServlet, httpServletRequest, httpServletResponse, connection, parameter);
         }

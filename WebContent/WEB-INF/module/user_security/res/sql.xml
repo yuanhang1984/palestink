@@ -1,0 +1,132 @@
+﻿<?xml version = "1.0" encoding = "utf-8" ?>
+<!DOCTYPE xml>
+<Sql>
+    <!-- [用户安全_角色][user-security_role] -->
+    <insert id = "insertRole" description = "添加角色">
+        <![CDATA[insert into `user-security_role` (`uuid`, `name`, `description`, `permission_list`) values (#{uuid}, #{name}, #{description}, #{permission_list})]]>
+    </insert>
+    <delete id = "deleteRole" description = "删除角色">
+        <![CDATA[delete from `user-security_role`]]>
+        <where>
+            <if parameterName = "uuid" parameterValue = "#null" operatorType = "unequal">
+                <![CDATA[and `uuid` = #{uuid}]]>
+            </if>
+        </where>
+    </delete>
+    <update id = "updateRole" description = "修改角色">
+        <![CDATA[update `user-security_role`]]>
+        <set>
+            <if parameterName = "name" parameterValue = "#null" operatorType = "unequal">
+                <![CDATA[`name` = #{name},]]>
+            </if>
+            <if parameterName = "description" parameterValue = "#null" operatorType = "unequal">
+                <![CDATA[`description` = #{description},]]>
+            </if>
+            <if parameterName = "permission_list" parameterValue = "#null" operatorType = "unequal">
+                <![CDATA[`permission_list` = #{permission_list},]]>
+            </if>
+        </set>
+        <where>
+            <if parameterName = "uuid" parameterValue = "#null" operatorType = "unequal">
+                <![CDATA[and `uuid` = #{uuid}]]>
+            </if>
+        </where>
+    </update>
+    <select id = "selectRole" description = "查询角色">
+        <![CDATA[select * from `user-security_role`]]>
+        <where>
+            <if parameterName = "uuid" parameterValue = "#null" operatorType = "unequal">
+                <![CDATA[and `uuid` = #{uuid}]]>
+            </if>
+            <if parameterName = "ne_uuid" parameterValue = "#null" operatorType = "unequal">
+                <![CDATA[and `uuid` != #{ne_uuid}]]>
+            </if>
+            <if parameterName = "name" parameterValue = "#null" operatorType = "unequal">
+                <![CDATA[and `name` = #{name}]]>
+            </if>
+        </where>
+        <![CDATA[ order by `id` desc]]>
+        <if parameterName = "offset" parameterValue = "#null" operatorType = "unequal">
+            <![CDATA[limit #{offset},]]>
+        </if>
+        <if parameterName = "rows" parameterValue = "#null" operatorType = "unequal">
+            <![CDATA[#{rows}]]>
+        </if>
+    </select>
+    <!-- [用户安全_用户][user-security_user] -->
+    <insert id = "insertUser" description = "添加用户">
+        <![CDATA[insert into `user-security_user` (`uuid`, `name`, `password`, `role`, `failed_retry_count`, `frozen_datetime`, `status`) values (#{uuid}, #{name}, #{password}, #{role}, #{failed_retry_count}, #{frozen_datetime}, #{status})]]>
+    </insert>
+    <delete id = "deleteUser" description = "删除用户安全">
+        <![CDATA[delete from `user-security_user`]]>
+        <where>
+            <if parameterName = "uuid" parameterValue = "#null" operatorType = "unequal">
+                <![CDATA[and `uuid` = #{uuid}]]>
+            </if>
+        </where>
+    </delete>
+    <update id = "updateUser" description = "修改用户">
+        <![CDATA[update `user-security_user`]]>
+        <set>
+            <if parameterName = "name" parameterValue = "#null" operatorType = "unequal">
+                <![CDATA[`name` = #{name},]]>
+            </if>
+            <if parameterName = "password" parameterValue = "#null" operatorType = "unequal">
+                <![CDATA[`password` = #{password},]]>
+            </if>
+            <if parameterName = "role" parameterValue = "#null" operatorType = "unequal">
+                <![CDATA[`role` = #{role},]]>
+            </if>
+            <if parameterName = "failed_retry_count" parameterValue = "#null" operatorType = "unequal">
+                <![CDATA[`failed_retry_count` = #{failed_retry_count},]]>
+            </if>
+            <if parameterName = "frozen_datetime" parameterValue = "#null" operatorType = "unequal">
+                <![CDATA[`frozen_datetime` = #{frozen_datetime},]]>
+            </if>
+            <if parameterName = "frozen_datetime" parameterValue = "set_null" operatorType = "equal">
+                <![CDATA[`frozen_datetime` = null,]]>
+            </if>
+            <if parameterName = "status" parameterValue = "#null" operatorType = "unequal">
+                <![CDATA[`status` = #{status},]]>
+            </if>
+        </set>
+        <where>
+            <if parameterName = "uuid" parameterValue = "#null" operatorType = "unequal">
+                <![CDATA[and `uuid` = #{uuid}]]>
+            </if>
+        </where>
+    </update>
+    <select id = "selectUser" description = "查询用户">
+        <![CDATA[select * from `user-security_user`]]>
+        <where>
+            <if parameterName = "uuid" parameterValue = "#null" operatorType = "unequal">
+                <![CDATA[and `uuid` = #{uuid}]]>
+            </if>
+            <if parameterName = "ne_uuid" parameterValue = "#null" operatorType = "unequal">
+                <![CDATA[and `uuid` != #{ne_uuid}]]>
+            </if>
+            <if parameterName = "name" parameterValue = "#null" operatorType = "unequal">
+                <![CDATA[and `name` = #{name}]]>
+            </if>
+            <if parameterName = "password" parameterValue = "#null" operatorType = "unequal">
+                <![CDATA[and `password` = #{password}]]>
+            </if>
+            <if parameterName = "role" parameterValue = "#null" operatorType = "unequal">
+                <![CDATA[and `role` = #{role}]]>
+            </if>
+            <if parameterName = "failed_retry_count" parameterValue = "#null" operatorType = "unequal">
+                <![CDATA[and `failed_retry_count` = #{failed_retry_count}]]>
+            </if>
+            <if parameterName = "status" parameterValue = "#null" operatorType = "unequal">
+                <![CDATA[and `status` = #{status}]]>
+            </if>
+        </where>
+        <![CDATA[ order by `id` desc]]>
+        <if parameterName = "offset" parameterValue = "#null" operatorType = "unequal">
+            <![CDATA[limit #{offset},]]>
+        </if>
+        <if parameterName = "rows" parameterValue = "#null" operatorType = "unequal">
+            <![CDATA[#{rows}]]>
+        </if>
+    </select>
+</Sql>

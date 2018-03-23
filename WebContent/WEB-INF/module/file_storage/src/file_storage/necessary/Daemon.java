@@ -30,7 +30,7 @@ class ExecuteThread extends Thread {
                 int res = 0;
                 Element sqlRoot = SqlRepository.get("file_storage");
                 if (null == sqlRoot) {
-                        Framework.LOG.error(Daemon.MODULE_NAME, Message.transformStatus(Message.RESULT.NO_MODULE_SQL));
+                        Framework.LOG.error(Daemon.MODULE_NAME, Message.ERROR.NO_MODULE_SQL.toString());
                         return;
                 }
                 try {
@@ -42,7 +42,7 @@ class ExecuteThread extends Thread {
                                 p.put("uuid", uuid);
                                 sql = DatabaseKit.composeSql(sqlRoot, "deleteStorageFile", p);
                                 if (0 >= sql.trim().length()) {
-                                        Framework.LOG.error(Daemon.MODULE_NAME, Message.transformStatus(Message.RESULT.COMPOSE_SQL_ERROR) + "[deleteStorageFile]");
+                                        Framework.LOG.error(Daemon.MODULE_NAME, Message.ERROR.COMPOSE_SQL_ERROR.toString() + "[deleteStorageFile]");
                                         this.connection.rollback();
                                         return;
                                 }
@@ -56,7 +56,7 @@ class ExecuteThread extends Thread {
                                 p.put("file_uuid", uuid);
                                 sql = DatabaseKit.composeSql(sqlRoot, "deleteStorageRepository", p);
                                 if (0 >= sql.trim().length()) {
-                                        Framework.LOG.error(Daemon.MODULE_NAME, Message.transformStatus(Message.RESULT.COMPOSE_SQL_ERROR) + "[deleteStorageRepository]");
+                                        Framework.LOG.error(Daemon.MODULE_NAME, Message.ERROR.COMPOSE_SQL_ERROR.toString() + "[deleteStorageRepository]");
                                         this.connection.rollback();
                                         return;
                                 }
@@ -89,14 +89,14 @@ class ExecuteThread extends Thread {
                 Framework.LOG.info(Daemon.MODULE_NAME, "File Storage Daemon Start");
                 Element sqlRoot = SqlRepository.get("file_storage");
                 if (null == sqlRoot) {
-                        Framework.LOG.error(Daemon.MODULE_NAME, Message.transformStatus(Message.RESULT.NO_MODULE_SQL));
+                        Framework.LOG.error(Daemon.MODULE_NAME, Message.ERROR.NO_MODULE_SQL.toString());
                         return;
                 }
                 HashMap<String, Object> p = new HashMap<String, Object>();
                 p.put("under_expire_datetime", new java.sql.Timestamp(System.currentTimeMillis()));
                 String sql = DatabaseKit.composeSql(sqlRoot, "selectStorageFile", p);
                 if (0 >= sql.trim().length()) {
-                        Framework.LOG.error(Daemon.MODULE_NAME, Message.transformStatus(Message.RESULT.COMPOSE_SQL_ERROR));
+                        Framework.LOG.error(Daemon.MODULE_NAME, Message.ERROR.COMPOSE_SQL_ERROR.toString());
                         return;
                 }
                 try {
@@ -104,8 +104,7 @@ class ExecuteThread extends Thread {
                                 ArrayList<String> expireFileUuidList = new ArrayList<String>();
                                 try {
                                         // 如果休眠设置在最后，出现异常时会频繁的执行操作。
-                                        // Thread.sleep(Config.FILE_CHECK_TIME_CYCLE * 1000 * 60);
-                                        Thread.sleep(1000 * 10);
+                                        Thread.sleep(Config.FILE_CHECK_TIME_CYCLE * 1000 * 60);
                                         ArrayList<HashMap<String, Object>> list = DbFactory.select(this.connection, sql);
                                         if (1 <= list.size()) {
                                                 Iterator<HashMap<String, Object>> iter = list.iterator();

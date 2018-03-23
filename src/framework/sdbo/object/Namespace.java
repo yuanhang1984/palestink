@@ -83,7 +83,7 @@ public class Namespace {
                                 String moduleName = matcher.group(2).trim();
                                 String id = matcher.group(3).trim();
                                 String parameter = matcher.group(4);
-                                if (null == parameter) {
+                                if ((null == parameter) || (0 >= parameter.length())) {
                                         parameter = Namespace.NO_PARAMETER;
                                 }
                                 if ((0 >= type.length()) || (0 >= moduleName.length()) || (0 >= id.length()) || (0 >= parameter.length())) {

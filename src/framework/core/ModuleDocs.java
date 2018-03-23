@@ -54,10 +54,10 @@ public class ModuleDocs extends HttpServlet {
                         if (s != null) {
                                 Message.responseToClient(response, s);
                         } else {
-                                Message.send(request, response, Message.RESULT.EXCEPTION, null, "Module Document Read Error: " + System.getProperty("line.separator") + path);
+                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.OTHER, null, "Module Document Read Error: " + System.getProperty("line.separator") + path);
                         }
                 } catch (Exception e) {
-                        Message.send(request, response, Message.RESULT.EXCEPTION, null, e.toString());
+                        Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, e.toString());
                 }
         }
 }

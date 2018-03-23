@@ -25,7 +25,6 @@ import org.dom4j.Element;
 import org.apache.commons.fileupload.FileItem;
 
 public class Custom extends CustomAction implements FileStorage {
-        public static final String MODULE_NAME = "file_storage.Custom";
         private HttpServletResponse httpServletResponse;
         private HashMap<String, Object> parameter;
         private Connection connection;
@@ -55,7 +54,8 @@ public class Custom extends CustomAction implements FileStorage {
                 int res = 0;
                 Element sqlRoot = SqlRepository.get("file_storage");
                 if (null == sqlRoot) {
-                        msg.setResult(Message.RESULT.NO_MODULE_SQL);
+                        msg.setStatus(Message.STATUS.ERROR);
+                        msg.setError(Message.ERROR.NO_MODULE_SQL);
                         msg.setDetail("file_storage");
                         return msg;
                 }
@@ -65,7 +65,8 @@ public class Custom extends CustomAction implements FileStorage {
                         cal.add(Calendar.MINUTE, Config.TEMPORARY_FILE_LIFE_CYCLE);
                         attachment = (FileItem) parameter.get("attachment");
                         if (null == attachment) {
-                                msg.setResult(Message.RESULT.PARAMETER_INVALID);
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.PARAMETER_FORMAT_ERROR);
                                 msg.setDetail("attachment");
                                 return msg;
                         }
@@ -85,7 +86,8 @@ public class Custom extends CustomAction implements FileStorage {
                         // 将文件内容写入“文件仓库”表（SimpleDBO中只是简单的sql操作，不包括二进制文件的添加。所以这里需要用传统语句的方式实现功能）
                         sql = DatabaseKit.composeSql(sqlRoot, "insertStorageRepository", null);
                         if (0 >= sql.trim().length()) {
-                                msg.setResult(Message.RESULT.COMPOSE_SQL_ERROR);
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.COMPOSE_SQL_ERROR);
                                 msg.setDetail("insertStorageRepository");
                                 return msg;
                         }
@@ -95,7 +97,8 @@ public class Custom extends CustomAction implements FileStorage {
                         ps.setBinaryStream(3, is);
                         res = ps.executeUpdate();
                         if (0 >= res) {
-                                msg.setResult(Message.RESULT.IDU_NO_DATA);
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.IDU_NO_DATA);
                                 msg.setDetail("insertStorageRepository");
                                 return msg;
                         }
@@ -106,21 +109,25 @@ public class Custom extends CustomAction implements FileStorage {
                         p.put("expire_datetime", new java.sql.Timestamp(cal.getTimeInMillis()));
                         sql = DatabaseKit.composeSql(sqlRoot, "insertStorageFile", p);
                         if (0 >= sql.trim().length()) {
-                                msg.setResult(Message.RESULT.COMPOSE_SQL_ERROR);
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.COMPOSE_SQL_ERROR);
                                 msg.setDetail("insertStorageFile");
                                 return msg;
                         }
                         res = DbFactory.iduExecute(this.connection, sql);
                         if (0 >= res) {
-                                msg.setResult(Message.RESULT.IDU_NO_DATA);
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.IDU_NO_DATA);
                                 msg.setDetail("insertStorageFile");
                                 return msg;
                         }
-                        msg.setResult(Message.RESULT.SUCCESS);
+                        msg.setStatus(Message.STATUS.SUCCESS);
+                        msg.setError(Message.ERROR.NONE);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Custom.MODULE_NAME, e.toString());
-                        msg.setResult(Message.RESULT.EXCEPTION);
+                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        msg.setStatus(Message.STATUS.EXCEPTION);
+                        msg.setError(Message.ERROR.OTHER);
                         msg.setDetail(e.toString());
                         return msg;
                 } finally {
@@ -132,8 +139,9 @@ public class Custom extends CustomAction implements FileStorage {
                                         ps.close();
                                 }
                         } catch (Exception e) {
-                                Framework.LOG.warn(Custom.MODULE_NAME, e.toString());
-                                msg.setResult(Message.RESULT.EXCEPTION);
+                                Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                                msg.setStatus(Message.STATUS.EXCEPTION);
+                                msg.setError(Message.ERROR.OTHER);
                                 msg.setDetail(e.toString());
                                 return msg;
                         }
@@ -158,7 +166,8 @@ public class Custom extends CustomAction implements FileStorage {
                 OutputStream os = null;
                 Element sqlRoot = SqlRepository.get("file_storage");
                 if (null == sqlRoot) {
-                        msg.setResult(Message.RESULT.NO_MODULE_SQL);
+                        msg.setStatus(Message.STATUS.ERROR);
+                        msg.setError(Message.ERROR.NO_MODULE_SQL);
                         msg.setDetail("file_storage");
                         return msg;
                 }
@@ -167,7 +176,8 @@ public class Custom extends CustomAction implements FileStorage {
                         p.put("uuid", parameter.get("uuid"));
                         sql = DatabaseKit.composeSql(sqlRoot, "selectStorageFileRepository", p);
                         if (0 >= sql.trim().length()) {
-                                msg.setResult(Message.RESULT.COMPOSE_SQL_ERROR);
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.COMPOSE_SQL_ERROR);
                                 msg.setDetail("selectStorageFileRepository");
                                 return msg;
                         }
@@ -190,21 +200,24 @@ public class Custom extends CustomAction implements FileStorage {
                                         try {
                                                 os.write(buf, 0, size);
                                         } catch (Exception e) {
-                                                msg.setResult(Message.RESULT.EXCEPTION);
+                                                msg.setStatus(Message.STATUS.EXCEPTION);
+                                                msg.setError(Message.ERROR.OTHER);
                                                 msg.setDetail(e.toString());
                                                 return msg;
                                         }
                                 }
                         } else {
-                                msg.setResult(Message.RESULT.FILE_NOT_EXIST);
-                                msg.setDetail(parameter.get("uuid"));
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.OTHER);
+                                msg.setDetail("File Not Exist [" + parameter.get("uuid") + "]");
                                 return msg;
                         }
-                        msg.setResult(Message.RESULT.ALREADY_FEEDBACK_TO_CLIENT);
+                        msg.setSign(Message.SIGN.ALREADY_FEEDBACK_TO_CLIENT);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Custom.MODULE_NAME, e.toString());
-                        msg.setResult(Message.RESULT.EXCEPTION);
+                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        msg.setStatus(Message.STATUS.EXCEPTION);
+                        msg.setError(Message.ERROR.OTHER);
                         msg.setDetail(e.toString());
                         return msg;
                 } finally {
@@ -222,8 +235,9 @@ public class Custom extends CustomAction implements FileStorage {
                                         ps.close();
                                 }
                         } catch (Exception e) {
-                                Framework.LOG.warn(Custom.MODULE_NAME, e.toString());
-                                msg.setResult(Message.RESULT.EXCEPTION);
+                                Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                                msg.setStatus(Message.STATUS.EXCEPTION);
+                                msg.setError(Message.ERROR.OTHER);
                                 msg.setDetail(e.toString());
                                 return msg;
                         }
@@ -243,7 +257,8 @@ public class Custom extends CustomAction implements FileStorage {
                 String sql = null;
                 Element sqlRoot = SqlRepository.get("file_storage");
                 if (null == sqlRoot) {
-                        msg.setResult(Message.RESULT.NO_MODULE_SQL);
+                        msg.setStatus(Message.STATUS.ERROR);
+                        msg.setError(Message.ERROR.NO_MODULE_SQL);
                         msg.setDetail("file_storage");
                         return msg;
                 }
@@ -256,21 +271,25 @@ public class Custom extends CustomAction implements FileStorage {
                         p.put("expire_datetime", new java.sql.Timestamp(cal.getTimeInMillis()));
                         sql = DatabaseKit.composeSql(sqlRoot, "updateStorageFile", p);
                         if (0 >= sql.trim().length()) {
-                                msg.setResult(Message.RESULT.COMPOSE_SQL_ERROR);
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.COMPOSE_SQL_ERROR);
                                 msg.setDetail("updateStorageFile");
                                 return msg;
                         }
                         res = DbFactory.iduExecute(this.connection, sql);
                         if (0 >= res) {
-                                msg.setResult(Message.RESULT.SAVE_FILE_PERMANENT_ERROR);
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.OTHER);
                                 msg.setDetail("updateStorageFile");
                                 return msg;
                         }
-                        msg.setResult(Message.RESULT.SUCCESS);
+                        msg.setStatus(Message.STATUS.SUCCESS);
+                        msg.setError(Message.ERROR.NONE);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Custom.MODULE_NAME, e.toString());
-                        msg.setResult(Message.RESULT.EXCEPTION);
+                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        msg.setStatus(Message.STATUS.EXCEPTION);
+                        msg.setError(Message.ERROR.OTHER);
                         msg.setDetail(e.toString());
                         return msg;
                 }
@@ -300,7 +319,8 @@ public class Custom extends CustomAction implements FileStorage {
                 String sql = null;
                 Element sqlRoot = SqlRepository.get("file_storage");
                 if (null == sqlRoot) {
-                        msg.setResult(Message.RESULT.NO_MODULE_SQL);
+                        msg.setStatus(Message.STATUS.ERROR);
+                        msg.setError(Message.ERROR.NO_MODULE_SQL);
                         msg.setDetail("file_storage");
                         return msg;
                 }
@@ -310,33 +330,39 @@ public class Custom extends CustomAction implements FileStorage {
                         p.put("uuid", uuid);
                         sql = DatabaseKit.composeSql(sqlRoot, "deleteStorageFile", p);
                         if (0 >= sql.trim().length()) {
-                                msg.setResult(Message.RESULT.COMPOSE_SQL_ERROR);
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.COMPOSE_SQL_ERROR);
                                 msg.setDetail("deleteStorageFile");
                                 return msg;
                         }
                         res = DbFactory.iduExecute(this.connection, sql);
                         if (0 >= res) {
-                                msg.setResult(Message.RESULT.IDU_NO_DATA);
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.IDU_NO_DATA);
                                 msg.setDetail("deleteStorageFile");
                                 return msg;
                         }
                         sql = DatabaseKit.composeSql(sqlRoot, "deleteStorageRepository", p);
                         if (0 >= sql.trim().length()) {
-                                msg.setResult(Message.RESULT.COMPOSE_SQL_ERROR);
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.COMPOSE_SQL_ERROR);
                                 msg.setDetail("deleteStorageRepository");
                                 return msg;
                         }
                         res = DbFactory.iduExecute(this.connection, sql);
                         if (0 >= res) {
-                                msg.setResult(Message.RESULT.IDU_NO_DATA);
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.IDU_NO_DATA);
                                 msg.setDetail("deleteStorageRepository");
                                 return msg;
                         }
-                        msg.setResult(Message.RESULT.SUCCESS);
+                        msg.setStatus(Message.STATUS.SUCCESS);
+                        msg.setError(Message.ERROR.NONE);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Custom.MODULE_NAME, e.toString());
-                        msg.setResult(Message.RESULT.EXCEPTION);
+                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        msg.setStatus(Message.STATUS.EXCEPTION);
+                        msg.setError(Message.ERROR.OTHER);
                         msg.setDetail(e.toString());
                         return msg;
                 }
@@ -368,7 +394,8 @@ public class Custom extends CustomAction implements FileStorage {
                 String sql = null;
                 Element sqlRoot = SqlRepository.get("file_storage");
                 if (null == sqlRoot) {
-                        msg.setResult(Message.RESULT.NO_MODULE_SQL);
+                        msg.setStatus(Message.STATUS.ERROR);
+                        msg.setError(Message.ERROR.NO_MODULE_SQL);
                         msg.setDetail("file_storage");
                         return msg;
                 }
@@ -377,28 +404,38 @@ public class Custom extends CustomAction implements FileStorage {
                         p.put("uuid", uuid);
                         sql = DatabaseKit.composeSql(sqlRoot, (String) parameter.get("selectStorageFile"), p);
                         if (0 >= sql.trim().length()) {
-                                msg.setResult(Message.RESULT.COMPOSE_SQL_ERROR);
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.COMPOSE_SQL_ERROR);
                                 msg.setDetail((String) parameter.get("selectStorageFile"));
                                 return msg;
                         }
                         ArrayList<HashMap<String, Object>> list = DbFactory.select(this.connection, sql);
                         if (0 < list.size()) {
                                 if (!flip) {
-                                        msg.setResult(Message.RESULT.FILE_EXIST);
+                                        msg.setStatus(Message.STATUS.ERROR);
+                                        msg.setError(Message.ERROR.OTHER);
+                                        msg.setDetail("File Exist");
                                 } else {
-                                        msg.setResult(Message.RESULT.FILE_NOT_EXIST);
+                                        msg.setStatus(Message.STATUS.ERROR);
+                                        msg.setError(Message.ERROR.OTHER);
+                                        msg.setDetail("File Not Exist");
                                 }
                         } else {
                                 if (!flip) {
-                                        msg.setResult(Message.RESULT.FILE_NOT_EXIST);
+                                        msg.setStatus(Message.STATUS.ERROR);
+                                        msg.setError(Message.ERROR.OTHER);
+                                        msg.setDetail("File Not Exist");
                                 } else {
-                                        msg.setResult(Message.RESULT.FILE_EXIST);
+                                        msg.setStatus(Message.STATUS.ERROR);
+                                        msg.setError(Message.ERROR.OTHER);
+                                        msg.setDetail("File Exist");
                                 }
                         }
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Custom.MODULE_NAME, e.toString());
-                        msg.setResult(Message.RESULT.EXCEPTION);
+                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        msg.setStatus(Message.STATUS.EXCEPTION);
+                        msg.setError(Message.ERROR.OTHER);
                         msg.setDetail(e.toString());
                         return msg;
                 }
@@ -448,7 +485,8 @@ public class Custom extends CustomAction implements FileStorage {
                 String sql = null;
                 Element sqlRoot = SqlRepository.get((String) parameter.get("moduleName"));
                 if (null == sqlRoot) {
-                        msg.setResult(Message.RESULT.NO_MODULE_SQL);
+                        msg.setStatus(Message.STATUS.ERROR);
+                        msg.setError(Message.ERROR.NO_MODULE_SQL);
                         msg.setDetail((String) parameter.get("moduleName"));
                         return msg;
                 }
@@ -458,13 +496,15 @@ public class Custom extends CustomAction implements FileStorage {
                         p.put((String) parameter.get("idColumnName"), parameter.get("idColumnValue"));
                         sql = DatabaseKit.composeSql(sqlRoot, (String) parameter.get("selectSqlId"), p);
                         if (0 >= sql.trim().length()) {
-                                msg.setResult(Message.RESULT.COMPOSE_SQL_ERROR);
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.COMPOSE_SQL_ERROR);
                                 msg.setDetail((String) parameter.get("selectSqlId"));
                                 return msg;
                         }
                         ArrayList<HashMap<String, Object>> list = DbFactory.select(this.connection, sql);
                         if (0 >= list.size()) {
-                                msg.setResult(Message.RESULT.QUERY_NO_DATA);
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.QUERY_NO_DATA);
                                 msg.setDetail((String) parameter.get("selectSqlId"));
                                 return msg;
                         }
@@ -479,9 +519,10 @@ public class Custom extends CustomAction implements FileStorage {
                                         for (int i = 0; i < oldAttachment.length; i++) {
                                                 // 删除“旧”附件
                                                 Message m = this.inline_removeFile(oldAttachment[i]);
-                                                if (Message.RESULT.SUCCESS != m.getResult()) {
-                                                        msg.setResult(Message.RESULT.FILE_REMOVE_ERROR);
-                                                        msg.setDetail(oldAttachment[i]);
+                                                if (m.getStatus() != Message.STATUS.SUCCESS) {
+                                                        msg.setStatus(Message.STATUS.ERROR);
+                                                        msg.setError(Message.ERROR.OTHER);
+                                                        msg.setDetail("File Remove Error [" + oldAttachment[i] + "]");
                                                         return msg;
                                                 }
                                                 // 清空“旧”附件
@@ -490,15 +531,17 @@ public class Custom extends CustomAction implements FileStorage {
                                                 p.put("sn_" + (String) parameter.get("attachmentColumnName"), null);
                                                 sql = DatabaseKit.composeSql(sqlRoot, (String) parameter.get("updateSqlId"), p);
                                                 if (0 >= sql.trim().length()) {
-                                                        msg.setResult(Message.RESULT.COMPOSE_SQL_ERROR);
+                                                        msg.setStatus(Message.STATUS.ERROR);
+                                                        msg.setError(Message.ERROR.COMPOSE_SQL_ERROR);
                                                         msg.setDetail((String) parameter.get("updateSqlId"));
                                                         return msg;
                                                 }
                                                 res = DbFactory.iduExecute(this.connection, sql);
                                                 if (1 > res) {
                                                         // 清空“旧”附件失败
-                                                        msg.setResult(Message.RESULT.ATTACHMENT_REMOVE_ERROR);
-                                                        msg.setDetail((String) parameter.get("updateSqlId"));
+                                                        msg.setStatus(Message.STATUS.ERROR);
+                                                        msg.setError(Message.ERROR.OTHER);
+                                                        msg.setDetail("File Remove Error [" + (String) parameter.get("updateSqlId") + "]");
                                                         return msg;
                                                 }
                                         }
@@ -518,9 +561,10 @@ public class Custom extends CustomAction implements FileStorage {
                                                 }
                                                 // 删除“旧”附件
                                                 Message m = this.inline_removeFile(oldAttachment[i]);
-                                                if (Message.RESULT.SUCCESS != m.getResult()) {
-                                                        msg.setResult(Message.RESULT.FILE_REMOVE_ERROR);
-                                                        msg.setDetail(oldAttachment[i]);
+                                                if (m.getStatus() != Message.STATUS.SUCCESS) {
+                                                        msg.setStatus(Message.STATUS.ERROR);
+                                                        msg.setError(Message.ERROR.OTHER);
+                                                        msg.setDetail("File Remove Error [" + oldAttachment[i] + "]");
                                                         return msg;
                                                 }
                                                 // 清空“旧”附件
@@ -529,15 +573,17 @@ public class Custom extends CustomAction implements FileStorage {
                                                 p.put("sn_" + (String) parameter.get("attachmentColumnName"), null);
                                                 sql = DatabaseKit.composeSql(sqlRoot, (String) parameter.get("updateSqlId"), p);
                                                 if (0 >= sql.trim().length()) {
-                                                        msg.setResult(Message.RESULT.COMPOSE_SQL_ERROR);
+                                                        msg.setStatus(Message.STATUS.ERROR);
+                                                        msg.setError(Message.ERROR.COMPOSE_SQL_ERROR);
                                                         msg.setDetail((String) parameter.get("updateSqlId"));
                                                         return msg;
                                                 }
                                                 res = DbFactory.iduExecute(this.connection, sql);
                                                 if (1 > res) {
                                                         // 清空“旧”文件集群数据失败
-                                                        msg.setResult(Message.RESULT.ATTACHMENT_REMOVE_ERROR);
-                                                        msg.setDetail((String) parameter.get("updateSqlId"));
+                                                        msg.setStatus(Message.STATUS.ERROR);
+                                                        msg.setError(Message.ERROR.OTHER);
+                                                        msg.setDetail("File Remove Error [" + (String) parameter.get("updateSqlId") + "]");
                                                         return msg;
                                                 }
                                         }
@@ -553,15 +599,17 @@ public class Custom extends CustomAction implements FileStorage {
                                 String newAttachment[] = ((String) parameter.get("newAttachments")).split(";");
                                 for (int i = 0; i < newAttachment.length; i++) {
                                         Message m = this.inline_checkFileExist(newAttachment[i], false);
-                                        if (Message.RESULT.SUCCESS != m.getResult()) {
-                                                msg.setResult(Message.RESULT.FILE_NOT_EXIST);
-                                                msg.setDetail(newAttachment[i]);
+                                        if (m.getStatus() != Message.STATUS.SUCCESS) {
+                                                msg.setStatus(Message.STATUS.ERROR);
+                                                msg.setError(Message.ERROR.OTHER);
+                                                msg.setDetail("File Not Exist [" + newAttachment[i] + "]");
                                                 return msg;
                                         }
                                         m = this.inline_savePermanentFile(newAttachment[i]);
-                                        if (Message.RESULT.SUCCESS != m.getResult()) {
-                                                msg.setResult(Message.RESULT.SAVE_FILE_PERMANENT_ERROR);
-                                                msg.setDetail(newAttachment[i]);
+                                        if (m.getStatus() != Message.STATUS.SUCCESS) {
+                                                msg.setStatus(Message.STATUS.ERROR);
+                                                msg.setError(Message.ERROR.OTHER);
+                                                msg.setDetail("Save File Permanent Error [" + newAttachment[i] + "]");
                                                 return msg;
                                         }
                                 }
@@ -571,24 +619,28 @@ public class Custom extends CustomAction implements FileStorage {
                                 p.put((String) parameter.get("attachmentColumnName"), parameter.get("newAttachments"));
                                 sql = DatabaseKit.composeSql(sqlRoot, (String) parameter.get("updateSqlId"), p);
                                 if (0 >= sql.trim().length()) {
-                                        msg.setResult(Message.RESULT.COMPOSE_SQL_ERROR);
+                                        msg.setStatus(Message.STATUS.ERROR);
+                                        msg.setError(Message.ERROR.COMPOSE_SQL_ERROR);
                                         msg.setDetail((String) parameter.get("updateSqlId"));
                                         return msg;
                                 }
                                 res = DbFactory.iduExecute(this.connection, sql);
                                 if (1 > res) {
                                         // 清空“旧”附件失败
-                                        msg.setResult(Message.RESULT.ATTACHMENT_MODIFY_ERROR);
-                                        msg.setDetail((String) parameter.get("updateSqlId"));
+                                        msg.setStatus(Message.STATUS.ERROR);
+                                        msg.setError(Message.ERROR.OTHER);
+                                        msg.setDetail("File Modify Error [" + (String) parameter.get("updateSqlId") + "]");
                                         return msg;
                                 }
                         }
                         // 操作成功
-                        msg.setResult(Message.RESULT.SUCCESS);
+                        msg.setStatus(Message.STATUS.SUCCESS);
+                        msg.setError(Message.ERROR.NONE);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Custom.MODULE_NAME, e.toString());
-                        msg.setResult(Message.RESULT.EXCEPTION);
+                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        msg.setStatus(Message.STATUS.EXCEPTION);
+                        msg.setError(Message.ERROR.OTHER);
                         msg.setDetail(e.toString());
                         return msg;
                 }
@@ -611,7 +663,8 @@ public class Custom extends CustomAction implements FileStorage {
                 String sql = null;
                 Element sqlRoot = SqlRepository.get((String) parameter.get("moduleName"));
                 if (null == sqlRoot) {
-                        msg.setResult(Message.RESULT.NO_MODULE_SQL);
+                        msg.setStatus(Message.STATUS.ERROR);
+                        msg.setError(Message.ERROR.NO_MODULE_SQL);
                         msg.setDetail((String) parameter.get("moduleName"));
                         return msg;
                 }
@@ -621,13 +674,15 @@ public class Custom extends CustomAction implements FileStorage {
                         p.put((String) parameter.get("idColumnName"), parameter.get("idColumnValue"));
                         sql = DatabaseKit.composeSql(sqlRoot, (String) parameter.get("selectSqlId"), p);
                         if (0 >= sql.trim().length()) {
-                                msg.setResult(Message.RESULT.COMPOSE_SQL_ERROR);
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.COMPOSE_SQL_ERROR);
                                 msg.setDetail((String) parameter.get("selectSqlId"));
                                 return msg;
                         }
                         ArrayList<HashMap<String, Object>> list = DbFactory.select(this.connection, sql);
                         if (0 >= list.size()) {
-                                msg.setResult(Message.RESULT.QUERY_NO_DATA);
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.QUERY_NO_DATA);
                                 msg.setDetail((String) parameter.get("selectSqlId"));
                                 return msg;
                         }
@@ -638,18 +693,21 @@ public class Custom extends CustomAction implements FileStorage {
                         for (int i = 0; i < oldAttachment.length; i++) {
                                 // 删除“旧”附件
                                 Message m = this.inline_removeFile(oldAttachment[i]);
-                                if (Message.RESULT.SUCCESS != m.getResult()) {
-                                        msg.setResult(Message.RESULT.FILE_REMOVE_ERROR);
-                                        msg.setDetail(oldAttachment[i]);
+                                if (m.getStatus() != Message.STATUS.SUCCESS) {
+                                        msg.setStatus(Message.STATUS.ERROR);
+                                        msg.setError(Message.ERROR.OTHER);
+                                        msg.setDetail("File Remove Error [" + oldAttachment[i] + "]");
                                         return msg;
                                 }
                         }
                         // 操作成功
-                        msg.setResult(Message.RESULT.SUCCESS);
+                        msg.setStatus(Message.STATUS.SUCCESS);
+                        msg.setError(Message.ERROR.NONE);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Custom.MODULE_NAME, e.toString());
-                        msg.setResult(Message.RESULT.EXCEPTION);
+                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        msg.setStatus(Message.STATUS.EXCEPTION);
+                        msg.setError(Message.ERROR.OTHER);
                         msg.setDetail(e.toString());
                         return msg;
                 }
