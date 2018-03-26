@@ -38,7 +38,7 @@
                     <name>permission_list</name>
                     <description><![CDATA[权限集合（分号分隔的数字、大小写字母和“.”）]]></description>
                     <type>string</type>
-                    <format>^([0-9a-zA-Z\.]{3,};)+$</format>
+                    <format>^([0-9a-zA-Z_\-\.]{3,};)+$</format>
                     <allowNull>false</allowNull>
                 </parameter>
             </parameters>
@@ -82,10 +82,10 @@
                 </parameter>
                 <parameter>
                     <name>name</name>
-                    <description><![CDATA[用户名（4-16位下划线、横线、字符或数字）]]></description>
+                    <description><![CDATA[用户名（必选项，否则第2个SQL将无法通过）（4-16位下划线、横线、字符或数字）]]></description>
                     <type>string</type>
                     <format>^[0-9a-zA-Z_-]{4,16}$</format>
-                    <allowNull>true</allowNull>
+                    <allowNull>false</allowNull>
                 </parameter>
                 <parameter>
                     <name>description</name>
@@ -98,7 +98,7 @@
                     <name>permission_list</name>
                     <description><![CDATA[权限集合（分号分隔的数字、大小写字母和“.”）]]></description>
                     <type>string</type>
-                    <format>^([0-9a-zA-Z\.]{3,};)+$</format>
+                    <format>^([0-9a-zA-Z_\-\.]{3,};)+$</format>
                     <allowNull>true</allowNull>
                 </parameter>
             </parameters>

@@ -45,7 +45,7 @@
                 <![CDATA[and `name` = #{name}]]>
             </if>
         </where>
-        <![CDATA[ order by `id` desc]]>
+        <![CDATA[ order by `id` asc]]>
         <if parameterName = "offset" parameterValue = "#null" operatorType = "unequal">
             <![CDATA[limit #{offset},]]>
         </if>

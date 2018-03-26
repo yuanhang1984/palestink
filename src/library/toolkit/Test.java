@@ -1,14 +1,13 @@
 package library.toolkit;
 
-import org.json.JSONObject;
-
-import framework.sdk.msg.Message;
-
 public class Test {
         public Test() {
-                JSONObject o = new JSONObject();
-                o.put("result", Message.SIGN.ALREADY_FEEDBACK_TO_CLIENT);
-                System.out.println(o.toString());
+                // if (library.string.CharacterString.regularExpressionCheck("^([0-9a-zA-Z]+[.]+[0-9a-zA-Z]+;)+$", "user_security.removeRole;")) {
+                if (library.string.CharacterString.regularExpressionCheck("^([0-9a-zA-Z_\\-\\.]{3,};)+$", "user_security.removeRole;")) {
+                        System.out.println("ok");
+                } else {
+                        System.out.println("error");
+                }
         }
 
         public static void main(String[] args) {
