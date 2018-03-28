@@ -211,13 +211,13 @@ public class SimpleDBO {
                         if (!flip) {
                                 if (0 >= m.getCount()) {// idu的执行结果未必大于0才是正确，但这里是以事务的方式来处理，所以要以是否大于0作为判断依据。
                                         c.rollback();
-                                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.IDU_NO_DATA, null, "[" + type + "][" + id + "]");
+                                        Message.send(request, response, Message.STATUS.SUCCESS, Message.ERROR.IDU_NO_DATA, null, "[" + type + "][" + id + "]");
                                         return false;
                                 }
                         } else {
                                 if (0 < m.getCount()) {// 取反
                                         c.rollback();
-                                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.IDU_NO_DATA, null, "[" + type + "][" + id + "]");
+                                        Message.send(request, response, Message.STATUS.SUCCESS, Message.ERROR.IDU_NO_DATA, null, "[" + type + "][" + id + "]");
                                         return false;
                                 }
                         }
@@ -287,13 +287,13 @@ public class SimpleDBO {
                                         if (!flip) {
                                                 if (0 >= m.getCount()) {// idu的执行结果未必大于0才是正确，但这里是以事务的方式来处理，所以要以是否大于0作为判断依据。
                                                         c.rollback();
-                                                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.IDU_NO_DATA, null, "[" + type + "][" + id + "]");
+                                                        Message.send(request, response, Message.STATUS.SUCCESS, Message.ERROR.IDU_NO_DATA, null, "[" + type + "][" + id + "]");
                                                         return false;
                                                 }
                                         } else {
                                                 if (0 < m.getCount()) {// 取反
                                                         c.rollback();
-                                                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.IDU_NO_DATA, null, "[" + type + "][" + id + "]");
+                                                        Message.send(request, response, Message.STATUS.SUCCESS, Message.ERROR.IDU_NO_DATA, null, "[" + type + "][" + id + "]");
                                                         return false;
                                                 }
                                         }
@@ -416,7 +416,7 @@ public class SimpleDBO {
                                         }
                                         if (0 >= m.getCount()) {// select的执行结果未必大于0才是正确，但这里是以事务的方式来处理，所以要以是否大于0作为判断依据。
                                                 c.rollback();
-                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.SUCCESS, Message.ERROR.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         if ((namespaceIndex + 1) >= namespaceList.size()) {
@@ -434,7 +434,7 @@ public class SimpleDBO {
                                         }
                                         if (0 < m.getCount()) {// 取反
                                                 c.rollback();
-                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.QUERY_EXIST_DATA, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.SUCCESS, Message.ERROR.QUERY_EXIST_DATA, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                 } else if (type.toLowerCase().startsWith("select>>")) {
@@ -452,7 +452,7 @@ public class SimpleDBO {
                                         }
                                         if (0 >= m.getCount()) {// select的执行结果未必大于0才是正确，但这里是以事务的方式来处理，所以要以是否大于0作为判断依据。
                                                 c.rollback();
-                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.SUCCESS, Message.ERROR.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         ArrayList<HashMap<String, Object>> list = m.getDataList();
@@ -485,7 +485,7 @@ public class SimpleDBO {
                                         }
                                         if (0 >= list.size()) {
                                                 c.rollback();
-                                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
+                                                Message.send(request, response, Message.STATUS.SUCCESS, Message.ERROR.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
                                                 return;
                                         }
                                         aliasNameMap.put(aliasName, list);
@@ -531,7 +531,7 @@ public class SimpleDBO {
                                                 }
                                                 if (0 >= m.getCount()) {// select的执行结果未必大于0才是正确，但这里是以事务的方式来处理，所以要以是否大于0作为判断依据。
                                                         c.rollback();
-                                                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
+                                                        Message.send(request, response, Message.STATUS.SUCCESS, Message.ERROR.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
                                                         return;
                                                 }
                                                 // 如果是最后一个namespace，那么就添加这个数据。
@@ -608,7 +608,7 @@ public class SimpleDBO {
                                                 }
                                                 if (0 < m.getCount()) {// 取反
                                                         c.rollback();
-                                                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
+                                                        Message.send(request, response, Message.STATUS.SUCCESS, Message.ERROR.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
                                                         return;
                                                 }
                                         }
@@ -653,7 +653,7 @@ public class SimpleDBO {
                                                 }
                                                 if (0 >= m.getCount()) {// select的执行结果未必大于0才是正确，但这里是以事务的方式来处理，所以要以是否大于0作为判断依据。
                                                         c.rollback();
-                                                        Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
+                                                        Message.send(request, response, Message.STATUS.SUCCESS, Message.ERROR.QUERY_NO_DATA, null, "[" + type + "][" + id + "]");
                                                         return;
                                                 }
                                                 aliasNameMap.put(aliasName, m.getDataList());

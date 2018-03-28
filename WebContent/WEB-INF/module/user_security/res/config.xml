@@ -9,7 +9,7 @@
                 1 编译.
             command: 编译源码的命令.多个jar和java之间用";"分隔.
     -->
-    <SourceCode rebuild = "1" command = "javac -g -encoding utf-8 -cp ${WEB_APP}/WEB-INF/lib/*;${WEB_APP}/WEB-INF/classes -d ${WEB_APP}/WEB-INF/module/user_security/bin ${WEB_APP}/WEB-INF/module/user_security/src/user_security/necessary/Config.java ${WEB_APP}/WEB-INF/module/user_security/src/user_security/necessary/Custom.java ${WEB_APP}/WEB-INF/module/user_security/src/user_security/necessary/Daemon.java ${WEB_APP}/WEB-INF/module/user_security/src/user_security/optional/LogIOn.java ${WEB_APP}/WEB-INF/module/user_security/src/user_security/optional/RolePermission.java" />
+    <SourceCode rebuild = "1" command = "javac -g -encoding utf-8 -cp ${WEB_APP}/WEB-INF/lib/*;${WEB_APP}/WEB-INF/classes -d ${WEB_APP}/WEB-INF/module/user_security/bin ${WEB_APP}/WEB-INF/module/user_security/src/user_security/necessary/Config.java ${WEB_APP}/WEB-INF/module/user_security/src/user_security/necessary/Custom.java ${WEB_APP}/WEB-INF/module/user_security/src/user_security/necessary/Daemon.java ${WEB_APP}/WEB-INF/module/user_security/src/user_security/optional/LogIOn.java" />
     <!--
         [Module]
             enable

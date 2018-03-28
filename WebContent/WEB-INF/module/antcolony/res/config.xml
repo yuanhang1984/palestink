@@ -1,0 +1,27 @@
+﻿<?xml version = "1.0" encoding = "utf-8"?>
+<!DOCTYPE xml>
+<Config>
+    <!-- 框架配置所需 -->
+    <!--
+        [SourceCode]
+            rebuild
+                0 不编译.
+                1 编译.
+            command: 编译源码的命令.多个jar和java之间用";"分隔.
+    -->
+    <SourceCode rebuild = "1" command = "javac -g -encoding utf-8 -cp ${WEB_APP}/WEB-INF/lib/*;${WEB_APP}/WEB-INF/classes -d ${WEB_APP}/WEB-INF/module/antcolony/bin ${WEB_APP}/WEB-INF/module/antcolony/src/antcolony/necessary/Config.java ${WEB_APP}/WEB-INF/module/antcolony/src/antcolony/necessary/Custom.java ${WEB_APP}/WEB-INF/module/antcolony/src/antcolony/necessary/Daemon.java ${WEB_APP}/WEB-INF/module/antcolony/src/antcolony/optional/Module.java" />
+    <!--
+        [Module]
+            enable
+                true 启用模块.
+                false 禁用模块.
+    -->
+    <Module enable = "ture" />
+    <!--
+        [Docs]
+            enable
+                true 启用Api.
+                false 禁用Api.
+    -->
+    <Docs enable = "true" />
+</Config>

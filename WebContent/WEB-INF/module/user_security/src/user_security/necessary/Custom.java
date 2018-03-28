@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 import framework.sdk.msg.Message;
 import framework.sdk.spec.module.necessary.CustomAction;
 import module.user_security.optional.LogIOn;
-import module.user_security.optional.RolePermission;
 
 public class Custom extends CustomAction {
         private HttpServlet httpServlet;
@@ -17,7 +16,6 @@ public class Custom extends CustomAction {
         private HashMap<String, Object> parameter;
         private Connection connection;
         private LogIOn logion;
-        private RolePermission rolePermission;
 
         public Custom(HttpServlet httpServlet, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Connection connection, HashMap<String, Object> parameter) {
                 super(httpServlet, httpServletRequest, httpServletResponse, connection, parameter);
@@ -27,7 +25,6 @@ public class Custom extends CustomAction {
                 this.parameter = parameter;
                 this.connection = connection;
                 this.logion = new LogIOn(this.httpServlet, this.httpServletRequest, this.httpServletResponse, this.connection, this.parameter);
-                this.rolePermission = new RolePermission(this.httpServlet, this.httpServletRequest, this.httpServletResponse, this.connection, this.parameter);
         }
 
         public Message login() {
@@ -36,9 +33,5 @@ public class Custom extends CustomAction {
 
         public Message logout() {
                 return this.logion.logout();
-        }
-
-        public Message getAllPermission() {
-                return this.rolePermission.getAllPermission();
         }
 }

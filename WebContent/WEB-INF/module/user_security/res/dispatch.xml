@@ -36,7 +36,7 @@
                 </parameter>
                 <parameter>
                     <name>permission_list</name>
-                    <description><![CDATA[权限集合（分号分隔的数字、大小写字母和“.”）]]></description>
+                    <description><![CDATA[权限集合（分号分隔的数字、大小写字母、下划线、横线和“.”）]]></description>
                     <type>string</type>
                     <format>^([0-9a-zA-Z_\-\.]{3,};)+$</format>
                     <allowNull>false</allowNull>
@@ -465,15 +465,6 @@
             <namespace>
                 <![CDATA[
                     [custom][user_security][module.user_security.necessary.Custom.logout][];
-                ]]>
-            </namespace>
-        </servlet>
-        <servlet>
-            <name>getAllPermission</name>
-            <description><![CDATA[获取所有权限]]></description>
-            <namespace>
-                <![CDATA[
-                    [custom][user_security][module.user_security.necessary.Custom.getAllPermission][];
                 ]]>
             </namespace>
         </servlet>

@@ -1,4 +1,4 @@
-package module.user_security.necessary;
+package module.antcolony.necessary;
 
 import java.util.HashMap;
 import java.sql.Connection;
@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import framework.sdk.msg.Message;
 import framework.sdk.spec.module.necessary.CustomAction;
-import module.user_security.optional.LogIOn;
+import module.antcolony.optional.Module;
 
 public class Custom extends CustomAction {
         private HttpServlet httpServlet;
@@ -15,7 +15,7 @@ public class Custom extends CustomAction {
         private HttpServletResponse httpServletResponse;
         private HashMap<String, Object> parameter;
         private Connection connection;
-        private LogIOn logion;
+        private Module module;
 
         public Custom(HttpServlet httpServlet, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Connection connection, HashMap<String, Object> parameter) {
                 super(httpServlet, httpServletRequest, httpServletResponse, connection, parameter);
@@ -24,14 +24,22 @@ public class Custom extends CustomAction {
                 this.httpServletResponse = httpServletResponse;
                 this.parameter = parameter;
                 this.connection = connection;
-                this.logion = new LogIOn(this.httpServlet, this.httpServletRequest, this.httpServletResponse, this.connection, this.parameter);
+                this.module = new Module(this.httpServlet, this.httpServletRequest, this.httpServletResponse, this.connection, this.parameter);
         }
 
-        public Message login() {
-                return this.logion.login();
+        public Message getNameList() {
+                return this.module.getNameList();
         }
 
-        public Message logout() {
-                return this.logion.logout();
+        public Message getPermissionList() {
+                return this.module.getPermissionList();
+        }
+
+        public Message getSqlContent() {
+                return this.module.getSqlContent();
+        }
+
+        public Message downloadServerResourceFile() {
+                return this.module.downloadServerResourceFile();
         }
 }
