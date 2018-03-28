@@ -83,7 +83,7 @@
             <if parameterName = "frozen_datetime" parameterValue = "#null" operatorType = "unequal">
                 <![CDATA[`frozen_datetime` = #{frozen_datetime},]]>
             </if>
-            <if parameterName = "frozen_datetime" parameterValue = "set_null" operatorType = "equal">
+            <if parameterName = "sn_frozen_datetime" parameterValue = "set_null" operatorType = "equal">
                 <![CDATA[`frozen_datetime` = null,]]>
             </if>
             <if parameterName = "status" parameterValue = "#null" operatorType = "unequal">
@@ -97,7 +97,12 @@
         </where>
     </update>
     <select id = "selectUser" description = "查询用户">
-        <![CDATA[select * from `user-security_user`]]>
+        <if parameterName = "data_type" parameterValue = "count" operatorType = "equal">
+            <![CDATA[select count(*) as `count` from `user-security_user`]]>
+        </if>
+        <if parameterName = "data_type" parameterValue = "#null" operatorType = "equal">
+            <![CDATA[select * from `user-security_user`]]>
+        </if>
         <where>
             <if parameterName = "uuid" parameterValue = "#null" operatorType = "unequal">
                 <![CDATA[and `uuid` = #{uuid}]]>

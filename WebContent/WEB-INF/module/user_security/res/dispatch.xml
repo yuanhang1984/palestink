@@ -312,8 +312,7 @@
             <namespace>
                 <![CDATA[
                     [select][user_security][selectUser][uuid];
-                    [!select][user_security][selectUser][uuid->ne_uuid,name];
-                    [update][user_security][updateUser][uuid,name,password,role,status];
+                    [update][user_security][updateUser][uuid,password,role,status];
                 ]]>
             </namespace>
             <parameters>
@@ -397,7 +396,7 @@
             <description><![CDATA[获取用户（后台获取）]]></description>
             <namespace>
                 <![CDATA[
-                    [select][user_security][selectUser][uuid,name,password,failed_retry_count,status,offset,rows];
+                    [select][user_security][selectUser][uuid,name,password,failed_retry_count,status,offset,rows,data_type];
                 ]]>
             </namespace>
             <parameters>
@@ -449,6 +448,13 @@
                     <description><![CDATA[行数（大于等于1的数字）]]></description>
                     <type>integer</type>
                     <format>^[1-9]+[0-9]*$</format>
+                    <allowNull>true</allowNull>
+                </parameter>
+                <parameter>
+                    <name>data_type</name>
+                    <description><![CDATA[数据类型（count）]]></description>
+                    <type>string</type>
+                    <format>^count$</format>
                     <allowNull>true</allowNull>
                 </parameter>
             </parameters>

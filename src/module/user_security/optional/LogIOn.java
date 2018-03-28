@@ -90,6 +90,26 @@ public class LogIOn extends CustomAction {
                                 // 判断用户状态
                                 HashMap<String, Object> hm = list.iterator().next();
                                 if (1 == (Integer) hm.get("status")) {
+                                        // 冻结时间已过，解冻账号。
+                                        p = new HashMap<String, Object>();
+                                        p.put("uuid", hm.get("uuid"));
+                                        p.put("failed_retry_count", 0);
+                                        p.put("sn_frozen_datetime", "set_null");
+                                        sql = DatabaseKit.composeSql(sqlRoot, "updateUser", p);
+                                        if (0 >= sql.trim().length()) {
+                                                msg.setStatus(Message.STATUS.ERROR);
+                                                msg.setError(Message.ERROR.COMPOSE_SQL_ERROR);
+                                                msg.setDetail("updateUser");
+                                                return msg;
+                                        }
+                                        res = DbFactory.iduExecute(this.connection, sql);
+                                        if (0 >= res) {
+                                                // 修改账户状态失败。
+                                                msg.setStatus(Message.STATUS.ERROR);
+                                                msg.setError(Message.ERROR.OTHER);
+                                                msg.setDetail("Modify Account Status Error");
+                                                return msg;
+                                        }
                                         // 用户正常，符合登录要求。
                                         this.saveUserSession(hm);
                                         msg.setStatus(Message.STATUS.SUCCESS);
@@ -104,7 +124,7 @@ public class LogIOn extends CustomAction {
                                                 p = new HashMap<String, Object>();
                                                 p.put("uuid", hm.get("uuid"));
                                                 p.put("failed_retry_count", 0);
-                                                p.put("frozen_datetime", "set_null");
+                                                p.put("sn_frozen_datetime", "set_null");
                                                 p.put("status", 1);
                                                 sql = DatabaseKit.composeSql(sqlRoot, "updateUser", p);
                                                 if (0 >= sql.trim().length()) {
