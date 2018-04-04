@@ -3,11 +3,20 @@
 <config>
     <dispatch>
         <servlet>
-            <name>getNameList</name>
-            <description><![CDATA[获取模块名称列表]]></description>
+            <name>getLoadNameList</name>
+            <description><![CDATA[获取已加载模块列表]]></description>
             <namespace>
                 <![CDATA[
-                    [custom][user_security][module.antcolony.necessary.Custom.getNameList][];
+                    [custom][antcolony][module.antcolony.necessary.Custom.getLoadNameList][];
+                ]]>
+            </namespace>
+        </servlet>
+        <servlet>
+            <name>getDiskNameList</name>
+            <description><![CDATA[获取硬盘（全部）模块列表]]></description>
+            <namespace>
+                <![CDATA[
+                    [custom][antcolony][module.antcolony.necessary.Custom.getDiskNameList][];
                 ]]>
             </namespace>
         </servlet>
@@ -16,24 +25,31 @@
             <description><![CDATA[获取模块权限列表]]></description>
             <namespace>
                 <![CDATA[
-                    [custom][user_security][module.antcolony.necessary.Custom.getPermissionList][];
+                    [custom][antcolony][module.antcolony.necessary.Custom.getPermissionList][];
                 ]]>
             </namespace>
         </servlet>
         <servlet>
-            <name>getSqlContent</name>
-            <description><![CDATA[获取模块的sql.xml文件内容]]></description>
+            <name>readServerResourceFile</name>
+            <description><![CDATA[读取服务器资源文件]]></description>
             <namespace>
                 <![CDATA[
-                    [custom][user_security][module.antcolony.necessary.Custom.getSqlContent][name];
+                    [custom][antcolony][module.antcolony.necessary.Custom.readServerResourceFile][moduleName,fileName];
                 ]]>
             </namespace>
             <parameters>
                 <parameter>
-                    <name>name</name>
+                    <name>moduleName</name>
                     <description><![CDATA[模块名称（数字、大小写字母、下划线、横线）]]></description>
                     <type>string</type>
                     <format>^[0-9a-zA-Z_\-]{1,}$</format>
+                    <allowNull>false</allowNull>
+                </parameter>
+                <parameter>
+                    <name>fileName</name>
+                    <description><![CDATA[资源文件名称（注意大小写）]]></description>
+                    <type>string</type>
+                    <format>^(sql\.xml|config\.xml|dispatch\.xml)$</format>
                     <allowNull>false</allowNull>
                 </parameter>
             </parameters>
@@ -43,22 +59,116 @@
             <description><![CDATA[下载服务器的资源文件]]></description>
             <namespace>
                 <![CDATA[
-                    [custom][user_security][module.antcolony.necessary.Custom.downloadServerResourceFile][name,type];
+                    [custom][antcolony][module.antcolony.necessary.Custom.downloadServerResourceFile][moduleName,fileName];
                 ]]>
             </namespace>
             <parameters>
                 <parameter>
-                    <name>name</name>
+                    <name>moduleName</name>
                     <description><![CDATA[模块名称（数字、大小写字母、下划线、横线）]]></description>
                     <type>string</type>
                     <format>^[0-9a-zA-Z_\-]{1,}$</format>
                     <allowNull>false</allowNull>
                 </parameter>
                 <parameter>
-                    <name>type</name>
-                    <description><![CDATA[资源类型（sql或dispatch）（注意大小写）]]></description>
+                    <name>fileName</name>
+                    <description><![CDATA[资源文件名称（注意大小写）]]></description>
                     <type>string</type>
-                    <format>^(sql|dispatch)$</format>
+                    <format>^(sql\.xml|config\.xml|dispatch\.xml)$</format>
+                    <allowNull>false</allowNull>
+                </parameter>
+            </parameters>
+        </servlet>
+        <servlet>
+            <name>uploadServerResourceFile</name>
+            <description><![CDATA[上传服务器的资源文件]]></description>
+            <namespace>
+                <![CDATA[
+                    [custom][antcolony][module.antcolony.necessary.Custom.uploadServerResourceFile][attachment,moduleName,fileName];
+                ]]>
+            </namespace>
+            <parameters>
+                <parameter>
+                    <name>attachment</name>
+                    <description><![CDATA[文件（尺寸小于等于10M，类型范围：xml）]]></description>
+                    <type>file</type>
+                    <format>.+\.(xml)$</format>
+                    <fileMaxSize>10485760</fileMaxSize>
+                    <allowNull>false</allowNull>
+                </parameter>
+                <parameter>
+                    <name>moduleName</name>
+                    <description><![CDATA[模块名称（数字、大小写字母、下划线、横线）]]></description>
+                    <type>string</type>
+                    <format>^[0-9a-zA-Z_\-]{1,}$</format>
+                    <allowNull>false</allowNull>
+                </parameter>
+                <parameter>
+                    <name>fileName</name>
+                    <description><![CDATA[资源文件名称（注意大小写）]]></description>
+                    <type>string</type>
+                    <format>^(sql\.xml|config\.xml|dispatch\.xml)$</format>
+                    <allowNull>false</allowNull>
+                </parameter>
+            </parameters>
+        </servlet>
+        <servlet>
+            <name>createModule</name>
+            <description><![CDATA[创建模块]]></description>
+            <namespace>
+                <![CDATA[
+                    [custom][antcolony][module.antcolony.necessary.Custom.createModule][moduleName];
+                ]]>
+            </namespace>
+            <parameters>
+                <parameter>
+                    <name>moduleName</name>
+                    <description><![CDATA[模块名称（数字、大小写字母、下划线、横线）]]></description>
+                    <type>string</type>
+                    <format>^[0-9a-zA-Z_\-]{1,}$</format>
+                    <allowNull>false</allowNull>
+                </parameter>
+            </parameters>
+        </servlet>
+        <servlet>
+            <name>removeModule</name>
+            <description><![CDATA[删除模块]]></description>
+            <namespace>
+                <![CDATA[
+                    [custom][antcolony][module.antcolony.necessary.Custom.removeModule][moduleName];
+                ]]>
+            </namespace>
+            <parameters>
+                <parameter>
+                    <name>moduleName</name>
+                    <description><![CDATA[模块名称（数字、大小写字母、下划线、横线）]]></description>
+                    <type>string</type>
+                    <format>^[0-9a-zA-Z_\-]{1,}$</format>
+                    <allowNull>false</allowNull>
+                </parameter>
+            </parameters>
+        </servlet>
+        <servlet>
+            <name>modifyModuleName</name>
+            <description><![CDATA[修改模块名称]]></description>
+            <namespace>
+                <![CDATA[
+                    [custom][antcolony][module.antcolony.necessary.Custom.modifyModuleName][oldModuleName,newModuleName];
+                ]]>
+            </namespace>
+            <parameters>
+                <parameter>
+                    <name>oldModuleName</name>
+                    <description><![CDATA[模块名称（数字、大小写字母、下划线、横线）]]></description>
+                    <type>string</type>
+                    <format>^[0-9a-zA-Z_\-]{1,}$</format>
+                    <allowNull>false</allowNull>
+                </parameter>
+                <parameter>
+                    <name>newModuleName</name>
+                    <description><![CDATA[模块名称（数字、大小写字母、下划线、横线）]]></description>
+                    <type>string</type>
+                    <format>^[0-9a-zA-Z_\-]{1,}$</format>
                     <allowNull>false</allowNull>
                 </parameter>
             </parameters>

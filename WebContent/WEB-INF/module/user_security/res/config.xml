@@ -16,7 +16,7 @@
                 true 启用模块.
                 false 禁用模块.
     -->
-    <Module enable = "ture" />
+    <Module enable = "true" />
     <!--
         [Docs]
             enable

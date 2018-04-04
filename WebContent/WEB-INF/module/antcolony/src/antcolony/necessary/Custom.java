@@ -27,19 +27,27 @@ public class Custom extends CustomAction {
                 this.module = new Module(this.httpServlet, this.httpServletRequest, this.httpServletResponse, this.connection, this.parameter);
         }
 
-        public Message getNameList() {
-                return this.module.getNameList();
+        public Message getLoadNameList() {
+                return this.module.getLoadNameList();
+        }
+
+        public Message getDiskNameList() {
+                return this.module.getDiskNameList();
         }
 
         public Message getPermissionList() {
                 return this.module.getPermissionList();
         }
 
-        public Message getSqlContent() {
-                return this.module.getSqlContent();
+        public Message readServerResourceFile() {
+                return this.module.readServerResourceFile();
         }
 
         public Message downloadServerResourceFile() {
                 return this.module.downloadServerResourceFile();
+        }
+
+        public Message uploadServerResourceFile() {
+                return this.module.uploadServerResourceFile();
         }
 }

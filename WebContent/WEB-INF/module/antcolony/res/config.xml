@@ -16,12 +16,12 @@
                 true 启用模块.
                 false 禁用模块.
     -->
-    <Module enable = "ture" />
+    <Module enable = "true" />
     <!--
         [Docs]
             enable
-                true 启用Api.
-                false 禁用Api.
+                true 启用API.
+                false 禁用API.
     -->
     <Docs enable = "true" />
 </Config>

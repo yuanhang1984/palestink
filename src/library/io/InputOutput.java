@@ -6,13 +6,6 @@ import java.awt.image.MemoryImageSource;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.PrintWriter;
-import java.io.RandomAccessFile;
-import java.nio.CharBuffer;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileChannel.MapMode;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
 import java.io.BufferedReader;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -149,45 +142,6 @@ public class InputOutput {
                 } finally {
                         if (null != br) {
                                 br.close();
-                        }
-                }
-        }
-
-        /**
-         * 读取文件内容至StringBuilder
-         * 
-         * @param filePath 文件的路径
-         * @param size 缓冲区大小
-         * @param charset 编码
-         * 
-         * @return 文件内容的StringBuilder
-         */
-        public static StringBuilder readFileToStringBuilder(String filePath, int size, String charset) throws Exception {
-                RandomAccessFile raf = null;
-                FileChannel fc = null;
-                try {
-                        File f = new File(filePath);
-                        raf = new RandomAccessFile(f, "rw");
-                        fc = raf.getChannel();
-                        MappedByteBuffer mbb = fc.map(MapMode.READ_WRITE, 0, f.length());
-                        Charset c = Charset.forName(charset);
-                        CharsetDecoder cd = c.newDecoder();
-                        StringBuilder sb = new StringBuilder();
-                        while (0 < fc.read(mbb)) {
-                                // read后mbb的指针会变动，所以需要flip。
-                                mbb.flip();
-                                CharBuffer cb = cd.decode(mbb);
-                                // decode后mbb的指针会变动，所以需要flip。
-                                mbb.flip();
-                                sb.append(cb);
-                        }
-                        return sb;
-                } finally {
-                        if (null != fc) {
-                                fc.close();
-                        }
-                        if (null != raf) {
-                                raf.close();
                         }
                 }
         }
