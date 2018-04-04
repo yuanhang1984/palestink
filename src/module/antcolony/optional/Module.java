@@ -351,7 +351,7 @@ public class Module extends CustomAction {
          * [参数列表所需参数]
          * moduleName: 模块名称
          */
-        public Message createModule() {
+        public Message addModule() {
                 Message msg = new Message();
                 FileWriter fw = null;
                 XMLWriter xw = null;
@@ -365,7 +365,7 @@ public class Module extends CustomAction {
                                 return msg;
                         }
                         // 创建模块目录
-                        if (!f.createNewFile()) {
+                        if (!f.mkdirs()) {
                                 msg.setStatus(Message.STATUS.ERROR);
                                 msg.setError(Message.ERROR.OTHER);
                                 msg.setDetail("Module Create Error");
@@ -373,7 +373,7 @@ public class Module extends CustomAction {
                         }
                         // 创建模块目录下bin目录
                         f = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + parameter.get("moduleName") + "/bin");
-                        if (!f.createNewFile()) {
+                        if (!f.mkdirs()) {
                                 msg.setStatus(Message.STATUS.ERROR);
                                 msg.setError(Message.ERROR.OTHER);
                                 msg.setDetail("Module bin Create Error");
@@ -381,7 +381,7 @@ public class Module extends CustomAction {
                         }
                         // 创建模块目录下lib目录
                         f = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + parameter.get("moduleName") + "/lib");
-                        if (!f.createNewFile()) {
+                        if (!f.mkdirs()) {
                                 msg.setStatus(Message.STATUS.ERROR);
                                 msg.setError(Message.ERROR.OTHER);
                                 msg.setDetail("Module lib Create Error");
@@ -389,7 +389,7 @@ public class Module extends CustomAction {
                         }
                         // 创建模块目录下res目录
                         f = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + parameter.get("moduleName") + "/res");
-                        if (!f.createNewFile()) {
+                        if (!f.mkdirs()) {
                                 msg.setStatus(Message.STATUS.ERROR);
                                 msg.setError(Message.ERROR.OTHER);
                                 msg.setDetail("Module res Create Error");
@@ -397,7 +397,7 @@ public class Module extends CustomAction {
                         }
                         // 创建模块目录下src目录
                         f = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + parameter.get("moduleName") + "/src");
-                        if (!f.createNewFile()) {
+                        if (!f.mkdirs()) {
                                 msg.setStatus(Message.STATUS.ERROR);
                                 msg.setError(Message.ERROR.OTHER);
                                 msg.setDetail("Module src Create Error");
@@ -481,14 +481,14 @@ public class Module extends CustomAction {
                                 msg.setError(Message.ERROR.NONE);
                                 return msg;
                         }
-                        if (0 < list.size()) {
-                                msg.setStatus(Message.STATUS.ERROR);
-                                msg.setError(Message.ERROR.OTHER);
-                                msg.setDetail("Module Remove Error");
+                        if (0 >= list.size()) {
+                                msg.setStatus(Message.STATUS.SUCCESS);
+                                msg.setError(Message.ERROR.NONE);
                                 return msg;
                         }
-                        msg.setStatus(Message.STATUS.SUCCESS);
-                        msg.setError(Message.ERROR.NONE);
+                        msg.setStatus(Message.STATUS.ERROR);
+                        msg.setError(Message.ERROR.OTHER);
+                        msg.setDetail("Module Remove Error");
                         return msg;
                 } catch (Exception e) {
                         Framework.LOG.warn(Config.MODULE_NAME, e.toString());

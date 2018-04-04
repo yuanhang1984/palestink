@@ -50,4 +50,16 @@ public class Custom extends CustomAction {
         public Message uploadServerResourceFile() {
                 return this.module.uploadServerResourceFile();
         }
+
+        public Message addModule() {
+                return this.module.addModule();
+        }
+
+        public Message removeModule() {
+                return this.module.removeModule();
+        }
+
+        public Message modifyModuleName() {
+                return this.module.modifyModuleName();
+        }
 }

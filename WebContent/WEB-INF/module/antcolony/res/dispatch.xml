@@ -113,11 +113,11 @@
             </parameters>
         </servlet>
         <servlet>
-            <name>createModule</name>
+            <name>addModule</name>
             <description><![CDATA[创建模块]]></description>
             <namespace>
                 <![CDATA[
-                    [custom][antcolony][module.antcolony.necessary.Custom.createModule][moduleName];
+                    [custom][antcolony][module.antcolony.necessary.Custom.addModule][moduleName];
                 ]]>
             </namespace>
             <parameters>
