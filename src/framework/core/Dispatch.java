@@ -205,6 +205,8 @@ public class Dispatch extends HttpServlet {
                                                 return constStr;
                                         } else if (parameter.getType().equalsIgnoreCase("double")) {
                                                 return Double.valueOf(constStr);
+                                        } else if (parameter.getType().equalsIgnoreCase("long")) {
+                                                return Long.valueOf(constStr);
                                         } else if (parameter.getType().equalsIgnoreCase("timestamp")) {
                                                 return java.sql.Timestamp.valueOf(constStr);
                                         } else if (parameter.getType().equalsIgnoreCase("jsonobject")) {
@@ -276,6 +278,8 @@ public class Dispatch extends HttpServlet {
                                         return paramValue;
                                 } else if (parameter.getType().equalsIgnoreCase("double")) {
                                         return Double.valueOf(paramValue);
+                                } else if (parameter.getType().equalsIgnoreCase("long")) {
+                                        return Long.valueOf(paramValue);
                                 } else if (parameter.getType().equalsIgnoreCase("timestamp")) {
                                         return java.sql.Timestamp.valueOf(paramValue);
                                 } else if (parameter.getType().equalsIgnoreCase("jsonobject")) {

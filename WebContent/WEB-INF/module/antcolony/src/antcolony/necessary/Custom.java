@@ -62,4 +62,28 @@ public class Custom extends CustomAction {
         public Message modifyModuleName() {
                 return this.module.modifyModuleName();
         }
+
+        public Message startWebServer() {
+                return this.module.startWebServer();
+        }
+
+        public Message stopWebServer() {
+                return this.module.stopWebServer();
+        }
+
+        public Message readServerLogFile() {
+                return this.module.readServerLogFile();
+        }
+
+        public Message uploadServerSourceCode() {
+                return this.module.uploadServerSourceCode();
+        }
+
+        public Message removeServerSourceCode() {
+                return this.module.removeServerSourceCode();
+        }
+
+        public Message downloadServerSourceFile() {
+                return this.module.downloadServerSourceFile();
+        }
 }

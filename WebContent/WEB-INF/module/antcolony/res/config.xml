@@ -24,4 +24,18 @@
                 false 禁用API.
     -->
     <Docs enable = "true" />
+    <!-- 其他业务所需 -->
+    <!--
+         file_storage模块用于实现文件的存储功能.这里将上传的文件存储于数据库中,不建议存储在本地.原因有二:
+         1. 在文件数据不大时,不会产生因web集群造成的文件共享问题.
+         2. 在文件数据较大时,通常采用"对象存储"的中间件实现.若是发生迁移,这种存储于数据库的选择无疑是修改成本最低的方式.
+    -->
+    <!--
+        [WebServer]
+        startCommand: 启动WebServer的命令(如果内容为空, 则不启用该功能).
+        stopCommand: 停止WebServer的命令(如果内容为空, 则不启用该功能).
+        logFilePath: 日志文件的路径(用于读取显示在前端)(如果内容为空, 则不启用该功能).
+        注意: 由于运行环境大相径庭, 所以命令一定要事先在运行环境中测试通过.
+    -->
+    <WebServer startCommand = "cmd /c E:/tmp/9.0.1/bin/startup.bat" stopCommand = "cmd /c E:/tmp/9.0.1/bin/shutdown.bat" logFilePath = "E:/tmp/catalina.out" />
 </Config>

@@ -16,6 +16,7 @@ import java.util.jar.JarFile;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import java.io.FileReader;
 import java.io.InputStream;
@@ -762,6 +763,58 @@ public class InputOutput {
                         }
                         if (null != fis) {
                                 fis.close();
+                        }
+                }
+        }
+
+        /**
+         * 解压缩zip文件至目录
+         * 注意：这个功能的实现有个bug（跨平台不好），对于windows下的winrar压缩成的zip解压缩会出现异常。原因是因为zip压缩时的编码问题（windows默认的不是utf-8），所以在使用的时候一定要慎重。
+         * 
+         * @param zipFilePath zip文件的输出路径
+         * @param outputPath 输出目录
+         * @throws Exception
+         */
+        public static void decompressZipFile(String zipFilePath, String outputPath) throws Exception {
+                File file = null;
+                ZipFile zf = null;
+                Enumeration<?> e = null;
+                ZipEntry ze = null;
+                InputStream is = null;
+                FileOutputStream fos = null;
+                try {
+                        file = new File(zipFilePath);
+                        zf = new ZipFile(file);
+                        e = zf.entries();
+                        while (e.hasMoreElements()) {
+                                ze = (ZipEntry) e.nextElement();
+                                File f = new File(InputOutput.regulatePath(outputPath) + ze.getName());
+                                if (ze.isDirectory()) {
+                                        f.mkdirs();
+                                } else {
+                                        f.getParentFile().mkdirs();
+                                        if (!f.createNewFile()) {
+                                                throw new Exception("Create File " + ze.getName() + " Error");
+                                        }
+                                        is = zf.getInputStream(ze);
+                                        fos = new FileOutputStream(f);
+                                        byte[] buffer = new byte[10240];
+                                        int nBytes = 0;
+                                        while (0 < (nBytes = is.read(buffer))) {
+                                                fos.write(buffer, 0, nBytes);
+                                        }
+                                        fos.flush();
+                                }
+                        }
+                } finally {
+                        if (null != fos) {
+                                fos.close();
+                        }
+                        if (null != is) {
+                                is.close();
+                        }
+                        if (null != zf) {
+                                zf.close();
                         }
                 }
         }

@@ -173,5 +173,48 @@
                 </parameter>
             </parameters>
         </servlet>
+        <servlet>
+            <name>startWebServer</name>
+            <description><![CDATA[启动web服务]]></description>
+            <namespace>
+                <![CDATA[
+                    [custom][antcolony][module.antcolony.necessary.Custom.startWebServer][];
+                ]]>
+            </namespace>
+        </servlet>
+        <servlet>
+            <name>stopWebServer</name>
+            <description><![CDATA[停止web服务]]></description>
+            <namespace>
+                <![CDATA[
+                    [custom][antcolony][module.antcolony.necessary.Custom.stopWebServer][];
+                ]]>
+            </namespace>
+        </servlet>
+        <servlet>
+            <name>readServerLogFile</name>
+            <description><![CDATA[读取服务器日志文件]]></description>
+            <namespace>
+                <![CDATA[
+                    [custom][antcolony][module.antcolony.necessary.Custom.readServerLogFile][seek,number];
+                ]]>
+            </namespace>
+            <parameters>
+                <parameter>
+                    <name>seek</name>
+                    <description><![CDATA[读取日志的开始点]]></description>
+                    <type>long</type>
+                    <format>^[0-9]{1,}$</format>
+                    <allowNull>false</allowNull>
+                </parameter>
+                <parameter>
+                    <name>number</name>
+                    <description><![CDATA[读取行数]]></description>
+                    <type>integer</type>
+                    <format>^[0-9]{1,}$</format>
+                    <allowNull>false</allowNull>
+                </parameter>
+            </parameters>
+        </servlet>
     </dispatch>
 </config>

@@ -6,11 +6,12 @@ import java.util.Map.Entry;
 import java.util.zip.GZIPOutputStream;
 import java.util.ArrayList;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.RandomAccessFile;
 import java.sql.Connection;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import library.execute.Run;
 import library.io.InputOutput;
 import framework.sdk.Framework;
 import framework.sdk.msg.Message;
@@ -481,14 +483,14 @@ public class Module extends CustomAction {
                                 msg.setError(Message.ERROR.NONE);
                                 return msg;
                         }
-                        if (0 < list.size()) {
-                                msg.setStatus(Message.STATUS.ERROR);
-                                msg.setError(Message.ERROR.OTHER);
-                                msg.setDetail("Module Remove Error");
+                        if (0 >= list.size()) {
+                                msg.setStatus(Message.STATUS.SUCCESS);
+                                msg.setError(Message.ERROR.NONE);
                                 return msg;
                         }
-                        msg.setStatus(Message.STATUS.SUCCESS);
-                        msg.setError(Message.ERROR.NONE);
+                        msg.setStatus(Message.STATUS.ERROR);
+                        msg.setError(Message.ERROR.OTHER);
+                        msg.setDetail("Module Remove Error");
                         return msg;
                 } catch (Exception e) {
                         Framework.LOG.warn(Config.MODULE_NAME, e.toString());
@@ -540,6 +542,272 @@ public class Module extends CustomAction {
                         msg.setError(Message.ERROR.OTHER);
                         msg.setDetail(e.toString());
                         return msg;
+                }
+        }
+
+        /**
+         *  启动web服务
+         */
+        public Message startWebServer() {
+                Message msg = new Message();
+                try {
+                        if (0 >= Config.START_COMMAND.length()) {
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.OTHER);
+                                msg.setDetail("Web Server Start Command Is Empty");
+                                return msg;
+                        }
+                        Run.executeProgram(Config.START_COMMAND, null, null, false);
+                        msg.setStatus(Message.STATUS.SUCCESS);
+                        msg.setError(Message.ERROR.NONE);
+                        return msg;
+                } catch (Exception e) {
+                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        msg.setStatus(Message.STATUS.EXCEPTION);
+                        msg.setError(Message.ERROR.OTHER);
+                        msg.setDetail(e.toString());
+                        return msg;
+                }
+        }
+
+        /**
+         *  停止web服务
+         */
+        public Message stopWebServer() {
+                Message msg = new Message();
+                try {
+                        if (0 >= Config.STOP_COMMAND.length()) {
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.OTHER);
+                                msg.setDetail("Web Server Stop Command Is Empty");
+                                return msg;
+                        }
+                        Run.executeProgram(Config.START_COMMAND, null, null, false);
+                        msg.setStatus(Message.STATUS.SUCCESS);
+                        msg.setError(Message.ERROR.NONE);
+                        return msg;
+                } catch (Exception e) {
+                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        msg.setStatus(Message.STATUS.EXCEPTION);
+                        msg.setError(Message.ERROR.OTHER);
+                        msg.setDetail(e.toString());
+                        return msg;
+                }
+        }
+
+        /**
+         * 读取服务器日志文件
+         * 由于文本内容过多，这里采用gzip的压缩方式，能够大幅减少传输占用的数据量。
+         * 
+         * [参数列表所需参数]
+         * seek: 读取日志的开始点
+         * number: 读取行数
+         * 
+         * [注意]
+         * 返回数据中的seek是读取结束后的偏移，可用作下次读取的开始。
+         */
+        public Message readServerLogFile() {
+                Message msg = new Message();
+                GZIPOutputStream gos = null;
+                PrintWriter pw = null;
+                File f = null;
+                RandomAccessFile raf = null;
+                try {
+                        if (0 >= Config.LOG_FILE_PATH.length()) {
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.OTHER);
+                                msg.setDetail("Log File Path Is Empty");
+                                return msg;
+                        }
+                        f = new File(Config.LOG_FILE_PATH);
+                        if (!f.exists()) {
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.OTHER);
+                                msg.setDetail("Log File Is Not Exist");
+                                return msg;
+                        }
+                        raf = new RandomAccessFile(f, "r");
+                        raf.seek((Long) parameter.get("seek"));
+                        StringBuilder sb = new StringBuilder();
+                        String s = "";
+                        int i = 0;
+                        boolean endOfFile = false;
+                        Long seek = -1L;
+                        while ((s = raf.readLine()) != null) {
+                                sb.append(s);
+                                sb.append(System.getProperty("line.separator"));
+                                i++;
+                                if (i >= (Integer) parameter.get("number")) {
+                                        endOfFile = true;
+                                        seek = raf.getFilePointer();
+                                        break;
+                                }
+                        }
+                        if (!endOfFile) {
+                                seek = raf.getFilePointer();
+                        }
+                        JSONObject detail = new JSONObject();
+                        detail.put("seek", seek);
+                        detail.put("content", sb.toString());
+                        gos = new GZIPOutputStream(this.httpServletResponse.getOutputStream());
+                        pw = new PrintWriter(gos);
+                        this.httpServletResponse.setHeader("Content-Encoding", "gzip");
+                        JSONObject o = new JSONObject();
+                        o.put("status", Message.STATUS.SUCCESS);
+                        o.put("error", Message.ERROR.NONE);
+                        o.put("detail", detail);
+                        pw.write(o.toString());
+                        msg.setSign(Message.SIGN.ALREADY_FEEDBACK_TO_CLIENT);
+                        return msg;
+                } catch (Exception e) {
+                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        msg.setStatus(Message.STATUS.EXCEPTION);
+                        msg.setError(Message.ERROR.OTHER);
+                        msg.setDetail(e.toString());
+                        return msg;
+                } finally {
+                        try {
+                                if (null != raf) {
+                                        raf.close();
+                                }
+                                if (null != pw) {
+                                        pw.flush();
+                                        pw.close();
+                                }
+                                if (null != gos) {
+                                        gos.close();
+                                }
+                        } catch (Exception e) {
+                                Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                                msg.setStatus(Message.STATUS.EXCEPTION);
+                                msg.setError(Message.ERROR.OTHER);
+                                msg.setDetail(e.toString());
+                                return msg;
+                        }
+                }
+        }
+
+        /**
+         * 上传服务器的源码文件
+         * 
+         * [参数列表所需参数]
+         * attachment: 上传的文件
+         * moduleName: 模块名称
+         * type: 类型
+         */
+        public Message uploadServerSourceCode() {
+                Message msg = new Message();
+                try {
+                        FileItem attachment = (FileItem) parameter.get("attachment");
+                        if (null == attachment) {
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.PARAMETER_FORMAT_ERROR);
+                                msg.setDetail("attachment");
+                                return msg;
+                        }
+                        File f = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + parameter.get("moduleName") + "/src/" + parameter.get("moduleName") + "/" + parameter.get("type") + "/" + attachment.getName());
+                        f.getParentFile().mkdirs();
+                        attachment.write(f);
+                        msg.setStatus(Message.STATUS.SUCCESS);
+                        msg.setError(Message.ERROR.NONE);
+                        return msg;
+                } catch (Exception e) {
+                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        msg.setStatus(Message.STATUS.EXCEPTION);
+                        msg.setError(Message.ERROR.OTHER);
+                        msg.setDetail(e.toString());
+                        return msg;
+                }
+        }
+
+        /**
+        * 删除服务器的源码文件
+        * 
+        * [参数列表所需参数]
+        * moduleName: 模块名称
+        * fileName: 资源文件名称
+        * type: 类型
+        */
+        public Message removeServerSourceCode() {
+                Message msg = new Message();
+                try {
+                        File f = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + parameter.get("moduleName") + "/src/" + parameter.get("moduleName") + "/" + parameter.get("type") + "/" + parameter.get("fileName"));
+                        if (!f.exists()) {
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.OTHER);
+                                msg.setDetail("File Is Not Exist");
+                                return msg;
+                        }
+                        if (!f.delete()) {
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.OTHER);
+                                msg.setDetail("File Remove Error");
+                                return msg;
+                        }
+                        msg.setStatus(Message.STATUS.SUCCESS);
+                        msg.setError(Message.ERROR.NONE);
+                        return msg;
+                } catch (Exception e) {
+                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        msg.setStatus(Message.STATUS.EXCEPTION);
+                        msg.setError(Message.ERROR.OTHER);
+                        msg.setDetail(e.toString());
+                        return msg;
+                }
+        }
+
+        /**
+         * 下载服务器的源码文件
+         * 
+         * [参数列表所需参数]
+         * moduleName: 模块名称
+         * fileName: 资源文件名称
+         * type: 类型
+         */
+        public Message downloadServerSourceFile() {
+                Message msg = new Message();
+                InputStream is = null;
+                OutputStream os = null;
+                File f = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + parameter.get("moduleName") + "/src/" + parameter.get("moduleName") + "/" + parameter.get("type") + "/" + parameter.get("fileName"));
+                try {
+                        this.httpServletResponse.setHeader("Content-Disposition", "attachment; filename=" + f.getName());
+                        is = new FileInputStream(f);
+                        int size = 0;
+                        byte[] buf = new byte[10240];
+                        os = this.httpServletResponse.getOutputStream();
+                        while (-1 != (size = is.read(buf))) {
+                                try {
+                                        os.write(buf, 0, size);
+                                } catch (Exception e) {
+                                        msg.setStatus(Message.STATUS.EXCEPTION);
+                                        msg.setError(Message.ERROR.OTHER);
+                                        msg.setDetail(e.toString());
+                                        return msg;
+                                }
+                        }
+                        msg.setSign(Message.SIGN.ALREADY_FEEDBACK_TO_CLIENT);
+                        return msg;
+                } catch (Exception e) {
+                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        msg.setStatus(Message.STATUS.EXCEPTION);
+                        msg.setError(Message.ERROR.OTHER);
+                        msg.setDetail(e.toString());
+                        return msg;
+                } finally {
+                        try {
+                                if (null != is) {
+                                        is.close();
+                                }
+                                if (null != os) {
+                                        os.close();
+                                }
+                        } catch (Exception e) {
+                                Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                                msg.setStatus(Message.STATUS.EXCEPTION);
+                                msg.setError(Message.ERROR.OTHER);
+                                msg.setDetail(e.toString());
+                                return msg;
+                        }
                 }
         }
 }
