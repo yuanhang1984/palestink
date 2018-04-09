@@ -229,7 +229,7 @@
                     <name>attachment</name>
                     <description><![CDATA[文件（尺寸小于等于10M，类型范围：xml）]]></description>
                     <type>file</type>
-                    <format>.+\.(xml)$</format>
+                    <format>.+\.(java)$</format>
                     <fileMaxSize>10485760</fileMaxSize>
                     <allowNull>false</allowNull>
                 </parameter>
