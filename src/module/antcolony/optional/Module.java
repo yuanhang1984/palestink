@@ -46,6 +46,13 @@ public class Module extends CustomAction {
         }
 
         /**
+         * 获取当前类的参数
+         */
+        public HashMap<String, Object> getParameter() {
+                return this.parameter;
+        }
+
+        /**
          * 获取已加载模块
          */
         public Message getLoadNameList() {
@@ -141,10 +148,11 @@ public class Module extends CustomAction {
          * 由于文本内容过多，这里采用gzip的压缩方式，能够大幅减少传输占用的数据量。
          * 
          * [参数列表所需参数]
+         * directory: 文件所在目录(lib, res, src)
          * moduleName: 模块名称
          * fileName: 资源文件名称
          */
-        public Message readServerResourceFile() {
+        public Message readServerFile() {
                 Message msg = new Message();
                 GZIPOutputStream gos = null;
                 PrintWriter pw = null;
@@ -152,7 +160,7 @@ public class Module extends CustomAction {
                         gos = new GZIPOutputStream(this.httpServletResponse.getOutputStream());
                         pw = new PrintWriter(gos);
                         this.httpServletResponse.setHeader("Content-Encoding", "gzip");
-                        StringBuilder sb = InputOutput.simpleStringBuilderReadFile(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + parameter.get("moduleName") + "/res/" + parameter.get("fileName"));
+                        StringBuilder sb = InputOutput.simpleStringBuilderReadFile(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + parameter.get("moduleName") + "/" + parameter.get("directory") + "/" + parameter.get("fileName"));
                         JSONObject o = new JSONObject();
                         o.put("status", Message.STATUS.SUCCESS);
                         o.put("error", Message.ERROR.NONE);
@@ -186,17 +194,54 @@ public class Module extends CustomAction {
         }
 
         /**
+        * 删除服务器的源码文件
+        *
+        * [参数列表所需参数]
+        * directory: 文件所在目录(lib, res, src)
+        * moduleName: 模块名称
+        * fileName: 资源文件名称
+        */
+        public Message removeServerFile() {
+                Message msg = new Message();
+                try {
+                        File f = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + parameter.get("moduleName") + "/" + parameter.get("directory") + "/" + parameter.get("fileName"));
+                        if (!f.exists()) {
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.OTHER);
+                                msg.setDetail("File Is Not Exist");
+                                return msg;
+                        }
+                        if (!f.delete()) {
+                                msg.setStatus(Message.STATUS.ERROR);
+                                msg.setError(Message.ERROR.OTHER);
+                                msg.setDetail("File Remove Error");
+                                return msg;
+                        }
+                        msg.setStatus(Message.STATUS.SUCCESS);
+                        msg.setError(Message.ERROR.NONE);
+                        return msg;
+                } catch (Exception e) {
+                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        msg.setStatus(Message.STATUS.EXCEPTION);
+                        msg.setError(Message.ERROR.OTHER);
+                        msg.setDetail(e.toString());
+                        return msg;
+                }
+        }
+
+        /**
          * 下载服务器的资源文件
          * 
          * [参数列表所需参数]
+         * directory: 文件所在目录(lib, res, src)
          * moduleName: 模块名称
          * fileName: 资源文件名称
          */
-        public Message downloadServerResourceFile() {
+        public Message downloadServerFile() {
                 Message msg = new Message();
                 InputStream is = null;
                 OutputStream os = null;
-                File f = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + parameter.get("moduleName") + "/res/" + parameter.get("fileName"));
+                File f = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + parameter.get("moduleName") + "/" + parameter.get("directory") + "/" + parameter.get("fileName"));
                 try {
                         this.httpServletResponse.setHeader("Content-Disposition", "attachment; filename=" + f.getName());
                         is = new FileInputStream(f);
@@ -244,10 +289,11 @@ public class Module extends CustomAction {
          * 
          * [参数列表所需参数]
          * attachment: 上传的文件
+         * directory: 文件所在目录(lib, res, src)
          * moduleName: 模块名称
          * fileName: 资源文件的名称
          */
-        public Message uploadServerResourceFile() {
+        public Message uploadServerFile() {
                 Message msg = new Message();
                 try {
                         FileItem attachment = (FileItem) parameter.get("attachment");
@@ -257,7 +303,7 @@ public class Module extends CustomAction {
                                 msg.setDetail("attachment");
                                 return msg;
                         }
-                        File f = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + parameter.get("moduleName") + "/res/" + parameter.get("fileName"));
+                        File f = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + parameter.get("moduleName") + "/" + parameter.get("directory") + "/" + parameter.get("fileName"));
                         attachment.write(f);
                         msg.setStatus(Message.STATUS.SUCCESS);
                         msg.setError(Message.ERROR.NONE);
@@ -272,12 +318,12 @@ public class Module extends CustomAction {
         }
 
         /**
-         * 获取config.xml文件的xml结构
+         * 生成config.xml文件的xml结构
          * 
          * @param moduleName 模块名称
          * @return config.xml文件的xml结构
          */
-        private Document getConfigXml(String moduleName) {
+        private Document generateConfigXml(String moduleName) {
                 Document doc = DocumentHelper.createDocument();
                 doc.addDocType("xml", null, null);
                 Element config = doc.addElement("Config");
@@ -306,11 +352,11 @@ public class Module extends CustomAction {
         }
 
         /**
-         * 获取sql.xml文件的xml结构
+         * 生成sql.xml文件的xml结构
          * 
          * @return sql.xml文件的xml结构
          */
-        private Document getSqlXml() {
+        private Document generateSqlXml() {
                 Document doc = DocumentHelper.createDocument();
                 doc.addDocType("xml", null, null);
                 doc.addElement("Sql");
@@ -318,11 +364,11 @@ public class Module extends CustomAction {
         }
 
         /**
-         * 获取dispatch.xml文件的xml结构
+         * 生成dispatch.xml文件的xml结构
          * 
          * @return dispatch.xml文件的xml结构
          */
-        private Document getDispatchXml() {
+        private Document generateDispatchXml() {
                 Document doc = DocumentHelper.createDocument();
                 doc.addDocType("xml", null, null);
                 Element config = doc.addElement("Config");
@@ -334,7 +380,7 @@ public class Module extends CustomAction {
          * 获取xml的格式
          * @return 返回xml的格式
          */
-        private OutputFormat getXmlFormat() {
+        private OutputFormat generateXmlFormat() {
                 OutputFormat fmt = new OutputFormat();
                 // 编码
                 fmt.setEncoding("utf-8");
@@ -408,24 +454,24 @@ public class Module extends CustomAction {
                         // 创建模块目录下res/config.xml文件
                         f = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + parameter.get("moduleName") + "/res/config.xml");
                         fw = new FileWriter(f);
-                        xw = new XMLWriter(fw, this.getXmlFormat());
-                        xw.write(this.getConfigXml((String) parameter.get("moduleName")));
+                        xw = new XMLWriter(fw, this.generateXmlFormat());
+                        xw.write(this.generateConfigXml((String) parameter.get("moduleName")));
                         xw.flush();
                         xw.close();
                         fw.close();
                         // 创建模块目录下res/sql.xml文件
                         f = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + parameter.get("moduleName") + "/res/sql.xml");
                         fw = new FileWriter(f);
-                        xw = new XMLWriter(fw, this.getXmlFormat());
-                        xw.write(this.getSqlXml());
+                        xw = new XMLWriter(fw, this.generateXmlFormat());
+                        xw.write(this.generateSqlXml());
                         xw.flush();
                         xw.close();
                         fw.close();
                         // 创建模块目录下res/dispatch.xml文件
                         f = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + parameter.get("moduleName") + "/res/dispatch.xml");
                         fw = new FileWriter(f);
-                        xw = new XMLWriter(fw, this.getXmlFormat());
-                        xw.write(this.getDispatchXml());
+                        xw = new XMLWriter(fw, this.generateXmlFormat());
+                        xw.write(this.generateDispatchXml());
                         xw.flush();
                         xw.close();
                         fw.close();
@@ -688,130 +734,6 @@ public class Module extends CustomAction {
         }
 
         /**
-         * 上传服务器的源码文件
-         * 
-         * [参数列表所需参数]
-         * attachment: 上传的文件
-         * moduleName: 模块名称
-         * type: 类型
-         */
-        public Message uploadServerSourceCode() {
-                Message msg = new Message();
-                try {
-                        FileItem attachment = (FileItem) parameter.get("attachment");
-                        if (null == attachment) {
-                                msg.setStatus(Message.STATUS.ERROR);
-                                msg.setError(Message.ERROR.PARAMETER_FORMAT_ERROR);
-                                msg.setDetail("attachment");
-                                return msg;
-                        }
-                        File f = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + parameter.get("moduleName") + "/src/" + parameter.get("moduleName") + "/" + parameter.get("type") + "/" + attachment.getName());
-                        f.getParentFile().mkdirs();
-                        attachment.write(f);
-                        msg.setStatus(Message.STATUS.SUCCESS);
-                        msg.setError(Message.ERROR.NONE);
-                        return msg;
-                } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
-                        msg.setStatus(Message.STATUS.EXCEPTION);
-                        msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
-                        return msg;
-                }
-        }
-
-        /**
-        * 删除服务器的源码文件
-        * 
-        * [参数列表所需参数]
-        * moduleName: 模块名称
-        * fileName: 资源文件名称
-        * type: 类型
-        */
-        public Message removeServerSourceCode() {
-                Message msg = new Message();
-                try {
-                        File f = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + parameter.get("moduleName") + "/src/" + parameter.get("moduleName") + "/" + parameter.get("type") + "/" + parameter.get("fileName"));
-                        if (!f.exists()) {
-                                msg.setStatus(Message.STATUS.ERROR);
-                                msg.setError(Message.ERROR.OTHER);
-                                msg.setDetail("File Is Not Exist");
-                                return msg;
-                        }
-                        if (!f.delete()) {
-                                msg.setStatus(Message.STATUS.ERROR);
-                                msg.setError(Message.ERROR.OTHER);
-                                msg.setDetail("File Remove Error");
-                                return msg;
-                        }
-                        msg.setStatus(Message.STATUS.SUCCESS);
-                        msg.setError(Message.ERROR.NONE);
-                        return msg;
-                } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
-                        msg.setStatus(Message.STATUS.EXCEPTION);
-                        msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
-                        return msg;
-                }
-        }
-
-        /**
-         * 下载服务器的源码文件
-         * 
-         * [参数列表所需参数]
-         * moduleName: 模块名称
-         * fileName: 资源文件名称
-         * type: 类型
-         */
-        public Message downloadServerSourceFile() {
-                Message msg = new Message();
-                InputStream is = null;
-                OutputStream os = null;
-                File f = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + parameter.get("moduleName") + "/src/" + parameter.get("moduleName") + "/" + parameter.get("type") + "/" + parameter.get("fileName"));
-                try {
-                        this.httpServletResponse.setHeader("Content-Disposition", "attachment; filename=" + f.getName());
-                        is = new FileInputStream(f);
-                        int size = 0;
-                        byte[] buf = new byte[10240];
-                        os = this.httpServletResponse.getOutputStream();
-                        while (-1 != (size = is.read(buf))) {
-                                try {
-                                        os.write(buf, 0, size);
-                                } catch (Exception e) {
-                                        msg.setStatus(Message.STATUS.EXCEPTION);
-                                        msg.setError(Message.ERROR.OTHER);
-                                        msg.setDetail(e.toString());
-                                        return msg;
-                                }
-                        }
-                        msg.setSign(Message.SIGN.ALREADY_FEEDBACK_TO_CLIENT);
-                        return msg;
-                } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
-                        msg.setStatus(Message.STATUS.EXCEPTION);
-                        msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
-                        return msg;
-                } finally {
-                        try {
-                                if (null != is) {
-                                        is.close();
-                                }
-                                if (null != os) {
-                                        os.close();
-                                }
-                        } catch (Exception e) {
-                                Framework.LOG.warn(Config.MODULE_NAME, e.toString());
-                                msg.setStatus(Message.STATUS.EXCEPTION);
-                                msg.setError(Message.ERROR.OTHER);
-                                msg.setDetail(e.toString());
-                                return msg;
-                        }
-                }
-        }
-
-        /**
          * 获取服务器源码文件的列表
          * 
          * [参数列表所需参数]
@@ -851,6 +773,32 @@ public class Module extends CustomAction {
                 msg.setStatus(Message.STATUS.SUCCESS);
                 msg.setError(Message.ERROR.NONE);
                 msg.setDetail(ssfObj);
+                return msg;
+        }
+
+        /**
+         * 获取服务器lib文件的列表
+         * 
+         * [参数列表所需参数]
+         * moduleName: 模块名称
+         */
+        public Message getServerLibraryFileList() {
+                Message msg = new Message();
+                JSONArray arr = new JSONArray();
+                ArrayList<String> list = InputOutput.getCurrentDirectoryFilePath(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + parameter.get("moduleName") + "/lib", null);
+                if (null != list) {
+                        Iterator<String> iter = list.iterator();
+                        while (iter.hasNext()) {
+                                String path = iter.next();
+                                File f = new File(path);
+                                JSONObject o = new JSONObject();
+                                o.put("name", f.getName());
+                                arr.put(o);
+                        }
+                }
+                msg.setStatus(Message.STATUS.SUCCESS);
+                msg.setError(Message.ERROR.NONE);
+                msg.setDetail(arr);
                 return msg;
         }
 }
