@@ -810,4 +810,47 @@ public class Module extends CustomAction {
                         }
                 }
         }
+
+        /**
+         * 获取服务器源码文件的列表
+         * 
+         * [参数列表所需参数]
+         * moduleName: 模块名称
+         */
+        public Message getServerSourceFileList() {
+                Message msg = new Message();
+                JSONObject ssfObj = new JSONObject();
+                JSONArray necessaryArr = new JSONArray();
+                JSONArray optionalArr = new JSONArray();
+                // necessary
+                ArrayList<String> necessaryList = InputOutput.getCurrentDirectoryFilePath(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + parameter.get("moduleName") + "/src/" + parameter.get("moduleName") + "/necessary", null);
+                if (null != necessaryList) {
+                        Iterator<String> iter = necessaryList.iterator();
+                        while (iter.hasNext()) {
+                                String path = iter.next();
+                                File f = new File(path);
+                                JSONObject necessaryObj = new JSONObject();
+                                necessaryObj.put("name", f.getName());
+                                necessaryArr.put(necessaryObj);
+                        }
+                }
+                ssfObj.put("necessary", necessaryArr);
+                // optional
+                ArrayList<String> optionalList = InputOutput.getCurrentDirectoryFilePath(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + parameter.get("moduleName") + "/src/" + parameter.get("moduleName") + "/optional", null);
+                if (null != optionalList) {
+                        Iterator<String> iter = optionalList.iterator();
+                        while (iter.hasNext()) {
+                                String path = iter.next();
+                                File f = new File(path);
+                                JSONObject optionalObj = new JSONObject();
+                                optionalObj.put("name", f.getName());
+                                optionalArr.put(optionalObj);
+                        }
+                }
+                ssfObj.put("optional", optionalArr);
+                msg.setStatus(Message.STATUS.SUCCESS);
+                msg.setError(Message.ERROR.NONE);
+                msg.setDetail(ssfObj);
+                return msg;
+        }
 }

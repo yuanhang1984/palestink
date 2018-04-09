@@ -1,11 +1,11 @@
 package library.toolkit;
 
-import library.io.InputOutput;
+import library.string.CharacterString;
 
 public class Test {
         public Test() {
                 try {
-                        InputOutput.decompressZipFile("E:\\tmp\\11122\\Desktop.zip", "E:\\tmp\\11122");
+                        System.out.println(CharacterString.regularExpressionCheck("^[0-9a-zA-Z_]{1,}\\.java$", "Custom.java"));
                 } catch (Exception e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();

@@ -86,4 +86,8 @@ public class Custom extends CustomAction {
         public Message downloadServerSourceFile() {
                 return this.module.downloadServerSourceFile();
         }
+
+        public Message getServerSourceFileList() {
+                return this.module.getServerSourceFileList();
+        }
 }
