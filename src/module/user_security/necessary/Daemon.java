@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import javax.servlet.ServletContext;
 import org.dom4j.Element;
 import library.database.DatabaseKit;
+import library.string.CharacterString;
 import framework.sdk.Framework;
 import framework.ext.factory.DbFactory;
 import framework.sdbo.object.SqlRepository;
@@ -48,7 +49,7 @@ class ExecuteThread extends Thread {
                         }
                         Framework.LOG.info(Daemon.MODULE_NAME, "User Role Load Complete");
                 } catch (Exception e) {
-                        Framework.LOG.error(Daemon.MODULE_NAME, "Get User Role Error: " + System.getProperty("line.separator") + e.toString());
+                        Framework.LOG.error(Daemon.MODULE_NAME, "Get User Role Error: " + System.getProperty("line.separator") + CharacterString.getExceptionStackTrace(e));
                 } finally {
                         try {
                                 if (null != rs) {
@@ -61,7 +62,7 @@ class ExecuteThread extends Thread {
                                         c.close();
                                 }
                         } catch (Exception e) {
-                                Framework.LOG.error(Daemon.MODULE_NAME, "Get User Role Error: " + System.getProperty("line.separator") + e.toString());
+                                Framework.LOG.error(Daemon.MODULE_NAME, "Get User Role Error: " + System.getProperty("line.separator") + CharacterString.getExceptionStackTrace(e));
                         }
                 }
         }

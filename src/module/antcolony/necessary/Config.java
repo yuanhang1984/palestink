@@ -8,6 +8,7 @@ import org.dom4j.Element;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
 import framework.sdk.Framework;
+import library.string.CharacterString;
 import module.antcolony.necessary.Config;
 
 @SuppressWarnings("serial")
@@ -43,7 +44,7 @@ public class Config extends HttpServlet {
                         Config.STOP_COMMAND = webServer.attributeValue("stopCommand");
                         Config.LOG_FILE_PATH = webServer.attributeValue("logFilePath");
                 } catch (Exception e) {
-                        Framework.LOG.error(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.error(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                 }
         }
 

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE xml>
+<config>
+    <dispatch>
+        <servlet>
+            <name>getName</name>
+            <description><![CDATA[getName]]></description>
+            <namespace>
+                <![CDATA[
+                    [custom][test][module.test.necessary.Custom.getName][name];
+                ]]>
+            </namespace>
+            <parameters>
+                <parameter>
+                    <name>name</name>
+                    <description><![CDATA[用户名（4-16位下划线、横线、字符或数字）]]></description>
+                    <type>string</type>
+                    <format>^[0-9a-zA-Z_-]{4,16}$</format>
+                    <allowNull>false</allowNull>
+                </parameter>
+            </parameters>
+        </servlet>
+    </dispatch>
+</config>

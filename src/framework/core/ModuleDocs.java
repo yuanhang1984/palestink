@@ -4,9 +4,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import framework.sdk.msg.Message;
 import library.io.InputOutput;
+import library.string.CharacterString;
 
 @SuppressWarnings("serial")
 public class ModuleDocs extends HttpServlet {
@@ -57,7 +57,7 @@ public class ModuleDocs extends HttpServlet {
                                 Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.OTHER, null, "Module Document Read Error: " + System.getProperty("line.separator") + path);
                         }
                 } catch (Exception e) {
-                        Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, e.toString());
+                        Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, CharacterString.getExceptionStackTrace(e));
                 }
         }
 }

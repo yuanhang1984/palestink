@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import library.database.DatabaseKit;
+import library.string.CharacterString;
 import framework.sdk.Framework;
 import framework.sdk.msg.Message;
 import framework.ext.factory.DbFactory;
@@ -92,10 +93,10 @@ public class SimpleDBO {
                         msg.setCount(res);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(SimpleDBO.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(SimpleDBO.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         msg.setStatus(Message.STATUS.EXCEPTION);
                         msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                         return msg;
                 }
         }
@@ -145,10 +146,10 @@ public class SimpleDBO {
                         msg.setDetail(a);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(SimpleDBO.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(SimpleDBO.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         msg.setStatus(Message.STATUS.EXCEPTION);
                         msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                         return msg;
                 }
         }
@@ -225,12 +226,12 @@ public class SimpleDBO {
                 } catch (Exception e) {
                         try {
                                 c.rollback();
-                                Framework.LOG.warn(SimpleDBO.MODULE_NAME, e.toString());
-                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, e.toString());
+                                Framework.LOG.warn(SimpleDBO.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
+                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, CharacterString.getExceptionStackTrace(e));
                                 return false;
                         } catch (Exception e2) {
-                                Framework.LOG.warn(SimpleDBO.MODULE_NAME, e2.toString());
-                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, e2.toString());
+                                Framework.LOG.warn(SimpleDBO.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
+                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, CharacterString.getExceptionStackTrace(e2));
                                 return false;
                         }
                 }
@@ -303,12 +304,12 @@ public class SimpleDBO {
                 } catch (Exception e) {
                         try {
                                 c.rollback();
-                                Framework.LOG.warn(SimpleDBO.MODULE_NAME, e.toString());
-                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, e.toString());
+                                Framework.LOG.warn(SimpleDBO.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
+                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, CharacterString.getExceptionStackTrace(e));
                                 return false;
                         } catch (Exception e2) {
-                                Framework.LOG.warn(SimpleDBO.MODULE_NAME, e2.toString());
-                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, e2.toString());
+                                Framework.LOG.warn(SimpleDBO.MODULE_NAME, CharacterString.getExceptionStackTrace(e2));
+                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, CharacterString.getExceptionStackTrace(e2));
                                 return false;
                         }
                 }
@@ -702,8 +703,8 @@ public class SimpleDBO {
                                                 }
                                         } catch (Exception e) {
                                                 c.rollback();
-                                                Framework.LOG.warn(SimpleDBO.MODULE_NAME, e.toString());
-                                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, e.toString());
+                                                Framework.LOG.warn(SimpleDBO.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
+                                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, CharacterString.getExceptionStackTrace(e));
                                                 return;
                                         }
                                 } else if (type.toLowerCase().startsWith("foreach-custom<<")) {
@@ -782,8 +783,8 @@ public class SimpleDBO {
                                                         }
                                                 } catch (Exception e) {
                                                         c.rollback();
-                                                        Framework.LOG.warn(SimpleDBO.MODULE_NAME, e.toString());
-                                                        Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, e.toString());
+                                                        Framework.LOG.warn(SimpleDBO.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
+                                                        Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, CharacterString.getExceptionStackTrace(e));
                                                         return;
                                                 }
                                         }
@@ -802,17 +803,17 @@ public class SimpleDBO {
                 } catch (Exception e) {
                         try {
                                 c.rollback();
-                                Framework.LOG.warn(SimpleDBO.MODULE_NAME, e.toString());
-                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, e.toString());
+                                Framework.LOG.warn(SimpleDBO.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
+                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, CharacterString.getExceptionStackTrace(e));
                         } catch (Exception e2) {
-                                Framework.LOG.warn(SimpleDBO.MODULE_NAME, e2.toString());
-                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, e2.toString());
+                                Framework.LOG.warn(SimpleDBO.MODULE_NAME, CharacterString.getExceptionStackTrace(e2));
+                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, CharacterString.getExceptionStackTrace(e2));
                         }
                 } finally {
                         try {
                                 c.close();
                         } catch (Exception e) {
-                                Framework.LOG.warn(SimpleDBO.MODULE_NAME, e.toString());
+                                Framework.LOG.warn(SimpleDBO.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         }
                 }
         }

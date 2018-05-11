@@ -115,7 +115,7 @@ public class Dispatch extends HttpServlet {
                                 // Dispatch.DISPATCH_PARAMETER_MAP.put(this.moduleName + "." + servletName, new framework.dispatch.object.Servlet(servletName, sdboType, namespace, permission, list));
                         }
                 } catch (Exception e) {
-                        Framework.LOG.warn(Dispatch.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(Dispatch.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                 }
         }
 
@@ -222,7 +222,7 @@ public class Dispatch extends HttpServlet {
                                         /*
                                          * 通过异常判断参数类型转换是否成功
                                          */
-                                        Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.PARAMETER_HANDLE_EXCEPTION, null, e.toString());
+                                        Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.PARAMETER_HANDLE_EXCEPTION, null, CharacterString.getExceptionStackTrace(e));
                                         isBroken.setBool(true);
                                         return null;
                                 }
@@ -265,7 +265,7 @@ public class Dispatch extends HttpServlet {
                                         try {
                                                 paramValue = Md5.encode(paramValue.getBytes("utf-8"));
                                         } catch (Exception e) {
-                                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.PARAMETER_TRANSFORM_ERROR, null, e.toString());
+                                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.PARAMETER_TRANSFORM_ERROR, null, CharacterString.getExceptionStackTrace(e));
                                                 isBroken.setBool(true);
                                                 return null;
                                         }
@@ -295,7 +295,7 @@ public class Dispatch extends HttpServlet {
                                 /*
                                  * 通过异常判断参数类型转换是否成功
                                  */
-                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.PARAMETER_HANDLE_EXCEPTION, null, e.toString());
+                                Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.PARAMETER_HANDLE_EXCEPTION, null, CharacterString.getExceptionStackTrace(e));
                                 isBroken.setBool(true);
                                 return null;
                         }
@@ -361,11 +361,11 @@ public class Dispatch extends HttpServlet {
                         isBroken.setBool(true);
                         return null;
                 } catch (FileUploadException e) {
-                        Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.FILE_UPLOAD_EXCEPTION, null, e.toString());
+                        Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.FILE_UPLOAD_EXCEPTION, null, CharacterString.getExceptionStackTrace(e));
                         isBroken.setBool(true);
                         return null;
                 } catch (Exception e) {
-                        Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, e.toString());
+                        Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, CharacterString.getExceptionStackTrace(e));
                         isBroken.setBool(true);
                         return null;
                 }

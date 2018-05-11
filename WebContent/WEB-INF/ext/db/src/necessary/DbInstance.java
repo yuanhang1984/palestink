@@ -3,7 +3,6 @@ package ext.db.necessary;
 import java.sql.Connection;
 import framework.sdk.Framework;
 import framework.sdk.spec.db.DbInstanceModel;
-
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 

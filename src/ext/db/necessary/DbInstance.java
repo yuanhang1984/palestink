@@ -3,6 +3,7 @@ package ext.db.necessary;
 import java.sql.Connection;
 import framework.sdk.Framework;
 import framework.sdk.spec.db.DbInstanceModel;
+import library.string.CharacterString;
 
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
@@ -29,7 +30,7 @@ public class DbInstance extends DbInstanceModel {
                         // 设置连接池属性至数据源
                         this.dataSource.setPoolProperties(this.poolProperties);
                 } catch (Exception e) {
-                        Framework.LOG.error(this.moduleName, "Initialize DbInstance Error: " + e.toString());
+                        Framework.LOG.error(this.moduleName, "Initialize DbInstance Error: " + CharacterString.getExceptionStackTrace(e));
                         return false;
                 }
                 return true;
@@ -40,7 +41,7 @@ public class DbInstance extends DbInstanceModel {
                 try {
                         return this.dataSource.getConnection();
                 } catch (Exception e) {
-                        Framework.LOG.error(this.moduleName, e.toString());
+                        Framework.LOG.error(this.moduleName, CharacterString.getExceptionStackTrace(e));
                         return null;
                 }
         }

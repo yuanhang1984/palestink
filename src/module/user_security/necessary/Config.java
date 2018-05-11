@@ -8,6 +8,7 @@ import org.dom4j.Element;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
 import framework.sdk.Framework;
+import library.string.CharacterString;
 import module.user_security.necessary.Config;
 
 @SuppressWarnings("serial")
@@ -35,7 +36,7 @@ public class Config extends HttpServlet {
                         Config.LOGIN_FAILED_RETRY_COUNT = Integer.parseInt(logion.attributeValue("loginFailedRetryCount"));
                         Config.ACCOUNT_FROZEN_TIME = Integer.parseInt(logion.attributeValue("accountFrozenTime"));
                 } catch (Exception e) {
-                        Framework.LOG.error(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.error(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                 }
         }
 

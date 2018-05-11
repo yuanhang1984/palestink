@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 import framework.sdk.Framework;
+import library.string.CharacterString;
 
 public class Message {
         public static final String MODULE_NAME = "Message";
@@ -180,7 +181,7 @@ public class Message {
                                 Message.responseToClient(response, o.toString());
                         }
                 } catch (Exception e) {
-                        Framework.LOG.error(Message.MODULE_NAME, e.toString());
+                        Framework.LOG.error(Message.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                 }
         }
 

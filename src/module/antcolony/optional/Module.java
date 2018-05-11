@@ -26,6 +26,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import library.execute.Run;
 import library.io.InputOutput;
+import library.string.CharacterString;
 import framework.sdk.Framework;
 import framework.sdk.msg.Message;
 import framework.sdk.spec.module.necessary.CustomAction;
@@ -71,10 +72,10 @@ public class Module extends CustomAction {
                         msg.setDetail(dataList);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         msg.setStatus(Message.STATUS.EXCEPTION);
                         msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                         return msg;
                 }
         }
@@ -98,10 +99,10 @@ public class Module extends CustomAction {
                         msg.setDetail(dataList);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         msg.setStatus(Message.STATUS.EXCEPTION);
                         msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                         return msg;
                 }
         }
@@ -135,10 +136,10 @@ public class Module extends CustomAction {
                         msg.setDetail(dataList);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         msg.setStatus(Message.STATUS.EXCEPTION);
                         msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                         return msg;
                 }
         }
@@ -169,10 +170,10 @@ public class Module extends CustomAction {
                         msg.setSign(Message.SIGN.ALREADY_FEEDBACK_TO_CLIENT);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         msg.setStatus(Message.STATUS.EXCEPTION);
                         msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                         return msg;
                 } finally {
                         try {
@@ -184,10 +185,10 @@ public class Module extends CustomAction {
                                         gos.close();
                                 }
                         } catch (Exception e) {
-                                Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                                Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                                 msg.setStatus(Message.STATUS.EXCEPTION);
                                 msg.setError(Message.ERROR.OTHER);
-                                msg.setDetail(e.toString());
+                                msg.setDetail(CharacterString.getExceptionStackTrace(e));
                                 return msg;
                         }
                 }
@@ -221,10 +222,10 @@ public class Module extends CustomAction {
                         msg.setError(Message.ERROR.NONE);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         msg.setStatus(Message.STATUS.EXCEPTION);
                         msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                         return msg;
                 }
         }
@@ -254,17 +255,17 @@ public class Module extends CustomAction {
                                 } catch (Exception e) {
                                         msg.setStatus(Message.STATUS.EXCEPTION);
                                         msg.setError(Message.ERROR.OTHER);
-                                        msg.setDetail(e.toString());
+                                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                                         return msg;
                                 }
                         }
                         msg.setSign(Message.SIGN.ALREADY_FEEDBACK_TO_CLIENT);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         msg.setStatus(Message.STATUS.EXCEPTION);
                         msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                         return msg;
                 } finally {
                         try {
@@ -275,10 +276,10 @@ public class Module extends CustomAction {
                                         os.close();
                                 }
                         } catch (Exception e) {
-                                Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                                Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                                 msg.setStatus(Message.STATUS.EXCEPTION);
                                 msg.setError(Message.ERROR.OTHER);
-                                msg.setDetail(e.toString());
+                                msg.setDetail(CharacterString.getExceptionStackTrace(e));
                                 return msg;
                         }
                 }
@@ -309,10 +310,10 @@ public class Module extends CustomAction {
                         msg.setError(Message.ERROR.NONE);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         msg.setStatus(Message.STATUS.EXCEPTION);
                         msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                         return msg;
                 }
         }
@@ -480,10 +481,10 @@ public class Module extends CustomAction {
                         msg.setError(Message.ERROR.NONE);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         msg.setStatus(Message.STATUS.EXCEPTION);
                         msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                         return msg;
                 } finally {
                         try {
@@ -494,10 +495,10 @@ public class Module extends CustomAction {
                                         fw.close();
                                 }
                         } catch (Exception e) {
-                                Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                                Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                                 msg.setStatus(Message.STATUS.EXCEPTION);
                                 msg.setError(Message.ERROR.OTHER);
-                                msg.setDetail(e.toString());
+                                msg.setDetail(CharacterString.getExceptionStackTrace(e));
                                 return msg;
                         }
                 }
@@ -539,10 +540,10 @@ public class Module extends CustomAction {
                         msg.setDetail("Module Remove Error");
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         msg.setStatus(Message.STATUS.EXCEPTION);
                         msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                         return msg;
                 }
         }
@@ -583,10 +584,10 @@ public class Module extends CustomAction {
                         msg.setError(Message.ERROR.NONE);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         msg.setStatus(Message.STATUS.EXCEPTION);
                         msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                         return msg;
                 }
         }
@@ -608,10 +609,10 @@ public class Module extends CustomAction {
                         msg.setError(Message.ERROR.NONE);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         msg.setStatus(Message.STATUS.EXCEPTION);
                         msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                         return msg;
                 }
         }
@@ -633,10 +634,10 @@ public class Module extends CustomAction {
                         msg.setError(Message.ERROR.NONE);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         msg.setStatus(Message.STATUS.EXCEPTION);
                         msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                         return msg;
                 }
         }
@@ -706,10 +707,10 @@ public class Module extends CustomAction {
                         msg.setSign(Message.SIGN.ALREADY_FEEDBACK_TO_CLIENT);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         msg.setStatus(Message.STATUS.EXCEPTION);
                         msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                         return msg;
                 } finally {
                         try {
@@ -724,10 +725,10 @@ public class Module extends CustomAction {
                                         gos.close();
                                 }
                         } catch (Exception e) {
-                                Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                                Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                                 msg.setStatus(Message.STATUS.EXCEPTION);
                                 msg.setError(Message.ERROR.OTHER);
-                                msg.setDetail(e.toString());
+                                msg.setDetail(CharacterString.getExceptionStackTrace(e));
                                 return msg;
                         }
                 }

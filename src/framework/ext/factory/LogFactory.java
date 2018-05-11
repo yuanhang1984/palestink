@@ -40,14 +40,14 @@ class CompressLogThread extends Thread {
                         bais = new ByteArrayInputStream(sb.toString().getBytes("utf-8"));
                         InputOutput.compressDataToZipFile(bais, this.logFileName, this.zipFilePath);
                 } catch (Exception e) {
-                        System.err.println(e.toString());
+                        System.err.println(CharacterString.getExceptionStackTrace(e));
                 } finally {
                         try {
                                 if (null != bais) {
                                         bais.close();
                                 }
                         } catch (Exception e) {
-                                System.err.println(e.toString());
+                                System.err.println(CharacterString.getExceptionStackTrace(e));
                         }
                 }
         }
@@ -163,7 +163,7 @@ public class LogFactory extends Log {
                         this.logListenerConstructor = this.logListenerClass.getConstructor();
                         this.logListenerObject = this.logListenerConstructor.newInstance();
                 } catch (Exception e) {
-                        throw new RuntimeException("Reflect Invoke LogListener Error: " + System.getProperty("line.separator") + e.toString());
+                        throw new RuntimeException("Reflect Invoke LogListener Error: " + System.getProperty("line.separator") + CharacterString.getExceptionStackTrace(e));
                 }
         }
 
@@ -212,7 +212,7 @@ public class LogFactory extends Log {
                         }
                         return true;
                 } catch (Exception e) {
-                        System.err.println(e.toString());
+                        System.err.println(CharacterString.getExceptionStackTrace(e));
                         return false;
                 } finally {
                         try {
@@ -223,7 +223,7 @@ public class LogFactory extends Log {
                                         this.fr.close();
                                 }
                         } catch (Exception e) {
-                                System.err.println(e.toString());
+                                System.err.println(CharacterString.getExceptionStackTrace(e));
                                 return false;
                         }
                 }
@@ -239,7 +239,7 @@ public class LogFactory extends Log {
                                 this.fos.close();
                         }
                 } catch (Exception e) {
-                        System.err.println(e.toString());
+                        System.err.println(CharacterString.getExceptionStackTrace(e));
                 }
         }
 
@@ -306,7 +306,7 @@ public class LogFactory extends Log {
                                 this.bos.flush();
                         }
                 } catch (Exception e) {
-                        System.err.println(e.toString());
+                        System.err.println(CharacterString.getExceptionStackTrace(e));
                 }
         }
 
@@ -317,7 +317,7 @@ public class LogFactory extends Log {
                         this.appendToLog(moduleName, "debug", newMsg);
                         this.afterMethod.invoke(this.logListenerObject, new Object[] { moduleName, newMsg });
                 } catch (Exception e) {
-                        System.err.println(e.toString());
+                        System.err.println(CharacterString.getExceptionStackTrace(e));
                 }
         }
 
@@ -328,7 +328,7 @@ public class LogFactory extends Log {
                         this.appendToLog(moduleName, "info", newMsg);
                         this.afterMethod.invoke(this.logListenerObject, new Object[] { moduleName, newMsg });
                 } catch (Exception e) {
-                        System.err.println(e.toString());
+                        System.err.println(CharacterString.getExceptionStackTrace(e));
                 }
         }
 
@@ -339,7 +339,7 @@ public class LogFactory extends Log {
                         this.appendToLog(moduleName, "warn", newMsg);
                         this.afterMethod.invoke(this.logListenerObject, new Object[] { moduleName, newMsg });
                 } catch (Exception e) {
-                        System.err.println(e.toString());
+                        System.err.println(CharacterString.getExceptionStackTrace(e));
                 }
         }
 
@@ -350,7 +350,7 @@ public class LogFactory extends Log {
                         this.appendToLog(moduleName, "error", newMsg);
                         this.afterMethod.invoke(this.logListenerObject, new Object[] { moduleName, newMsg });
                 } catch (Exception e) {
-                        System.err.println(e.toString());
+                        System.err.println(CharacterString.getExceptionStackTrace(e));
                 }
         }
 
@@ -361,7 +361,7 @@ public class LogFactory extends Log {
                         this.appendToLog(moduleName, "fatal", newMsg);
                         this.afterMethod.invoke(this.logListenerObject, new Object[] { moduleName, newMsg });
                 } catch (Exception e) {
-                        System.err.println(e.toString());
+                        System.err.println(CharacterString.getExceptionStackTrace(e));
                 }
         }
 }

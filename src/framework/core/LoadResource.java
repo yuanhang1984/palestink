@@ -13,6 +13,7 @@ import javax.servlet.ServletRegistration;
 import javax.servlet.ServletRegistration.Dynamic;
 import library.execute.Run;
 import library.io.InputOutput;
+import library.string.CharacterString;
 import library.system.SystemKit;
 import framework.sdk.Framework;
 import framework.sdk.spec.module.necessary.DaemonAction;
@@ -132,7 +133,7 @@ public class LoadResource implements ServletContextListener {
                                 list.add(name);
                         }
                 } catch (Exception e) {
-                        throw new RuntimeException("Load Module Servlet Error: " + System.getProperty("line.separator") + e.toString());
+                        throw new RuntimeException("Load Module Servlet Error: " + System.getProperty("line.separator") + CharacterString.getExceptionStackTrace(e));
                 }
                 return list;
         }
@@ -157,7 +158,7 @@ public class LoadResource implements ServletContextListener {
                                         try {
                                                 InputOutput.decompressDirectoryToJarFile(f.getAbsolutePath(), Framework.PROJECT_REAL_PATH + "WEB-INF/classes/");
                                         } catch (Exception e) {
-                                                throw new RuntimeException("Decompress Ext Jar File Error: " + System.getProperty("line.separator") + e.toString());
+                                                throw new RuntimeException("Decompress Ext Jar File Error: " + System.getProperty("line.separator") + CharacterString.getExceptionStackTrace(e));
                                         }
                                 }
                         }
@@ -176,7 +177,7 @@ public class LoadResource implements ServletContextListener {
                         try {
                                 Run.executeProgram(Framework.LOG_SOURCE_CODE_COMMAND, null, stderr, true);
                         } catch (Exception e) {
-                                throw new RuntimeException("Run Log Source Code Command Error: " + System.getProperty("line.separator") + e.toString());
+                                throw new RuntimeException("Run Log Source Code Command Error: " + System.getProperty("line.separator") + CharacterString.getExceptionStackTrace(e));
                         }
                         if (stderr.length() > 1) {
                                 throw new RuntimeException("Complie Log Source Code Command Error: " + System.getProperty("line.separator") + stderr);
@@ -188,7 +189,7 @@ public class LoadResource implements ServletContextListener {
                         // 将编译好的Log文件，复制到classes目录
                         InputOutput.copyDirectory(InputOutput.regulatePath(Framework.PROJECT_REAL_PATH + "WEB-INF/ext/log/bin"), InputOutput.regulatePath(Framework.PROJECT_REAL_PATH + "WEB-INF/classes"));
                 } catch (Exception e) {
-                        throw new RuntimeException("Copy Log Class Error: " + System.getProperty("line.separator") + e.toString());
+                        throw new RuntimeException("Copy Log Class Error: " + System.getProperty("line.separator") + CharacterString.getExceptionStackTrace(e));
                 }
                 if (Framework.LOG_FILE_ENABLE) {
                         // 创建log输出文件所需的目录
@@ -221,7 +222,7 @@ public class LoadResource implements ServletContextListener {
                         try {
                                 Run.executeProgram(Framework.DB_SOURCE_CODE_COMMAND, null, stderr, true);
                         } catch (Exception e) {
-                                throw new RuntimeException("Run Db Source Code Command Error: " + System.getProperty("line.separator") + e.toString());
+                                throw new RuntimeException("Run Db Source Code Command Error: " + System.getProperty("line.separator") + CharacterString.getExceptionStackTrace(e));
                         }
                         if (stderr.length() > 1) {
                                 throw new RuntimeException("Complie Db Source Code Command Error: " + System.getProperty("line.separator") + stderr);
@@ -233,7 +234,7 @@ public class LoadResource implements ServletContextListener {
                         // 将编译好的Log文件，复制到classes目录
                         InputOutput.copyDirectory(InputOutput.regulatePath(Framework.PROJECT_REAL_PATH + "WEB-INF/ext/db/bin"), InputOutput.regulatePath(Framework.PROJECT_REAL_PATH + "WEB-INF/classes"));
                 } catch (Exception e) {
-                        throw new RuntimeException("Copy Log Class Error: " + System.getProperty("line.separator") + e.toString());
+                        throw new RuntimeException("Copy Log Class Error: " + System.getProperty("line.separator") + CharacterString.getExceptionStackTrace(e));
                 }
                 // 根据DbFactory初始化Framework的Db对象
                 if (!DbFactory.init(Framework.DB_INFO_DRIVER, Framework.DB_INFO_URL, Framework.DB_SECURITY_NAME, Framework.DB_SECURITY_PASSWORD, Framework.DB_POOL_MAXACTIVECONNECTION)) {
@@ -254,7 +255,7 @@ public class LoadResource implements ServletContextListener {
                                         try {
                                                 InputOutput.decompressDirectoryToJarFile(f.getAbsolutePath(), Framework.PROJECT_REAL_PATH + "WEB-INF/classes/");
                                         } catch (Exception e) {
-                                                throw new RuntimeException("Decompress Module Jar File Error: " + System.getProperty("line.separator") + e.toString());
+                                                throw new RuntimeException("Decompress Module Jar File Error: " + System.getProperty("line.separator") + CharacterString.getExceptionStackTrace(e));
                                         }
                                 }
                         }
@@ -275,7 +276,7 @@ public class LoadResource implements ServletContextListener {
                                 try {
                                         doc = reader.read(file);
                                 } catch (Exception e) {
-                                        throw new RuntimeException("Read Module[" + moduleName + "] Config File Error: " + System.getProperty("line.separator") + e.toString());
+                                        throw new RuntimeException("Read Module[" + moduleName + "] Config File Error: " + System.getProperty("line.separator") + CharacterString.getExceptionStackTrace(e));
                                 }
                                 Element root = doc.getRootElement();
                                 Element sourceCode = root.element("SourceCode");
@@ -298,7 +299,7 @@ public class LoadResource implements ServletContextListener {
                                         try {
                                                 Run.executeProgram(cmd, null, stderr, true);
                                         } catch (Exception e) {
-                                                throw new RuntimeException("Run Module[" + moduleName + "] Source Code Command Error: " + System.getProperty("line.separator") + e.toString());
+                                                throw new RuntimeException("Run Module[" + moduleName + "] Source Code Command Error: " + System.getProperty("line.separator") + CharacterString.getExceptionStackTrace(e));
                                         }
                                         if (stderr.length() > 1) {
                                                 throw new RuntimeException("Complie Module[" + moduleName + "] Source Code Command Error: " + System.getProperty("line.separator") + stderr);
@@ -310,7 +311,7 @@ public class LoadResource implements ServletContextListener {
                                         // 将编译好的模块文件，复制到classes目录
                                         InputOutput.copyDirectory(InputOutput.regulatePath(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + moduleName + "/bin"), InputOutput.regulatePath(Framework.PROJECT_REAL_PATH + "WEB-INF/classes"));
                                 } catch (Exception e) {
-                                        throw new RuntimeException("Copy Module[" + moduleName + "] Class Error: " + System.getProperty("line.separator") + e.toString());
+                                        throw new RuntimeException("Copy Module[" + moduleName + "] Class Error: " + System.getProperty("line.separator") + CharacterString.getExceptionStackTrace(e));
                                 }
                                 // 加载sql信息
                                 file = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + moduleName + "/res/sql.xml");
@@ -321,7 +322,7 @@ public class LoadResource implements ServletContextListener {
                                 try {
                                         doc = reader.read(file);
                                 } catch (Exception e) {
-                                        throw new RuntimeException("Read Module[" + moduleName + "] Config File Error: " + System.getProperty("line.separator") + e.toString());
+                                        throw new RuntimeException("Read Module[" + moduleName + "] Config File Error: " + System.getProperty("line.separator") + CharacterString.getExceptionStackTrace(e));
                                 }
                                 root = doc.getRootElement();
                                 SqlRepository.put(moduleName, root);
@@ -339,7 +340,7 @@ public class LoadResource implements ServletContextListener {
                                         Object o = c.newInstance(params);
                                         daemonMethod.invoke(o);
                                 } catch (Exception e) {
-                                        throw new RuntimeException("Module[" + moduleName + "] Daemon Invoke Error: " + System.getProperty("line.separator") + e.toString());
+                                        throw new RuntimeException("Module[" + moduleName + "] Daemon Invoke Error: " + System.getProperty("line.separator") + CharacterString.getExceptionStackTrace(e));
                                 }
                                 // 统一注册Dispatch为Servlet
                                 Dynamic dispatchServlet = sce.getServletContext().addServlet(moduleName, Dispatch.class.getName());

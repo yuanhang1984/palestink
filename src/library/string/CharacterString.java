@@ -69,8 +69,8 @@ public class CharacterString {
         }
 
         /**
-         * 获取指定时间格式当前时间的字符串。<br />
-         * 格式如下：年（yyyy）、月（MM）、日（dd）、时（HH）、分（mm）、秒（ss）、毫秒（SSS）。<br />
+         * 获取指定时间格式当前时间的字符串。
+         * 格式如下：年（yyyy）、月（MM）、日（dd）、时（HH）、分（mm）、秒（ss）、毫秒（SSS）。
          * 常用格式有：yyyy-MM-dd HH:mm:ss
          * 
          * @param format 时间格式
@@ -83,8 +83,8 @@ public class CharacterString {
         }
 
         /**
-         * 按照“秒”的设置，获取自定义格式的时间字符串。<br />
-         * 可用于“以秒递增”实现音频时间轴的增加<br >
+         * 按照“秒”的设置，获取自定义格式的时间字符串。
+         * 可用于“以秒递增”实现音频时间轴的增加
          * 
          * @param format 时间格式
          * @param second 秒
@@ -95,6 +95,22 @@ public class CharacterString {
                 cal.setTime(new SimpleDateFormat("ss").parse(String.valueOf(second)));
                 SimpleDateFormat f = new SimpleDateFormat(format);
                 return f.format(cal.getTime());
+        }
+
+        /**
+         * 获取异常盏追踪信息
+         * 
+         * @param e Exception对象
+         * @return 异常的盏追踪信息
+         */
+        public static String getExceptionStackTrace(Exception e) {
+                StringBuffer sb = new StringBuffer();
+                StackTraceElement[] ste = e.getStackTrace();
+                for (int i = 0; i < ste.length; i++) {
+                        StackTraceElement s = ste[i];
+                        sb.append(s.toString() + System.getProperty("line.separator"));
+                }
+                return sb.toString();
         }
 
         /**

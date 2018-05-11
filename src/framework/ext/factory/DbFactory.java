@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
 import framework.sdk.Framework;
 import framework.sdk.spec.db.DbInstanceModel;
+import library.string.CharacterString;
 import ext.db.necessary.DbInstance;
 
 public class DbFactory {
@@ -47,7 +48,7 @@ public class DbFactory {
                         ps = con.prepareStatement(sql);
                         return ps.executeUpdate();
                 } catch (Exception e) {
-                        Framework.LOG.error(DbFactory.MODULE_NAME, e.toString());
+                        Framework.LOG.error(DbFactory.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         return -1;
                 } finally {
                         try {
@@ -55,7 +56,7 @@ public class DbFactory {
                                         ps.close();
                                 }
                         } catch (Exception e) {
-                                Framework.LOG.error(DbFactory.MODULE_NAME, e.toString());
+                                Framework.LOG.error(DbFactory.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                                 return -1;
                         }
                 }
@@ -84,7 +85,7 @@ public class DbFactory {
                         }
                         return result;
                 } catch (Exception e) {
-                        Framework.LOG.error(DbFactory.MODULE_NAME, e.toString());
+                        Framework.LOG.error(DbFactory.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         return result;
                 } finally {
                         try {
@@ -95,7 +96,7 @@ public class DbFactory {
                                         ps.close();
                                 }
                         } catch (Exception e) {
-                                Framework.LOG.error(DbFactory.MODULE_NAME, e.toString());
+                                Framework.LOG.error(DbFactory.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                                 return result;
                         }
                 }
