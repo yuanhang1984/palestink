@@ -15,6 +15,7 @@ import framework.ext.factory.DbFactory;
 import framework.sdbo.object.SqlRepository;
 import framework.sdk.spec.module.necessary.CustomAction;
 import library.database.DatabaseKit;
+import library.string.CharacterString;
 import module.user_security.necessary.Config;
 
 public class LogIOn extends CustomAction {
@@ -247,10 +248,10 @@ public class LogIOn extends CustomAction {
                                 }
                         }
                 } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         msg.setStatus(Message.STATUS.EXCEPTION);
                         msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                         return msg;
                 }
         }

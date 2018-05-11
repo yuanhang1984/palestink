@@ -4,6 +4,7 @@ import java.io.File;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+import library.string.CharacterString;
 import library.thread.Block;
 import framework.sdk.Framework;
 import org.dom4j.Element;
@@ -40,7 +41,7 @@ public class Config extends HttpServlet {
                         Config.TEMPORARY_FILE_LIFE_CYCLE = Integer.parseInt(fileStorage.attributeValue("temporaryFileLifeCycle"));
                         Config.PERMANENT_FILE_LIFE_CYCLE = Integer.parseInt(fileStorage.attributeValue("permanentFileLifeCycle"));
                 } catch (Exception e) {
-                        Framework.LOG.error(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.error(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                 }
         }
 

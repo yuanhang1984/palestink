@@ -103,6 +103,10 @@ public class Custom extends CustomAction {
                 return this.module.downloadServerFile();
         }
 
+        public Message downloadLib() {
+                return this.module.downloadLib();
+        }
+
         public Message uploadServerSourceLibrary() {
                 FileItem attachment = (FileItem) this.module.getParameter().get("attachment");
                 this.module.getParameter().put("directory", "lib");

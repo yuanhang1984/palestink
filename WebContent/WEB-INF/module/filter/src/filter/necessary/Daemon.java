@@ -6,6 +6,7 @@ import javax.servlet.ServletContext;
 import framework.sdk.Framework;
 import framework.sdk.config.HttpConfig;
 import framework.sdk.spec.module.necessary.DaemonAction;
+import library.string.CharacterString;
 import org.dom4j.Element;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
@@ -22,7 +23,7 @@ class ExecuteThread extends Thread {
                 try {
                         doc = reader.read(path);
                 } catch (Exception e) {
-                        Framework.LOG.error(Daemon.MODULE_NAME, "Read Filter Config File Error: " + System.getProperty("line.separator") + e.toString());
+                        Framework.LOG.error(Daemon.MODULE_NAME, "Read Filter Config File Error: " + System.getProperty("line.separator") + CharacterString.getExceptionStackTrace(e));
                 }
                 Element root = doc.getRootElement();
                 Element httpHeader = root.element("HttpHeader");

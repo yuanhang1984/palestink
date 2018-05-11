@@ -125,10 +125,10 @@ public class Custom extends CustomAction implements FileStorage {
                         msg.setError(Message.ERROR.NONE);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         msg.setStatus(Message.STATUS.EXCEPTION);
                         msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                         return msg;
                 } finally {
                         try {
@@ -139,10 +139,10 @@ public class Custom extends CustomAction implements FileStorage {
                                         ps.close();
                                 }
                         } catch (Exception e) {
-                                Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                                Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                                 msg.setStatus(Message.STATUS.EXCEPTION);
                                 msg.setError(Message.ERROR.OTHER);
-                                msg.setDetail(e.toString());
+                                msg.setDetail(CharacterString.getExceptionStackTrace(e));
                                 return msg;
                         }
                 }
@@ -202,7 +202,7 @@ public class Custom extends CustomAction implements FileStorage {
                                         } catch (Exception e) {
                                                 msg.setStatus(Message.STATUS.EXCEPTION);
                                                 msg.setError(Message.ERROR.OTHER);
-                                                msg.setDetail(e.toString());
+                                                msg.setDetail(CharacterString.getExceptionStackTrace(e));
                                                 return msg;
                                         }
                                 }
@@ -215,10 +215,10 @@ public class Custom extends CustomAction implements FileStorage {
                         msg.setSign(Message.SIGN.ALREADY_FEEDBACK_TO_CLIENT);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         msg.setStatus(Message.STATUS.EXCEPTION);
                         msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                         return msg;
                 } finally {
                         try {
@@ -235,10 +235,10 @@ public class Custom extends CustomAction implements FileStorage {
                                         ps.close();
                                 }
                         } catch (Exception e) {
-                                Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                                Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                                 msg.setStatus(Message.STATUS.EXCEPTION);
                                 msg.setError(Message.ERROR.OTHER);
-                                msg.setDetail(e.toString());
+                                msg.setDetail(CharacterString.getExceptionStackTrace(e));
                                 return msg;
                         }
                 }
@@ -287,10 +287,10 @@ public class Custom extends CustomAction implements FileStorage {
                         msg.setError(Message.ERROR.NONE);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         msg.setStatus(Message.STATUS.EXCEPTION);
                         msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                         return msg;
                 }
         }
@@ -360,10 +360,10 @@ public class Custom extends CustomAction implements FileStorage {
                         msg.setError(Message.ERROR.NONE);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         msg.setStatus(Message.STATUS.EXCEPTION);
                         msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                         return msg;
                 }
         }
@@ -433,10 +433,10 @@ public class Custom extends CustomAction implements FileStorage {
                         }
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         msg.setStatus(Message.STATUS.EXCEPTION);
                         msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                         return msg;
                 }
         }
@@ -638,10 +638,10 @@ public class Custom extends CustomAction implements FileStorage {
                         msg.setError(Message.ERROR.NONE);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         msg.setStatus(Message.STATUS.EXCEPTION);
                         msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                         return msg;
                 }
         }
@@ -705,10 +705,10 @@ public class Custom extends CustomAction implements FileStorage {
                         msg.setError(Message.ERROR.NONE);
                         return msg;
                 } catch (Exception e) {
-                        Framework.LOG.warn(Config.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         msg.setStatus(Message.STATUS.EXCEPTION);
                         msg.setError(Message.ERROR.OTHER);
-                        msg.setDetail(e.toString());
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
                         return msg;
                 }
         }

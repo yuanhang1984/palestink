@@ -80,6 +80,24 @@
             </parameters>
         </servlet>
         <servlet>
+            <name>downloadSDK</name>
+            <description><![CDATA[下载SDK]]></description>
+            <namespace>
+                <![CDATA[
+                    [custom][antcolony][module.antcolony.necessary.Custom.downloadLib][fileName];
+                ]]>
+            </namespace>
+            <parameters>
+                <parameter>
+                    <name>fileName</name>
+                    <description><![CDATA[SDK的文件名]]></description>
+                    <type>string</type>
+                    <format>#constant#</format>
+                    <constant>palestink_sdk.jar</constant>
+                </parameter>
+            </parameters>
+        </servlet>
+        <servlet>
             <name>uploadServerResourceFile</name>
             <description><![CDATA[上传服务器的资源文件]]></description>
             <namespace>

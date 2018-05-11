@@ -15,6 +15,7 @@ import framework.sdk.spec.module.necessary.DaemonAction;
 import framework.sdbo.object.SqlRepository;
 import library.thread.Block;
 import library.database.DatabaseKit;
+import library.string.CharacterString;
 import org.dom4j.Element;
 
 class ExecuteThread extends Thread {
@@ -69,11 +70,11 @@ class ExecuteThread extends Thread {
                                 this.connection.commit();
                         }
                 } catch (Exception e) {
-                        Framework.LOG.warn(Daemon.MODULE_NAME, e.toString());
+                        Framework.LOG.warn(Daemon.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         try {
                                 this.connection.rollback();
                         } catch (Exception e2) {
-                                Framework.LOG.warn(Daemon.MODULE_NAME, e2.toString());
+                                Framework.LOG.warn(Daemon.MODULE_NAME, CharacterString.getExceptionStackTrace(e2));
                         }
                 }
         }
@@ -83,7 +84,7 @@ class ExecuteThread extends Thread {
                 try {
                         Block.lock(Daemon.LOCK, Daemon.CONDITION);
                 } catch (Exception e) {
-                        Framework.LOG.error(Daemon.MODULE_NAME, e.toString());
+                        Framework.LOG.error(Daemon.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         return;
                 }
                 Framework.LOG.info(Daemon.MODULE_NAME, "File Storage Daemon Start");
@@ -118,7 +119,7 @@ class ExecuteThread extends Thread {
                                         Framework.LOG.info(Daemon.MODULE_NAME, "File Storage Daemon Stop");
                                         return;
                                 } catch (Exception e) {
-                                        Framework.LOG.warn(Daemon.MODULE_NAME, e.toString());
+                                        Framework.LOG.warn(Daemon.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                                 }
                                 this.deleteExpireFile(expireFileUuidList);
                         }
@@ -126,7 +127,7 @@ class ExecuteThread extends Thread {
                         try {
                                 this.connection.close();
                         } catch (Exception e) {
-                                Framework.LOG.warn(Daemon.MODULE_NAME, e.toString());
+                                Framework.LOG.warn(Daemon.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
                         }
                 }
         }

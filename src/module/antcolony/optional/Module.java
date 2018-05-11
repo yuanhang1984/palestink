@@ -286,6 +286,59 @@ public class Module extends CustomAction {
         }
 
         /**
+         * 下载Lib文件
+         * 
+         * [参数列表所需参数]
+         * fileName: 资源文件名称（常量）
+         */
+        public Message downloadLib() {
+                Message msg = new Message();
+                InputStream is = null;
+                OutputStream os = null;
+                File f = new File(Framework.PROJECT_REAL_PATH + "WEB-INF/lib/" + parameter.get("fileName"));
+                try {
+                        this.httpServletResponse.setHeader("Content-Disposition", "attachment; filename=" + f.getName());
+                        is = new FileInputStream(f);
+                        int size = 0;
+                        byte[] buf = new byte[10240];
+                        os = this.httpServletResponse.getOutputStream();
+                        while (-1 != (size = is.read(buf))) {
+                                try {
+                                        os.write(buf, 0, size);
+                                } catch (Exception e) {
+                                        msg.setStatus(Message.STATUS.EXCEPTION);
+                                        msg.setError(Message.ERROR.OTHER);
+                                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
+                                        return msg;
+                                }
+                        }
+                        msg.setSign(Message.SIGN.ALREADY_FEEDBACK_TO_CLIENT);
+                        return msg;
+                } catch (Exception e) {
+                        Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
+                        msg.setStatus(Message.STATUS.EXCEPTION);
+                        msg.setError(Message.ERROR.OTHER);
+                        msg.setDetail(CharacterString.getExceptionStackTrace(e));
+                        return msg;
+                } finally {
+                        try {
+                                if (null != is) {
+                                        is.close();
+                                }
+                                if (null != os) {
+                                        os.close();
+                                }
+                        } catch (Exception e) {
+                                Framework.LOG.warn(Config.MODULE_NAME, CharacterString.getExceptionStackTrace(e));
+                                msg.setStatus(Message.STATUS.EXCEPTION);
+                                msg.setError(Message.ERROR.OTHER);
+                                msg.setDetail(CharacterString.getExceptionStackTrace(e));
+                                return msg;
+                        }
+                }
+        }
+
+        /**
          * 上传服务器的资源文件
          * 
          * [参数列表所需参数]
