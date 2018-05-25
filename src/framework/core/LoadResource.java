@@ -352,6 +352,7 @@ public class LoadResource implements ServletContextListener {
                                 dispatchServlet.addMapping("/module/" + moduleName + "/*");
                                 // 如果开启了api，那么添加api的servlet
                                 if (docs.attributeValue("enable").equalsIgnoreCase("true")) {
+                                        // 文档
                                         String moduleDocs = "docs_" + moduleName;
                                         // 统一注册Module为Servlet
                                         ServletRegistration srDocs = sce.getServletContext().addServlet(moduleDocs, ModuleDocs.class.getName());
@@ -359,6 +360,15 @@ public class LoadResource implements ServletContextListener {
                                         srDocs.setInitParameter("path", Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + moduleName + "/res/dispatch.xml");
                                         // 添加模块的映射
                                         srDocs.addMapping("/module/docs/" + moduleName);
+                                        // 注解
+                                        String moduleAnnotation = "annotation_" + moduleName;
+                                        // 统一注册Annotation为Servlet
+                                        ServletRegistration srAnnotation = sce.getServletContext().addServlet(moduleAnnotation, ModuleAnnotation.class.getName());
+                                        // 设置模块的配置文件为Servlet的读取参数
+                                        // srAnnotation.setInitParameter("path", Framework.PROJECT_REAL_PATH + "WEB-INF/module/" + moduleName + "/bin/module/" + moduleName + "/necessary/Custom.class");
+                                        srAnnotation.setInitParameter("className", "module." + moduleName + ".necessary.Custom");
+                                        // 添加模块的映射
+                                        srAnnotation.addMapping("/module/annotation/" + moduleName);
                                 }
                                 // 保存模块名称
                                 Framework.MODULE_NAME_LIST.add(moduleName);

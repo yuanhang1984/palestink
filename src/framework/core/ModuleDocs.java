@@ -51,10 +51,10 @@ public class ModuleDocs extends HttpServlet {
         public void doPost(HttpServletRequest request, HttpServletResponse response) {
                 try {
                         String s = this.getModuleDocs();
-                        if (s != null) {
+                        if (null != s) {
                                 Message.responseToClient(response, s);
                         } else {
-                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.OTHER, null, "Module Document Read Error: " + System.getProperty("line.separator") + path);
+                                Message.send(request, response, Message.STATUS.ERROR, Message.ERROR.OTHER, null, "Module Document Read Error: " + System.getProperty("line.separator") + this.path);
                         }
                 } catch (Exception e) {
                         Message.send(request, response, Message.STATUS.EXCEPTION, Message.ERROR.OTHER, null, CharacterString.getExceptionStackTrace(e));

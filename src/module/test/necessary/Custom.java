@@ -5,6 +5,9 @@ import java.sql.Connection;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import framework.sdk.annotation.Method;
+import framework.sdk.annotation.Parameter;
 import framework.sdk.msg.Message;
 import framework.sdk.spec.module.necessary.CustomAction;
 
@@ -16,7 +19,17 @@ public class Custom extends CustomAction {
                 this.parameter = parameter;
         }
 
+        @Method(description = "获取用户名", parameters = { @Parameter(name = "address", description = "详细地址", format = "^.[1,16]$", type = "string"), @Parameter(name = "age", description = "年龄", format = "^\\d$", type = "integer") })
         public Message getName() {
+                Message msg = new Message();
+                msg.setStatus(Message.STATUS.SUCCESS);
+                msg.setError(Message.ERROR.NONE);
+                msg.setDetail(this.parameter.get("name"));
+                return msg;
+        }
+
+        @Method(description = "获取用户年龄", parameters = { @Parameter(name = "address", description = "详细地址", format = "^.[1,16]$", type = "string"), @Parameter(name = "age", description = "年龄", format = "^\\d$", type = "integer") })
+        public Message getAge() {
                 Message msg = new Message();
                 msg.setStatus(Message.STATUS.SUCCESS);
                 msg.setError(Message.ERROR.NONE);
