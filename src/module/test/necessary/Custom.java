@@ -5,12 +5,13 @@ import java.sql.Connection;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import framework.sdk.msg.Message;
+import framework.sdk.annotation.Class;
 import framework.sdk.annotation.Method;
 import framework.sdk.annotation.Parameter;
-import framework.sdk.msg.Message;
 import framework.sdk.spec.module.necessary.CustomAction;
 
+@Class(description = "这是一个测试类")
 public class Custom extends CustomAction {
         private HashMap<String, Object> parameter;
 
